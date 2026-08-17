@@ -9,7 +9,7 @@ import { useUIStore } from "@/lib/uiStore";
 
 /* ============================================================
    CosmeticHeader — nav sticky reutilizable para todas las páginas
-   /cosmetic/**  y la landing en /.
+   todas las rutas del sitio (montado una sola vez en el RootLayout).
    - Logo Veliroz Cosmetic
    - Links: Productos, Rutinas, Marcas, Diario
    - Iconos: wishlist (badge count), carrito (badge count → abre CartDrawer)
@@ -30,27 +30,27 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   {
     key: "productos",
-    href: "/cosmetic/productos",
+    href: "/productos",
     label: "Productos",
-    matchPrefix: ["/cosmetic/productos", "/cosmetic/producto"],
+    matchPrefix: ["/productos", "/producto"],
   },
   {
     key: "rutinas",
-    href: "/cosmetic/rutinas",
+    href: "/rutinas",
     label: "Rutinas",
-    matchPrefix: ["/cosmetic/rutinas", "/cosmetic/rutina"],
+    matchPrefix: ["/rutinas", "/rutina"],
   },
   {
     key: "marcas",
-    href: "/cosmetic/marcas",
+    href: "/marcas",
     label: "Marcas",
-    matchPrefix: ["/cosmetic/marcas", "/cosmetic/marca"],
+    matchPrefix: ["/marcas", "/marca"],
   },
   {
     key: "blog",
-    href: "/cosmetic/blog",
+    href: "/blog",
     label: "Diario",
-    matchPrefix: ["/cosmetic/blog"],
+    matchPrefix: ["/blog"],
   },
 ];
 
@@ -137,7 +137,7 @@ export function CosmeticHeader({ current }: Props = {}) {
           {/* Actions */}
           <div className="flex items-center gap-2 md:gap-4">
             <Link
-              href="/cosmetic/cuenta"
+              href="/cuenta"
               className="text-clay hover:text-ink text-sm hidden md:inline"
             >
               Iniciar sesión
@@ -145,7 +145,7 @@ export function CosmeticHeader({ current }: Props = {}) {
 
             {/* Wishlist */}
             <Link
-              href="/cosmetic/wishlist"
+              href="/wishlist"
               className="relative w-10 h-10 flex items-center justify-center text-ink hover:text-rose-deep transition-colors rounded-full"
               aria-label={`Ver favoritos${
                 mounted && wishlistCount > 0 ? ` (${wishlistCount})` : ""
@@ -271,14 +271,14 @@ export function CosmeticHeader({ current }: Props = {}) {
                 })}
                 <div className="divider-champagne my-2" />
                 <Link
-                  href="/cosmetic/cuenta"
+                  href="/cuenta"
                   onClick={closeMobileMenu}
                   className="px-2 py-3 text-sm text-clay hover:text-ink"
                 >
                   Iniciar sesión
                 </Link>
                 <Link
-                  href="/cosmetic/wishlist"
+                  href="/wishlist"
                   onClick={closeMobileMenu}
                   className="px-2 py-3 text-sm text-clay hover:text-ink"
                 >

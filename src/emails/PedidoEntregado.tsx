@@ -11,6 +11,7 @@ export type PedidoEntregadoProps = {
   clienteNombre: string;
   reviewUrl?: string | null;
   instagramHandle?: string;
+  /** Se acepta por consistencia con los demás correos; este no lo usa. */
   siteUrl?: string;
 };
 
@@ -20,12 +21,19 @@ export default function PedidoEntregado(props: PedidoEntregadoProps) {
     clienteNombre,
     reviewUrl,
     instagramHandle = "veliroz_02",
-    siteUrl = "https://veliroz-cosmetic.vercel.app",
   } = props;
 
   const primerNombre = clienteNombre.split(" ")[0] || "linda";
+  /* Todavía NO existe un flujo de reseñas en la web: el fallback apuntaba a
+     /mis-pedidos/{codigo}/review, que devolvía 404 desde el correo. Hasta que
+     exista esa página, la reseña se recoge por WhatsApp (canal real del
+     negocio) con el código ya cargado en el mensaje. Cuando el flujo esté,
+     basta con pasar `reviewUrl` al render del correo. */
   const reviewHref =
-    reviewUrl ?? `${siteUrl}/cosmetic/mis-pedidos/${pedidoCodigo}/review`;
+    reviewUrl ??
+    `https://wa.me/51967456364?text=${encodeURIComponent(
+      `Hola Veliroz Cosmetic! Recibí mi pedido ${pedidoCodigo} y les quiero contar qué me pareció: `,
+    )}`;
   const igUrl = `https://instagram.com/${instagramHandle}`;
 
   return (

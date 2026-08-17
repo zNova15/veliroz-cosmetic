@@ -223,7 +223,7 @@ export function flowCatalogo(): FlowResult {
   return {
     reply: [
       "Nuestro catálogo completo 🛍️",
-      "https://veliroz.com/cosmetic/productos",
+      "https://veliroz.com/productos",
       "",
       "Filtrá por tipo de piel, marca o preocupación. Cualquier duda, escribinos *contacto*.",
     ].join("\n"),
@@ -322,12 +322,12 @@ export async function flowPrecio(termino: string): Promise<FlowResult> {
       // eslint-disable-next-line no-console
       console.error("[bot:precio] supabase error", error);
       return {
-        reply: "No pude buscar ahora. Probá desde el catálogo: https://veliroz.com/cosmetic/productos",
+        reply: "No pude buscar ahora. Probá desde el catálogo: https://veliroz.com/productos",
       };
     }
     if (!data || data.length === 0) {
       return {
-        reply: `No encontré nada con "*${q}*". Probá con otra palabra o mirá el catálogo: https://veliroz.com/cosmetic/productos`,
+        reply: `No encontré nada con "*${q}*". Probá con otra palabra o mirá el catálogo: https://veliroz.com/productos`,
       };
     }
 
@@ -340,7 +340,7 @@ export async function flowPrecio(termino: string): Promise<FlowResult> {
       const max = Math.max(...vs.map((v) => Number(v.precio)));
       const precioTxt =
         min === max ? `S/ ${min.toFixed(2)}` : `desde S/ ${min.toFixed(2)}`;
-      return `• *${p.nombre}* — ${precioTxt}\n  https://veliroz.com/cosmetic/producto/${p.slug}`;
+      return `• *${p.nombre}* — ${precioTxt}\n  https://veliroz.com/producto/${p.slug}`;
     });
 
     return { reply: `Encontré esto para "*${q}*":\n\n${filas.join("\n")}` };
@@ -348,7 +348,7 @@ export async function flowPrecio(termino: string): Promise<FlowResult> {
     // eslint-disable-next-line no-console
     console.error("[bot:precio] throw", e);
     return {
-      reply: "Tuve un problema buscando. Probá el catálogo: https://veliroz.com/cosmetic/productos",
+      reply: "Tuve un problema buscando. Probá el catálogo: https://veliroz.com/productos",
     };
   }
 }
@@ -372,7 +372,7 @@ export function flowRecomendacion(args: {
     reply: [
       ...rutina,
       "",
-      "Encontrás todo esto en: https://veliroz.com/cosmetic/productos",
+      "Encontrás todo esto en: https://veliroz.com/productos",
     ].join("\n"),
   };
 }

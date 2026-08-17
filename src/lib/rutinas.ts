@@ -25,7 +25,7 @@
    cambian en la BD, actualizar estos tres campos acá (son copy, no cálculo:
    la fuente de verdad de cobro sigue siendo variantes_producto.precio).
 
-   La página /cosmetic/rutinas/[slug] resuelve los productos por slug con
+   La página /rutinas/[slug] resuelve los productos por slug con
    una sola query a Supabase (in-list).
    ============================================================ */
 

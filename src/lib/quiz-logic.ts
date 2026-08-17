@@ -161,7 +161,7 @@ export interface Rutina {
   rutina_nombre: string;
   descripcion: string;
   productos_slugs: string[];
-  /* Query params que llevan a `/cosmetic/productos` prefiltrado. */
+  /* Query params que llevan a `/productos` prefiltrado. */
   filtro_url: string;
 }
 
@@ -180,7 +180,7 @@ const RUTINAS: Record<string, Rutina> = {
       "anua-pdrn-hyaluronic-capsule-serum",
       "round-lab-birch-juice-sunscreen-spf50",
     ],
-    filtro_url: "/cosmetic/productos?preocupacion=antiedad",
+    filtro_url: "/productos?preocupacion=antiedad",
   },
   manchas: {
     slug: "manchas",
@@ -192,7 +192,7 @@ const RUTINAS: Record<string, Rutina> = {
       "cosrx-advanced-snail-96-mucin-essence",
       "skin1004-madagascar-sun-serum-spf50",
     ],
-    filtro_url: "/cosmetic/productos?preocupacion=manchas",
+    filtro_url: "/productos?preocupacion=manchas",
   },
   "acne-graso": {
     slug: "acne-graso",
@@ -204,7 +204,7 @@ const RUTINAS: Record<string, Rutina> = {
       "anua-niacinamide-10-txa-4-serum",
       "beauty-of-joseon-relief-sun-spf50",
     ],
-    filtro_url: "/cosmetic/productos?tipo_piel=grasa&preocupacion=poros",
+    filtro_url: "/productos?tipo_piel=grasa&preocupacion=poros",
   },
   hidratacion: {
     slug: "hidratacion",
@@ -216,7 +216,7 @@ const RUTINAS: Record<string, Rutina> = {
       "anua-pdrn-hyaluronic-capsule-serum",
       "round-lab-birch-juice-sunscreen-spf50",
     ],
-    filtro_url: "/cosmetic/productos?tipo_piel=seca&preocupacion=hidratacion",
+    filtro_url: "/productos?tipo_piel=seca&preocupacion=hidratacion",
   },
   "primera-vez": {
     slug: "primera-vez",
@@ -228,7 +228,7 @@ const RUTINAS: Record<string, Rutina> = {
       "dr-althea-345-relief-cream",
       "beauty-of-joseon-relief-sun-spf50",
     ],
-    filtro_url: "/cosmetic/productos",
+    filtro_url: "/productos",
   },
   sensibilidad: {
     slug: "sensibilidad",
@@ -240,7 +240,7 @@ const RUTINAS: Record<string, Rutina> = {
       "dr-althea-345-relief-cream",
       "skin1004-madagascar-sun-serum-spf50",
     ],
-    filtro_url: "/cosmetic/productos?tipo_piel=sensible",
+    filtro_url: "/productos?tipo_piel=sensible",
   },
 };
 

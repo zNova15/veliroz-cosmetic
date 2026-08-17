@@ -10,8 +10,8 @@ import readingTime from "reading-time";
    - Reading-time calculado sobre el body
    - Server-only: nunca importar desde un Client Component
    Rutas consumidoras:
-   - /cosmetic/blog             → listPosts()
-   - /cosmetic/blog/[slug]      → getPostBySlug() + getRelatedPosts()
+   - /blog             → listPosts()
+   - /blog/[slug]      → getPostBySlug() + getRelatedPosts()
    - sitemap.ts                 → listPostSlugs()
    ============================================================ */
 

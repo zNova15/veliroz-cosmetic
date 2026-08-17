@@ -12,7 +12,7 @@ import { useUIStore } from "@/lib/uiStore";
    - Lee items del useCartStore. Cambios de cantidad → updateQty(sku, qty).
    - Overlay negro semitransparente: click cierra. Escape cierra también.
    - Bloquea scroll del body mientras está abierto.
-   - Botón "Ir a pagar" → /cosmetic/pago (se implementa en Sprint 4).
+   - Botón "Ir a pagar" → /pago (se implementa en Sprint 4).
    ============================================================ */
 
 export function CartDrawer() {
@@ -132,7 +132,7 @@ export function CartDrawer() {
                           {item.snapshot.marcaNombre}
                         </p>
                         <Link
-                          href={`/cosmetic/producto/${item.snapshot.productoSlug}`}
+                          href={`/producto/${item.snapshot.productoSlug}`}
                           onClick={close}
                           className="font-serif text-sm text-ink leading-snug hover:text-rose-deep line-clamp-2"
                         >
@@ -192,7 +192,7 @@ export function CartDrawer() {
                     Envío e impuestos se calculan al pagar.
                   </p>
                   <Link
-                    href="/cosmetic/pago"
+                    href="/pago"
                     onClick={close}
                     className="btn-primary w-full justify-center"
                   >
@@ -256,7 +256,7 @@ function EmptyState({ onClose }: { onClose: () => void }) {
           Empezá por acá — 7 productos curados esperándote.
         </p>
       </div>
-      <Link href="/cosmetic/productos" onClick={onClose} className="btn-outline">
+      <Link href="/productos" onClick={onClose} className="btn-outline">
         Ver productos
       </Link>
     </div>

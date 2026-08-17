@@ -41,7 +41,7 @@ export default function PedidoPagado(props: PedidoPagadoProps) {
     metodoEntrega,
     comprobantePdfUrl,
     trackingUrl,
-    siteUrl = "https://veliroz-cosmetic.vercel.app",
+    siteUrl = "https://veliroz.com",
   } = props;
 
   const primerNombre = clienteNombre.split(" ")[0] || "linda";
@@ -117,7 +117,7 @@ export default function PedidoPagado(props: PedidoPagadoProps) {
 
       <Section style={{ textAlign: "center", padding: "16px 0 0" }}>
         <Button
-          href={`${siteUrl}/cosmetic/mis-pedidos`}
+          href={`${siteUrl}/mis-pedidos`}
           style={styles.btnOutline}
         >
           Ver mis pedidos

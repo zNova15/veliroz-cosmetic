@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@/components/Analytics";
+import { CosmeticHeader } from "@/components/CosmeticHeader";
+import { CartDrawer } from "@/components/CartDrawer";
+import { PreventaBar } from "@/components/PreventaBar";
 
 /* ============================================================
    Fuentes Veliroz Cosmetic (self-hosted via next/font):
@@ -39,11 +42,11 @@ export const metadata: Metadata = {
   description:
     "The Ordinary, CeraVe, Beauty of Joseon, COSRX y más — curados por rutina según tu piel. Envío nacional Shalom, entrega en Lima y Cajamarca.",
   metadataBase: new URL("https://veliroz.com"),
-  alternates: { canonical: "/cosmetic" },
+  alternates: { canonical: "/" },
   openGraph: {
     title: "Veliroz Cosmetic",
     description: "Skincare clínico y honesto. Rutinas curadas según tu piel.",
-    url: "https://veliroz.com/cosmetic",
+    url: "https://veliroz.com",
     siteName: "Veliroz",
     locale: "es_PE",
     type: "website",
@@ -61,6 +64,22 @@ export const metadata: Metadata = {
   ],
 };
 
+/* ============================================================
+   RootLayout — chrome global de veliroz.com (Veliroz Cosmetic).
+   Desde el refactor de rutas (Cosmetic pasó del segmento cosmetic a la
+   raíz) este layout absorbió al viejo layout del segmento; acá vive
+   TODO el chrome compartido:
+   - <html>/<body> + variables de fuente.
+   - CosmeticHeader: header sticky reutilizable (badges carrito/wishlist).
+   - PreventaBar: barra fina de pre-venta global. El header es `fixed top-0`
+     + spacer, así que la barra va DESPUÉS en el DOM para caer justo debajo
+     y no quedar tapada. No invertir el orden.
+   - CartDrawer: se monta UNA sola vez para todo el sitio; el open/close
+     se maneja vía useUIStore, no vía props.
+   Ojo: ninguna page debe volver a montar header/barra/drawer inline —
+   se renderizarían dos veces.
+   ============================================================ */
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -69,9 +88,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
     >
       <body className="paper-grain antialiased min-h-screen">
+        <CosmeticHeader />
+        <PreventaBar />
         {children}
+        <CartDrawer />
         {/* Analytics stack: Vercel Web Analytics + GA4 + Meta Pixel.
-            Vive en el root para cubrir /, /cosmetic/**, /carrito, /pago/**, etc.
+            Vive en el root para cubrir /, /productos/**, /pago/**, etc.
             Cada script chequea su env var y hace fallback silencioso si falta. */}
         <Analytics />
       </body>

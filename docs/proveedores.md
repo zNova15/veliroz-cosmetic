@@ -95,7 +95,7 @@
 - [ ] **RUC MYPE Tributario activo** (obligatorio para SUNAT + para pedir precio B2B a mayoristas)
 - [ ] **Boleta electrónica configurada** (Nubefact desde día 1, S/40/mes)
 - [ ] **Confirmar por escrito NSO DIGEMID** de cada SKU al proveedor mayorista (paraguas legal por venta a través de importador con NSO vigente)
-- [ ] **Libro de Reclamaciones digital** activo en veliroz.com/cosmetic (INDECOPI obligatorio para tienda virtual)
+- [ ] **Libro de Reclamaciones digital** activo en veliroz.com/libro-reclamaciones (INDECOPI obligatorio para tienda virtual)
 - [ ] **Yape Business API** solicitado a BCP (aprobación 3-10 días, comisión 1.5-2.5% vs 3.44% de Culqi)
 - [ ] **Cuenta Culqi** creada (backup tarjeta)
 - [ ] **Cuenta Meta Business** para WhatsApp Cloud API (1000 conversations/mes free)

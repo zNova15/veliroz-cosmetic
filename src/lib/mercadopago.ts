@@ -75,8 +75,8 @@ export interface CreatePreferenceResult {
  *
  * - `external_reference` = `pedido_codigo` → así los webhooks IPN nos permiten
  *   ubicar el pedido sin depender del `payment_id` de MP.
- * - `back_urls` apuntan al dominio del deploy (env `NEXT_PUBLIC_SITE_URL`, con
- *   fallback a veliroz-cosmetic.vercel.app).
+ * - `back_urls` apuntan a `/pago/exito` del dominio del deploy (env
+ *   `NEXT_PUBLIC_SITE_URL`, con fallback a veliroz-cosmetic.vercel.app).
  * - `notification_url` apunta a `/api/pagos/mercadopago/webhook` del mismo host.
  *
  * Si el token no está seteado, devolvemos `{ ok:false, error:"no_token" }` sin
@@ -117,6 +117,24 @@ export async function createPreference(
     });
   }
 
+  /* ── back_urls → /pago/exito ──────────────────────────────────────────
+     La página de confirmación real es /pago/exito. Antes apuntábamos a la
+     ruta vieja del checkout, que dejó de existir en el refactor de rutas
+     → el cliente que pagaba con MP aterrizaba en un 404.
+
+     Mandamos codigo + total + pago como FALLBACK: si la RLS anon no deja
+     leer el pedido, /pago/exito igual puede pintar el detalle desde el URL.
+     MercadoPago agrega encima sus propios params al redirigir
+     (collection_id, collection_status, payment_id, status,
+     external_reference, preference_id, merchant_order_id) y la página los
+     usa para decidir qué estado mostrar. `estado` es nuestro hint propio
+     por si MP no manda status (algunos flujos mandan `status=null`). */
+  const backBase = `${siteUrl}/pago/exito?${new URLSearchParams({
+    codigo: pedido.pedido_codigo,
+    total: Number(pedido.total ?? 0).toFixed(2),
+    pago: "mercadopago",
+  }).toString()}`;
+
   const body: PreferenceRequest = {
     items,
     external_reference: pedido.pedido_codigo,
@@ -131,9 +149,9 @@ export async function createPreference(
         : undefined,
     },
     back_urls: {
-      success: `${siteUrl}/cosmetic/checkout/confirmacion?codigo=${pedido.pedido_codigo}&estado=aprobado`,
-      failure: `${siteUrl}/cosmetic/checkout/confirmacion?codigo=${pedido.pedido_codigo}&estado=fallido`,
-      pending: `${siteUrl}/cosmetic/checkout/confirmacion?codigo=${pedido.pedido_codigo}&estado=pendiente`,
+      success: `${backBase}&estado=aprobado`,
+      failure: `${backBase}&estado=fallido`,
+      pending: `${backBase}&estado=pendiente`,
     },
     auto_return: "approved",
     notification_url: `${siteUrl}/api/pagos/mercadopago/webhook`,

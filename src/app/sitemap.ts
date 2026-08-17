@@ -21,7 +21,7 @@ function baseUrl(): string {
   if (explicit) return explicit.replace(/\/$/, "");
   const vercel = process.env.VERCEL_URL;
   if (vercel) return `https://${vercel}`;
-  return "https://veliroz-cosmetic.vercel.app";
+  return "https://veliroz.com";
 }
 
 type ChangeFreq = MetadataRoute.Sitemap[number]["changeFrequency"];
@@ -37,13 +37,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   /* ─────────── Rutas estáticas ─────────── */
   const staticRoutes: MetadataRoute.Sitemap = [
-    { url: `${site}/`, lastModified: now, changeFrequency: "weekly" as ChangeFreq, priority: 1.0 },
-    { url: `${site}/cosmetic`, lastModified: now, changeFrequency: "daily" as ChangeFreq, priority: 1.0 },
-    { url: `${site}/cosmetic/productos`, lastModified: now, changeFrequency: "daily" as ChangeFreq, priority: 0.9 },
-    { url: `${site}/cosmetic/rutinas`, lastModified: now, changeFrequency: "weekly" as ChangeFreq, priority: 0.8 },
-    { url: `${site}/cosmetic/marcas`, lastModified: now, changeFrequency: "weekly" as ChangeFreq, priority: 0.7 },
-    { url: `${site}/cosmetic/blog`, lastModified: now, changeFrequency: "weekly" as ChangeFreq, priority: 0.7 },
-    { url: `${site}/cosmetic/quiz`, lastModified: now, changeFrequency: "monthly" as ChangeFreq, priority: 0.6 },
+    { url: `${site}/`, lastModified: now, changeFrequency: "daily" as ChangeFreq, priority: 1.0 },
+    { url: `${site}/productos`, lastModified: now, changeFrequency: "daily" as ChangeFreq, priority: 0.9 },
+    { url: `${site}/rutinas`, lastModified: now, changeFrequency: "weekly" as ChangeFreq, priority: 0.8 },
+    { url: `${site}/marcas`, lastModified: now, changeFrequency: "weekly" as ChangeFreq, priority: 0.7 },
+    { url: `${site}/blog`, lastModified: now, changeFrequency: "weekly" as ChangeFreq, priority: 0.7 },
+    { url: `${site}/quiz`, lastModified: now, changeFrequency: "monthly" as ChangeFreq, priority: 0.6 },
+    /* Institucionales + legales: indexables (robots.index = true en su
+       metadata) y consultadas antes de comprar, así que entran al sitemap.
+       /cuenta, /pago y /mis-pedidos quedan fuera a propósito — son noindex. */
+    { url: `${site}/envios`, lastModified: now, changeFrequency: "monthly" as ChangeFreq, priority: 0.5 },
+    { url: `${site}/contacto`, lastModified: now, changeFrequency: "monthly" as ChangeFreq, priority: 0.5 },
+    { url: `${site}/terminos`, lastModified: now, changeFrequency: "yearly" as ChangeFreq, priority: 0.3 },
+    { url: `${site}/privacidad`, lastModified: now, changeFrequency: "yearly" as ChangeFreq, priority: 0.3 },
+    { url: `${site}/libro-reclamaciones`, lastModified: now, changeFrequency: "yearly" as ChangeFreq, priority: 0.3 },
   ];
 
   /* ─────────── Productos (Supabase, degrada grácilmente) ─────────── */
@@ -57,7 +64,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (error) throw error;
     const rows = (data ?? []) as ProductoSitemapRow[];
     productoRoutes = rows.map((r) => ({
-      url: `${site}/cosmetic/producto/${encodeURIComponent(r.slug)}`,
+      url: `${site}/producto/${encodeURIComponent(r.slug)}`,
       lastModified: r.created_at ? new Date(r.created_at) : now,
       changeFrequency: "weekly" as ChangeFreq,
       priority: 0.8,
@@ -70,7 +77,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let blogRoutes: MetadataRoute.Sitemap = [];
   try {
     blogRoutes = listPostsForSitemap().map((p) => ({
-      url: `${site}/cosmetic/blog/${encodeURIComponent(p.slug)}`,
+      url: `${site}/blog/${encodeURIComponent(p.slug)}`,
       lastModified: new Date(p.lastModified),
       changeFrequency: "monthly" as ChangeFreq,
       priority: 0.6,

@@ -19,7 +19,7 @@ export default function Bienvenida(props: BienvenidaProps) {
     clienteNombre,
     cupon = "COSMETIC10",
     descuentoPct = 10,
-    siteUrl = "https://veliroz-cosmetic.vercel.app",
+    siteUrl = "https://veliroz.com",
   } = props;
 
   const primerNombre = clienteNombre.split(" ")[0] || "linda";
@@ -91,7 +91,7 @@ export default function Bienvenida(props: BienvenidaProps) {
           cuenta.
         </Text>
         <Section>
-          <Button href={`${siteUrl}/cosmetic`} style={styles.btn}>
+          <Button href={siteUrl} style={styles.btn}>
             Explorar la tienda
           </Button>
         </Section>

@@ -5,7 +5,7 @@
   ],
   "headers": [
     {
-      "source": "/cosmetic/(.*)",
+      "source": "/(.*)",
       "headers": [
         {
           "key": "X-Robots-Tag",

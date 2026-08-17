@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 /* ============================================================
-   Footer compartido para /cosmetic/**.
-   El header/nav lo monta /cosmetic/layout.tsx con <CosmeticHeader />,
+   Footer compartido para todo el sitio.
+   El header/nav lo monta el RootLayout con <CosmeticHeader />,
    así que las páginas sólo agregan este footer al final.
    Server component — sin JS.
    ============================================================ */
@@ -44,27 +44,27 @@ export function SiteFooter() {
           </h4>
           <ul className="space-y-2 text-clay">
             <li>
-              <Link href="/cosmetic/productos" className="hover:text-ink">
+              <Link href="/productos" className="hover:text-ink">
                 Productos
               </Link>
             </li>
             <li>
-              <Link href="/cosmetic/rutinas" className="hover:text-ink">
+              <Link href="/rutinas" className="hover:text-ink">
                 Rutinas
               </Link>
             </li>
             <li>
-              <Link href="/cosmetic/marcas" className="hover:text-ink">
+              <Link href="/marcas" className="hover:text-ink">
                 Marcas
               </Link>
             </li>
             <li>
-              <Link href="/cosmetic/quiz" className="hover:text-ink">
+              <Link href="/quiz" className="hover:text-ink">
                 Quiz de piel
               </Link>
             </li>
             <li>
-              <Link href="/cosmetic/blog" className="hover:text-ink">
+              <Link href="/blog" className="hover:text-ink">
                 Diario
               </Link>
             </li>
@@ -76,23 +76,28 @@ export function SiteFooter() {
           </h4>
           <ul className="space-y-2 text-clay">
             <li>
-              <Link href="/cosmetic/cuenta" className="hover:text-ink">
+              <Link href="/cuenta" className="hover:text-ink">
                 Iniciar sesión
               </Link>
             </li>
             <li>
-              <Link href="/cosmetic/envios" className="hover:text-ink">
+              <Link href="/mis-pedidos" className="hover:text-ink">
+                Mis pedidos
+              </Link>
+            </li>
+            <li>
+              <Link href="/envios" className="hover:text-ink">
                 Envíos y devoluciones
               </Link>
             </li>
             <li>
-              <Link href="/cosmetic/contacto" className="hover:text-ink">
+              <Link href="/contacto" className="hover:text-ink">
                 Contacto
               </Link>
             </li>
             <li>
               <Link
-                href="/cosmetic/libro-reclamaciones"
+                href="/libro-reclamaciones"
                 className="hover:text-ink"
               >
                 Libro de reclamaciones
@@ -104,11 +109,20 @@ export function SiteFooter() {
 
       <div className="mt-12 pt-6 border-t border-[--border] flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-clay">
         <p>© 2026 Veliroz Cosmetic · Sub-marca de Veliroz.</p>
-        <div className="flex gap-6">
-          <Link href="/" className="hover:text-ink">
+        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
+          <Link href="/terminos" className="hover:text-ink">
+            Términos y condiciones
+          </Link>
+          <Link href="/privacidad" className="hover:text-ink">
+            Privacidad
+          </Link>
+          <Link href="https://flores.veliroz.com" className="hover:text-ink">
             Veliroz Flores Eternas
           </Link>
-          <Link href="/chocotejas" className="hover:text-ink">
+          <Link
+            href="https://flores.veliroz.com/chocotejas"
+            className="hover:text-ink"
+          >
             Chocotejas Veliroz
           </Link>
         </div>

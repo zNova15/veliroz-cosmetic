@@ -1,9 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { CosmeticHeader } from "@/components/CosmeticHeader";
-import { CartDrawer } from "@/components/CartDrawer";
-import { PreventaBar } from "@/components/PreventaBar";
 import { RUTINAS } from "@/lib/rutinas";
 import { swatchFor } from "@/lib/marcas";
 import {
@@ -25,8 +22,8 @@ import {
    Lo único hardcodeado son las rutinas (src/lib/rutinas.ts), que son copy
    editorial y ya referencian los slugs/SKUs reales.
 
-   La landing vive fuera del segmento /cosmetic, por eso monta
-   CosmeticHeader + PreventaBar + CartDrawer inline.
+   El chrome (CosmeticHeader + PreventaBar + CartDrawer) lo monta el
+   RootLayout en src/app/layout.tsx — NO montarlo acá o se duplica.
    ============================================================ */
 
 export const revalidate = 300;
@@ -174,7 +171,7 @@ export default async function CosmeticLanding() {
   /* La grilla de la landing es la vitrina: solo entran productos con packshot
      real. Sin este filtro, el orden de la BD (destacado desc, nombre asc) mete
      el set Gua Sha —todavía sin foto— en el slot 8 y deja fuera al SKIN1004,
-     que sí tiene. Los sets Veliroz siguen visibles en /cosmetic/productos.
+     que sí tiene. Los sets Veliroz siguen visibles en /productos.
      El fallback tipográfico de ProductoCard queda igual: si algún día no hay
      8 productos fotografiados, la grilla se completa igual en vez de vaciarse. */
   const cards = [
@@ -188,8 +185,6 @@ export default async function CosmeticLanding() {
 
   return (
     <>
-      <CosmeticHeader />
-      <PreventaBar />
       <main className="min-h-screen">
         {/* ────────────────── HERO ────────────────── */}
         <section className="max-w-7xl mx-auto px-6 md:px-10 pt-16 md:pt-24 pb-20 grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
@@ -223,7 +218,7 @@ export default async function CosmeticLanding() {
               Reservá en pre-venta y recibí en 5-7 días · Shalom a todo el Perú.
             </p>
             <div className="flex flex-wrap gap-3 pt-2">
-              <Link href="/cosmetic/productos" className="btn-primary">
+              <Link href="/productos" className="btn-primary">
                 Ver productos
                 <svg
                   className="w-4 h-4"
@@ -239,7 +234,7 @@ export default async function CosmeticLanding() {
                   />
                 </svg>
               </Link>
-              <Link href="/cosmetic/quiz" className="btn-outline">
+              <Link href="/quiz" className="btn-outline">
                 Quiz · ¿Qué le hace bien a tu piel?
               </Link>
             </div>
@@ -332,7 +327,7 @@ export default async function CosmeticLanding() {
                       </p>
                     </div>
                     <Link
-                      href={`/cosmetic/producto/${hero.slug}`}
+                      href={`/producto/${hero.slug}`}
                       className="text-xs text-ink underline underline-offset-4 hover:text-rose-deep shrink-0"
                     >
                       Ver ficha →
@@ -379,7 +374,7 @@ export default async function CosmeticLanding() {
               </h2>
             </div>
             <Link
-              href="/cosmetic/productos"
+              href="/productos"
               className="hidden md:inline text-sm text-clay hover:text-ink underline underline-offset-4"
             >
               Todos los productos →
@@ -416,7 +411,7 @@ export default async function CosmeticLanding() {
 
           <div className="mt-10 text-center md:hidden">
             <Link
-              href="/cosmetic/productos"
+              href="/productos"
               className="text-sm text-clay hover:text-ink underline underline-offset-4"
             >
               Todos los productos →
@@ -497,7 +492,7 @@ export default async function CosmeticLanding() {
                       </p>
                     </div>
                     <Link
-                      href={`/cosmetic/rutinas/${r.slug}`}
+                      href={`/rutinas/${r.slug}`}
                       className="text-xs text-ink underline underline-offset-4 hover:text-rose-deep shrink-0"
                     >
                       Ver rutina →
@@ -514,7 +509,7 @@ export default async function CosmeticLanding() {
               WhatsApp; el carrito suma los precios sueltos.
             </p>
             <Link
-              href="/cosmetic/rutinas"
+              href="/rutinas"
               className="text-sm text-clay hover:text-ink underline underline-offset-4"
             >
               Las {RUTINAS.length} rutinas curadas →
@@ -533,7 +528,7 @@ export default async function CosmeticLanding() {
                 {marcas.map((m) => (
                   <Link
                     key={m.slug}
-                    href={`/cosmetic/marcas/${m.slug}`}
+                    href={`/marcas/${m.slug}`}
                     className="font-serif text-xl md:text-2xl text-ink italic hover:text-rose-deep transition-colors"
                   >
                     {m.nombre}
@@ -580,27 +575,27 @@ export default async function CosmeticLanding() {
               </h3>
               <ul className="space-y-2 text-clay">
                 <li>
-                  <Link href="/cosmetic/productos" className="hover:text-ink">
+                  <Link href="/productos" className="hover:text-ink">
                     Productos
                   </Link>
                 </li>
                 <li>
-                  <Link href="/cosmetic/rutinas" className="hover:text-ink">
+                  <Link href="/rutinas" className="hover:text-ink">
                     Rutinas
                   </Link>
                 </li>
                 <li>
-                  <Link href="/cosmetic/marcas" className="hover:text-ink">
+                  <Link href="/marcas" className="hover:text-ink">
                     Marcas
                   </Link>
                 </li>
                 <li>
-                  <Link href="/cosmetic/quiz" className="hover:text-ink">
+                  <Link href="/quiz" className="hover:text-ink">
                     Quiz de piel
                   </Link>
                 </li>
                 <li>
-                  <Link href="/cosmetic/blog" className="hover:text-ink">
+                  <Link href="/blog" className="hover:text-ink">
                     Diario
                   </Link>
                 </li>
@@ -612,28 +607,28 @@ export default async function CosmeticLanding() {
               </h3>
               <ul className="space-y-2 text-clay">
                 <li>
-                  <Link href="/cosmetic/cuenta" className="hover:text-ink">
+                  <Link href="/cuenta" className="hover:text-ink">
                     Iniciar sesión
                   </Link>
                 </li>
                 <li>
-                  <Link href="/cosmetic/mis-pedidos" className="hover:text-ink">
+                  <Link href="/mis-pedidos" className="hover:text-ink">
                     Mis pedidos
                   </Link>
                 </li>
                 <li>
-                  <Link href="/cosmetic/envios" className="hover:text-ink">
+                  <Link href="/envios" className="hover:text-ink">
                     Envíos y devoluciones
                   </Link>
                 </li>
                 <li>
-                  <Link href="/cosmetic/contacto" className="hover:text-ink">
+                  <Link href="/contacto" className="hover:text-ink">
                     Contacto
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/cosmetic/libro-reclamaciones"
+                    href="/libro-reclamaciones"
                     className="hover:text-ink"
                   >
                     Libro de reclamaciones
@@ -645,18 +640,26 @@ export default async function CosmeticLanding() {
 
           <div className="mt-12 pt-6 border-t border-[--border] flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-clay">
             <p>© 2026 Veliroz Cosmetic · Sub-marca de Veliroz.</p>
-            <div className="flex gap-6">
-              <Link href="/" className="hover:text-ink">
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
+              <Link href="/terminos" className="hover:text-ink">
+                Términos y condiciones
+              </Link>
+              <Link href="/privacidad" className="hover:text-ink">
+                Privacidad
+              </Link>
+              <Link href="https://flores.veliroz.com" className="hover:text-ink">
                 Veliroz Flores Eternas
               </Link>
-              <Link href="/chocotejas" className="hover:text-ink">
+              <Link
+                href="https://flores.veliroz.com/chocotejas"
+                className="hover:text-ink"
+              >
                 Chocotejas Veliroz
               </Link>
             </div>
           </div>
         </footer>
       </main>
-      <CartDrawer />
     </>
   );
 }
@@ -674,9 +677,9 @@ function ProductoCard({ producto }: { producto: Producto }) {
   return (
     <article className="prod-card">
       {/* Packshots 1:1 con fondo blanco → base blanca + velo de marca
-          (misma receta que las cards de /cosmetic/productos). */}
+          (misma receta que las cards de /productos). */}
       <Link
-        href={`/cosmetic/producto/${producto.slug}`}
+        href={`/producto/${producto.slug}`}
         className="relative aspect-square block overflow-hidden bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-ink"
         aria-label={`Ver ficha de ${marcaNombre} ${producto.nombre}`}
       >
@@ -731,7 +734,7 @@ function ProductoCard({ producto }: { producto: Producto }) {
           </p>
           <h3 className="font-serif text-base text-ink leading-snug text-pretty">
             <Link
-              href={`/cosmetic/producto/${producto.slug}`}
+              href={`/producto/${producto.slug}`}
               className="hover:text-rose-deep transition-colors"
             >
               {producto.nombre}
@@ -761,7 +764,7 @@ function ProductoCard({ producto }: { producto: Producto }) {
             </p>
           </div>
           <Link
-            href={`/cosmetic/producto/${producto.slug}`}
+            href={`/producto/${producto.slug}`}
             className="text-xs text-ink underline underline-offset-4 hover:text-rose-deep"
           >
             Ver →

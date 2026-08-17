@@ -9,7 +9,7 @@ import type { MetadataRoute } from "next";
       mimicree el papel; el punto está en no romper la paleta.)
    - Icono: SVG inline "V" en ink sobre cream. Sirve para
      browsers Chromium + iOS 16+ (any + maskable declarados).
-   - start_url apunta al hub /cosmetic (más útil que "/").
+   - start_url apunta a la raíz "/" (la landing del catálogo).
    ============================================================ */
 
 /* Ícono SVG inline como data: URI. Un solo asset, cero fetch. */
@@ -26,7 +26,7 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: "Veliroz",
     description:
       "Skincare clínico y honesto — The Ordinary, CeraVe, Beauty of Joseon, COSRX, Xhekpon. Rutinas curadas según tu piel.",
-    start_url: "/cosmetic",
+    start_url: "/",
     scope: "/",
     display: "standalone",
     orientation: "portrait",

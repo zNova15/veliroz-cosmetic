@@ -5,9 +5,10 @@ import type { MetadataRoute } from "next";
    - Allow global — el catálogo es público, queremos ser indexados.
    - Disallow endpoints internos y flujos privados:
      * /api/*  → route handlers, feeds, webhooks
-     * /cosmetic/pago/*  → checkout con datos del usuario
-     * /cosmetic/cuenta/*  → área privada del cliente
-   - Sitemap apunta al deploy actual (veliroz-cosmetic.vercel.app).
+     * /pago/*  → checkout con datos del usuario
+     * /cuenta/*  → área privada del cliente
+     * /mis-pedidos  → post-venta (noindex en su metadata)
+   - Sitemap apunta al deploy actual (veliroz.com).
      Cuando esté el custom domain, setear NEXT_PUBLIC_SITE_URL.
    ============================================================ */
 
@@ -16,7 +17,7 @@ function baseUrl(): string {
   if (explicit) return explicit.replace(/\/$/, "");
   const vercel = process.env.VERCEL_URL;
   if (vercel) return `https://${vercel}`;
-  return "https://veliroz-cosmetic.vercel.app";
+  return "https://veliroz.com";
 }
 
 export default function robots(): MetadataRoute.Robots {
@@ -26,7 +27,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/", "/cosmetic/pago/", "/cosmetic/cuenta/"],
+        disallow: ["/api/", "/pago/", "/cuenta/", "/mis-pedidos"],
       },
     ],
     sitemap: `${site}/sitemap.xml`,

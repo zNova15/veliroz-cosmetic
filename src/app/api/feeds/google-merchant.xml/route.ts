@@ -19,14 +19,14 @@ export const revalidate = 21600; // 6h
 export const dynamic = "force-static";
 
 /* Base URL: en Vercel Preview / branch deploys, VERCEL_URL (host sin
-   protocolo) es lo más confiable. En prod fijamos veliroz-cosmetic.vercel.app.
+   protocolo) es lo más confiable. En prod fijamos veliroz.com.
    Priorizamos NEXT_PUBLIC_SITE_URL si el equipo lo setea para custom domain. */
 function baseUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL;
   if (explicit) return explicit.replace(/\/$/, "");
   const vercel = process.env.VERCEL_URL;
   if (vercel) return `https://${vercel}`;
-  return "https://veliroz-cosmetic.vercel.app";
+  return "https://veliroz.com";
 }
 
 /* Escapado XML mínimo pero completo (los 5 caracteres reservados). */
@@ -73,7 +73,7 @@ export async function GET(): Promise<Response> {
   const rows: string[] = [];
   for (const p of items) {
     const marcaNombre = p.marca?.nombre ?? "Veliroz";
-    const productLink = `${site}/cosmetic/producto/${encodeURIComponent(p.slug)}`;
+    const productLink = `${site}/producto/${encodeURIComponent(p.slug)}`;
     const imageFallback = p.imagen_principal ?? "";
     const productType = productTypeFor(p.categoria, p.subcategoria);
     const descBase =
@@ -117,7 +117,7 @@ export async function GET(): Promise<Response> {
 <rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
   <channel>
     <title>Veliroz Cosmetic — Catálogo</title>
-    <link>${xmlEscape(site + "/cosmetic")}</link>
+    <link>${xmlEscape(site)}</link>
     <description>Skincare clínico y honesto en Perú — The Ordinary, CeraVe, Beauty of Joseon, COSRX, Xhekpon.</description>
     <lastBuildDate>${xmlEscape(now)}</lastBuildDate>
 ${rows.join("\n")}

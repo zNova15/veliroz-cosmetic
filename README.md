@@ -1,7 +1,10 @@
 # Veliroz Cosmetic
 
 Sub-marca de skincare del ecosistema Veliroz (Cajamarca + Lima, Perú).
-**Live**: https://veliroz-cosmetic.vercel.app · Deploy target futuro: `veliroz.com/cosmetic`.
+**Live**: https://veliroz-cosmetic.vercel.app · Deploy target: `veliroz.com` (raíz).
+Las rutas vivían bajo `/cosmetic/**` y desde agosto 2026 están en la raíz; las URLs
+viejas redirigen con 308 (ver `redirects()` en `next.config.ts`). El sitio HTML viejo
+de Flores Eternas se mudó a `flores.veliroz.com` y también tiene sus redirects ahí.
 
 ## Stack
 
@@ -126,12 +129,12 @@ Config en `vercel.json`:
 ## URLs live
 
 - Landing: https://veliroz-cosmetic.vercel.app/
-- Catálogo: https://veliroz-cosmetic.vercel.app/cosmetic/productos
-- PDP: https://veliroz-cosmetic.vercel.app/cosmetic/producto/[slug]
-- Blog: https://veliroz-cosmetic.vercel.app/cosmetic/blog
-- Quiz: https://veliroz-cosmetic.vercel.app/cosmetic/quiz
-- Rutinas: https://veliroz-cosmetic.vercel.app/cosmetic/rutinas
-- Marcas: https://veliroz-cosmetic.vercel.app/cosmetic/marcas
-- Checkout: https://veliroz-cosmetic.vercel.app/cosmetic/pago
+- Catálogo: https://veliroz-cosmetic.vercel.app/productos
+- PDP: https://veliroz-cosmetic.vercel.app/producto/[slug]
+- Blog: https://veliroz-cosmetic.vercel.app/blog
+- Quiz: https://veliroz-cosmetic.vercel.app/quiz
+- Rutinas: https://veliroz-cosmetic.vercel.app/rutinas
+- Marcas: https://veliroz-cosmetic.vercel.app/marcas
+- Checkout: https://veliroz-cosmetic.vercel.app/pago
 - Feeds: `/api/feeds/google-merchant.xml` + `/api/feeds/meta-catalog.csv`
 - Sitemap: `/sitemap.xml`

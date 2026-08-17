@@ -22,7 +22,7 @@ function baseUrl(): string {
   if (explicit) return explicit.replace(/\/$/, "");
   const vercel = process.env.VERCEL_URL;
   if (vercel) return `https://${vercel}`;
-  return "https://veliroz-cosmetic.vercel.app";
+  return "https://veliroz.com";
 }
 
 /* CSV RFC 4180 escaping:
@@ -78,7 +78,7 @@ export async function GET(): Promise<Response> {
   const rows: string[] = [];
   for (const p of items) {
     const marcaNombre = p.marca?.nombre ?? "Veliroz";
-    const productLink = `${site}/cosmetic/producto/${encodeURIComponent(p.slug)}`;
+    const productLink = `${site}/producto/${encodeURIComponent(p.slug)}`;
     const imageFallback = p.imagen_principal ?? "";
     const productType = productTypeFor(p.categoria, p.subcategoria);
     const descBase =

@@ -77,7 +77,7 @@ export default function PedidoCreado(props: PedidoCreadoProps) {
     total,
     metodoPago,
     metodoEntrega,
-    siteUrl = "https://veliroz-cosmetic.vercel.app",
+    siteUrl = "https://veliroz.com",
   } = props;
 
   const pasos =
@@ -222,7 +222,7 @@ export default function PedidoCreado(props: PedidoCreadoProps) {
       </Text>
 
       <Section style={{ textAlign: "center", padding: "24px 0 8px" }}>
-        <Button href={`${siteUrl}/cosmetic`} style={styles.btnOutline}>
+        <Button href={siteUrl} style={styles.btnOutline}>
           Seguir explorando
         </Button>
       </Section>

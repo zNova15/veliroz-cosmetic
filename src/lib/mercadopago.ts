@@ -2,6 +2,7 @@ import "server-only";
 
 import MercadoPagoConfig, { Preference, Payment } from "mercadopago";
 import type { PreferenceRequest } from "mercadopago/dist/clients/preference/commonTypes";
+import { siteUrl as resolverSiteUrl } from "@/lib/site";
 
 /* ============================================================
    MercadoPago — SDK server-side (Node runtime).
@@ -75,8 +76,9 @@ export interface CreatePreferenceResult {
  *
  * - `external_reference` = `pedido_codigo` → así los webhooks IPN nos permiten
  *   ubicar el pedido sin depender del `payment_id` de MP.
- * - `back_urls` apuntan a `/pago/exito` del dominio del deploy (env
- *   `NEXT_PUBLIC_SITE_URL`, con fallback a veliroz-cosmetic.vercel.app).
+ * - `back_urls` apuntan a `/pago/exito` del host que resuelve `lib/site.ts`
+ *   (en producción, veliroz.com — nunca la URL con hash del deployment, que es
+ *   dónde caía el comprador antes de centralizar esto).
  * - `notification_url` apunta a `/api/pagos/mercadopago/webhook` del mismo host.
  *
  * Si el token no está seteado, devolvemos `{ ok:false, error:"no_token" }` sin
@@ -91,9 +93,7 @@ export async function createPreference(
     return { ok: false, error: "no_token" };
   }
 
-  const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ??
-    "https://veliroz-cosmetic.vercel.app";
+  const siteUrl = resolverSiteUrl();
 
   const items: PreferenceRequest["items"] = pedido.lineas.map((l) => ({
     id: l.sku,

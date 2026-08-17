@@ -3,6 +3,7 @@ import {
   PRODUCTO_SELECT,
   type ProductoRow,
 } from "@/lib/supabase";
+import { siteUrl } from "@/lib/site";
 
 /* ============================================================
    Veliroz Cosmetic — Meta (Facebook/Instagram) Catalog CSV
@@ -18,11 +19,8 @@ export const revalidate = 21600; // 6h
 export const dynamic = "force-static";
 
 function baseUrl(): string {
-  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
-  if (explicit) return explicit.replace(/\/$/, "");
-  const vercel = process.env.VERCEL_URL;
-  if (vercel) return `https://${vercel}`;
-  return "https://veliroz.com";
+  // Delegado a src/lib/site.ts — ver ahí por qué no se usa VERCEL_URL en prod.
+  return siteUrl();
 }
 
 /* CSV RFC 4180 escaping:

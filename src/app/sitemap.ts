@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getSupabase } from "@/lib/supabase";
 import { listPostsForSitemap } from "@/lib/blog";
+import { siteUrl } from "@/lib/site";
 
 /* ============================================================
    Veliroz Cosmetic — sitemap dinámico (app/sitemap.ts)
@@ -17,11 +18,8 @@ import { listPostsForSitemap } from "@/lib/blog";
 export const revalidate = 3600;
 
 function baseUrl(): string {
-  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
-  if (explicit) return explicit.replace(/\/$/, "");
-  const vercel = process.env.VERCEL_URL;
-  if (vercel) return `https://${vercel}`;
-  return "https://veliroz.com";
+  // Delegado a src/lib/site.ts — ver ahí por qué no se usa VERCEL_URL en prod.
+  return siteUrl();
 }
 
 type ChangeFreq = MetadataRoute.Sitemap[number]["changeFrequency"];

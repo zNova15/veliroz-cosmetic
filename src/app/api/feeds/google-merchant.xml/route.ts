@@ -3,6 +3,7 @@ import {
   PRODUCTO_SELECT,
   type ProductoRow,
 } from "@/lib/supabase";
+import { siteUrl } from "@/lib/site";
 
 /* ============================================================
    Veliroz Cosmetic — Google Merchant Center feed
@@ -22,11 +23,8 @@ export const dynamic = "force-static";
    protocolo) es lo más confiable. En prod fijamos veliroz.com.
    Priorizamos NEXT_PUBLIC_SITE_URL si el equipo lo setea para custom domain. */
 function baseUrl(): string {
-  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
-  if (explicit) return explicit.replace(/\/$/, "");
-  const vercel = process.env.VERCEL_URL;
-  if (vercel) return `https://${vercel}`;
-  return "https://veliroz.com";
+  // Delegado a src/lib/site.ts — ver ahí por qué no se usa VERCEL_URL en prod.
+  return siteUrl();
 }
 
 /* Escapado XML mínimo pero completo (los 5 caracteres reservados). */

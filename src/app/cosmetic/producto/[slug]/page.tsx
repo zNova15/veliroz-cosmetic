@@ -164,14 +164,23 @@ async function fetchRelacionados(actual: ProductoPDP): Promise<Producto[]> {
 /* ────────────────── SSG ────────────────── */
 
 export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
-  const { data, error } = await getSupabase()
-    .from("productos")
-    .select("slug")
-    .eq("linea_negocio", "cosmetic")
-    .eq("activo", true);
-  if (error || !data) return [];
-  return (data as Array<{ slug: string }>).map((r) => ({ slug: r.slug }));
+  try {
+    const { data, error } = await getSupabase()
+      .from("productos")
+      .select("slug")
+      .eq("linea_negocio", "cosmetic")
+      .eq("activo", true);
+    if (error || !data) return [];
+    return (data as Array<{ slug: string }>).map((r) => ({ slug: r.slug }));
+  } catch (e) {
+    // Sin env vars Supabase en build → devolver [] y dejar SSR dinámico
+    console.warn("[generateStaticParams] Supabase no disponible en build, sirviendo dinámico:", e);
+    return [];
+  }
 }
+
+// Permitir slugs no incluidos en generateStaticParams (SSR bajo demanda)
+export const dynamicParams = true;
 
 /* ────────────────── Metadata ────────────────── */
 

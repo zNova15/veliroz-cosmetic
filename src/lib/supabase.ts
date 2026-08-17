@@ -8,20 +8,24 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
    - Fetch nativo → funciona en runtime edge/node.
    ============================================================ */
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-if (!url || !anon) {
-  throw new Error(
-    "Faltan NEXT_PUBLIC_SUPABASE_URL o NEXT_PUBLIC_SUPABASE_ANON_KEY en .env.local"
-  );
-}
+/* Env vars leídas lazy en cada llamada (NO en top-level) para que el
+   build no reviente cuando las vars están ausentes — Next.js evalúa
+   los Server Components en build para prerender/collect-config, y
+   crashear ahí bloquea todo el deploy. En runtime real siempre están
+   presentes (setearlas en Vercel → Settings → Environment Variables). */
 
 let _sb: SupabaseClient | null = null;
 
 export function getSupabase(): SupabaseClient {
   if (_sb) return _sb;
-  _sb = createClient(url as string, anon as string, {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !anon) {
+    throw new Error(
+      "Faltan NEXT_PUBLIC_SUPABASE_URL o NEXT_PUBLIC_SUPABASE_ANON_KEY (setear en Vercel Settings → Environment Variables)"
+    );
+  }
+  _sb = createClient(url, anon, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,

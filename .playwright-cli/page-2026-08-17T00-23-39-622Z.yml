@@ -1,0 +1,177 @@
+- main [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e4]:
+      - link "V Veliroz Cosmetic" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: V
+        - generic [ref=e7]:
+          - generic [ref=e8]: Veliroz
+          - generic [ref=e9]: Cosmetic
+      - generic [ref=e10]:
+        - link "Productos" [ref=e11] [cursor=pointer]:
+          - /url: /cosmetic/productos
+        - link "Rutinas" [ref=e12] [cursor=pointer]:
+          - /url: /rutinas
+        - link "Marcas" [ref=e13] [cursor=pointer]:
+          - /url: /marcas
+        - link "Diario" [ref=e14] [cursor=pointer]:
+          - /url: /blog
+      - generic [ref=e15]:
+        - link "Iniciar sesión" [ref=e16] [cursor=pointer]:
+          - /url: /cuenta
+        - link "Ver carrito" [ref=e17] [cursor=pointer]:
+          - /url: /carrito
+          - img [ref=e18]
+  - generic [ref=e21]:
+    - navigation "Migas de pan" [ref=e22]:
+      - link "Inicio" [ref=e23] [cursor=pointer]:
+        - /url: /
+      - text: ·Catálogo
+    - generic [ref=e24]:
+      - generic [ref=e25]:
+        - text: · Skincare curado por rutina ·
+        - heading "Catálogo. Encontrá lo que le hace bien a tu piel." [level=1] [ref=e26]
+        - paragraph [ref=e27]: 0 productos disponibles.
+      - group [ref=e28]:
+        - generic "Ordenar productos" [ref=e29] [cursor=pointer]:
+          - generic [ref=e30]: Ordenar
+          - generic [ref=e31]: Destacados
+          - img [ref=e32]
+  - generic [ref=e35]:
+    - complementary [ref=e36]:
+      - heading "Filtros" [level=2] [ref=e38]
+      - generic [ref=e39]:
+        - heading "Marca" [level=3] [ref=e40]
+        - generic [ref=e41]:
+          - 'link "Filtrar por marca: The Ordinary" [ref=e42] [cursor=pointer]':
+            - /url: /cosmetic/productos?marca=the-ordinary
+            - generic [ref=e43]: The Ordinary
+          - 'link "Filtrar por marca: CeraVe" [ref=e44] [cursor=pointer]':
+            - /url: /cosmetic/productos?marca=cerave
+            - generic [ref=e45]: CeraVe
+          - 'link "Filtrar por marca: Beauty of Joseon" [ref=e46] [cursor=pointer]':
+            - /url: /cosmetic/productos?marca=beauty-of-joseon
+            - generic [ref=e47]: Beauty of Joseon
+          - 'link "Filtrar por marca: COSRX" [ref=e48] [cursor=pointer]':
+            - /url: /cosmetic/productos?marca=cosrx
+            - generic [ref=e49]: COSRX
+          - 'link "Filtrar por marca: Xhekpon" [ref=e50] [cursor=pointer]':
+            - /url: /cosmetic/productos?marca=xhekpon
+            - generic [ref=e51]: Xhekpon
+      - generic [ref=e52]:
+        - heading "Categoría" [level=3] [ref=e53]
+        - generic [ref=e54]:
+          - 'link "Filtrar por categoría: Sérum" [ref=e55] [cursor=pointer]':
+            - /url: /cosmetic/productos?categoria=serum
+            - generic [ref=e56]: Sérum
+          - 'link "Filtrar por categoría: Limpiador" [ref=e57] [cursor=pointer]':
+            - /url: /cosmetic/productos?categoria=limpiador
+            - generic [ref=e58]: Limpiador
+          - 'link "Filtrar por categoría: Protector solar" [ref=e59] [cursor=pointer]':
+            - /url: /cosmetic/productos?categoria=protector-solar
+            - generic [ref=e60]: Protector solar
+          - 'link "Filtrar por categoría: Hidratante" [ref=e61] [cursor=pointer]':
+            - /url: /cosmetic/productos?categoria=crema-hidratante
+            - generic [ref=e62]: Hidratante
+          - 'link "Filtrar por categoría: Essence" [ref=e63] [cursor=pointer]':
+            - /url: /cosmetic/productos?categoria=essence
+            - generic [ref=e64]: Essence
+      - generic [ref=e65]:
+        - heading "Tipo de piel" [level=3] [ref=e66]
+        - generic [ref=e67]:
+          - 'link "Filtrar por tipo de piel: Grasa" [ref=e68] [cursor=pointer]':
+            - /url: /cosmetic/productos?tipo_piel=grasa
+            - generic [ref=e69]: Grasa
+          - 'link "Filtrar por tipo de piel: Mixta" [ref=e70] [cursor=pointer]':
+            - /url: /cosmetic/productos?tipo_piel=mixta
+            - generic [ref=e71]: Mixta
+          - 'link "Filtrar por tipo de piel: Seca" [ref=e72] [cursor=pointer]':
+            - /url: /cosmetic/productos?tipo_piel=seca
+            - generic [ref=e73]: Seca
+          - 'link "Filtrar por tipo de piel: Sensible" [ref=e74] [cursor=pointer]':
+            - /url: /cosmetic/productos?tipo_piel=sensible
+            - generic [ref=e75]: Sensible
+          - 'link "Filtrar por tipo de piel: Normal" [ref=e76] [cursor=pointer]':
+            - /url: /cosmetic/productos?tipo_piel=normal
+            - generic [ref=e77]: Normal
+      - generic [ref=e78]:
+        - heading "Preocupación" [level=3] [ref=e79]
+        - generic [ref=e80]:
+          - 'link "Filtrar por preocupación: Poros" [ref=e81] [cursor=pointer]':
+            - /url: /cosmetic/productos?preocupacion=poros
+            - generic [ref=e82]: Poros
+          - 'link "Filtrar por preocupación: Grasitud" [ref=e83] [cursor=pointer]':
+            - /url: /cosmetic/productos?preocupacion=grasitud
+            - generic [ref=e84]: Grasitud
+          - 'link "Filtrar por preocupación: Hidratación" [ref=e85] [cursor=pointer]':
+            - /url: /cosmetic/productos?preocupacion=hidratacion
+            - generic [ref=e86]: Hidratación
+          - 'link "Filtrar por preocupación: Antiedad" [ref=e87] [cursor=pointer]':
+            - /url: /cosmetic/productos?preocupacion=antiedad
+            - generic [ref=e88]: Antiedad
+          - 'link "Filtrar por preocupación: Marcas post-acné" [ref=e89] [cursor=pointer]':
+            - /url: /cosmetic/productos?preocupacion=marcas-post-acne
+            - generic [ref=e90]: Marcas post-acné
+          - 'link "Filtrar por preocupación: Sensibilidad" [ref=e91] [cursor=pointer]':
+            - /url: /cosmetic/productos?preocupacion=sensibilidad
+            - generic [ref=e92]: Sensibilidad
+          - 'link "Filtrar por preocupación: Textura" [ref=e93] [cursor=pointer]':
+            - /url: /cosmetic/productos?preocupacion=textura
+            - generic [ref=e94]: Textura
+          - 'link "Filtrar por preocupación: Reparación" [ref=e95] [cursor=pointer]':
+            - /url: /cosmetic/productos?preocupacion=reparacion
+            - generic [ref=e96]: Reparación
+          - 'link "Filtrar por preocupación: Protección solar" [ref=e97] [cursor=pointer]':
+            - /url: /cosmetic/productos?preocupacion=proteccion-solar
+            - generic [ref=e98]: Protección solar
+          - 'link "Filtrar por preocupación: Barrera cutánea" [ref=e99] [cursor=pointer]':
+            - /url: /cosmetic/productos?preocupacion=barrera-cutanea
+            - generic [ref=e100]: Barrera cutánea
+      - generic [ref=e101]:
+        - heading "Ingrediente activo" [level=3] [ref=e102]
+        - generic [ref=e103]:
+          - 'link "Filtrar por ingrediente activo: Niacinamida" [ref=e104] [cursor=pointer]':
+            - /url: /cosmetic/productos?ingrediente=niacinamida
+            - generic [ref=e105]: Niacinamida
+          - 'link "Filtrar por ingrediente activo: Ác. hialurónico" [ref=e106] [cursor=pointer]':
+            - /url: /cosmetic/productos?ingrediente=ac-hialuronico
+            - generic [ref=e107]: Ác. hialurónico
+          - 'link "Filtrar por ingrediente activo: Ác. salicílico" [ref=e108] [cursor=pointer]':
+            - /url: /cosmetic/productos?ingrediente=ac-salicilico
+            - generic [ref=e109]: Ác. salicílico
+          - 'link "Filtrar por ingrediente activo: Ceramidas" [ref=e110] [cursor=pointer]':
+            - /url: /cosmetic/productos?ingrediente=ceramidas
+            - generic [ref=e111]: Ceramidas
+          - 'link "Filtrar por ingrediente activo: Mucina de caracol" [ref=e112] [cursor=pointer]':
+            - /url: /cosmetic/productos?ingrediente=mucina-caracol
+            - generic [ref=e113]: Mucina de caracol
+          - 'link "Filtrar por ingrediente activo: SPF 50" [ref=e114] [cursor=pointer]':
+            - /url: /cosmetic/productos?ingrediente=spf-50
+            - generic [ref=e115]: SPF 50
+          - 'link "Filtrar por ingrediente activo: Colágeno" [ref=e116] [cursor=pointer]':
+            - /url: /cosmetic/productos?ingrediente=colageno
+            - generic [ref=e117]: Colágeno
+          - 'link "Filtrar por ingrediente activo: Zinc" [ref=e118] [cursor=pointer]':
+            - /url: /cosmetic/productos?ingrediente=zinc
+            - generic [ref=e119]: Zinc
+          - 'link "Filtrar por ingrediente activo: Péptidos" [ref=e120] [cursor=pointer]':
+            - /url: /cosmetic/productos?ingrediente=peptidos
+            - generic [ref=e121]: Péptidos
+      - generic [ref=e122]:
+        - heading "Precio" [level=3] [ref=e123]
+        - generic [ref=e124]:
+          - 'link "Filtrar por precio: Menos de S/50" [ref=e125] [cursor=pointer]':
+            - /url: /cosmetic/productos?precio=0-50
+            - generic [ref=e126]: Menos de S/50
+          - 'link "Filtrar por precio: S/50 – S/100" [ref=e127] [cursor=pointer]':
+            - /url: /cosmetic/productos?precio=50-100
+            - generic [ref=e128]: S/50 – S/100
+          - 'link "Filtrar por precio: Más de S/100" [ref=e129] [cursor=pointer]':
+            - /url: /cosmetic/productos?precio=100%2B
+            - generic [ref=e130]: Más de S/100
+    - generic [ref=e132]:
+      - text: Sin resultados
+      - heading "No encontramos productos con esos filtros." [level=3] [ref=e133]
+      - paragraph [ref=e134]: Probá quitar algún filtro o volvé al catálogo completo — 7 productos curados esperándote.
+      - link "Limpiar filtros" [ref=e136] [cursor=pointer]:
+        - /url: /cosmetic/productos

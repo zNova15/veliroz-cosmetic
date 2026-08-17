@@ -103,25 +103,25 @@ export default function CosmeticLanding() {
             </div>
           </Link>
           <div className="hidden md:flex items-center gap-8 text-sm">
-            <Link href="/productos" className="text-clay hover:text-ink transition-colors">
+            <Link href="/cosmetic/productos" className="text-clay hover:text-ink transition-colors">
               Productos
             </Link>
-            <Link href="/rutinas" className="text-clay hover:text-ink transition-colors">
+            <Link href="/cosmetic/rutinas" className="text-clay hover:text-ink transition-colors">
               Rutinas
             </Link>
-            <Link href="/marcas" className="text-clay hover:text-ink transition-colors">
+            <Link href="/cosmetic/marcas" className="text-clay hover:text-ink transition-colors">
               Marcas
             </Link>
-            <Link href="/blog" className="text-clay hover:text-ink transition-colors">
+            <Link href="/cosmetic/blog" className="text-clay hover:text-ink transition-colors">
               Diario
             </Link>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/cuenta" className="text-clay hover:text-ink text-sm hidden md:inline">
+            <Link href="/cosmetic/cuenta" className="text-clay hover:text-ink text-sm hidden md:inline">
               Iniciar sesión
             </Link>
             <Link
-              href="/carrito"
+              href="/cosmetic/carrito"
               className="relative text-ink hover:text-rose-deep transition-colors"
               aria-label="Ver carrito"
             >
@@ -155,13 +155,13 @@ export default function CosmeticLanding() {
             nacional Shalom · entrega Lima y Cajamarca.
           </p>
           <div className="flex flex-wrap gap-3 pt-2">
-            <Link href="/productos" className="btn-primary">
+            <Link href="/cosmetic/productos" className="btn-primary">
               Ver productos
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
               </svg>
             </Link>
-            <Link href="/quiz" className="btn-outline">
+            <Link href="/cosmetic/quiz" className="btn-outline">
               Quiz · ¿Qué le hace bien a tu piel?
             </Link>
           </div>
@@ -206,7 +206,7 @@ export default function CosmeticLanding() {
                 <p className="font-serif text-3xl text-ink">S/. 59.00</p>
               </div>
               <Link
-                href="/producto/the-ordinary-niacinamida"
+                href="/cosmetic/producto/the-ordinary-niacinamida-10-zinc-1"
                 className="text-xs text-ink underline underline-offset-4 hover:text-rose-deep"
               >
                 Ver ficha →
@@ -243,7 +243,7 @@ export default function CosmeticLanding() {
             </h2>
           </div>
           <Link
-            href="/productos"
+            href="/cosmetic/productos"
             className="hidden md:inline text-sm text-clay hover:text-ink underline underline-offset-4"
           >
             Todos los productos →
@@ -295,7 +295,7 @@ export default function CosmeticLanding() {
                     </p>
                   </div>
                   <Link
-                    href={`/producto/${p.slug}`}
+                    href={`/cosmetic/producto/${p.slug}`}
                     className="text-xs text-ink underline underline-offset-4 hover:text-rose-deep"
                   >
                     Ver →
@@ -308,7 +308,7 @@ export default function CosmeticLanding() {
 
         <div className="mt-10 text-center md:hidden">
           <Link
-            href="/productos"
+            href="/cosmetic/productos"
             className="text-sm text-clay hover:text-ink underline underline-offset-4"
           >
             Todos los productos →
@@ -384,7 +384,7 @@ export default function CosmeticLanding() {
               <div className="pt-4 mt-auto border-t border-[--border] flex items-center justify-between">
                 <span className="font-mono text-lg text-ink">{r.precio}</span>
                 <Link
-                  href={`/rutinas/${r.nombre.toLowerCase().replace(/ /g, "-")}`}
+                  href={`/cosmetic/rutinas/${r.nombre.toLowerCase().replace(/ /g, "-")}`}
                   className="text-xs text-ink underline underline-offset-4 hover:text-rose-deep"
                 >
                   Ver rutina →
@@ -411,7 +411,7 @@ export default function CosmeticLanding() {
             ].map((m) => (
               <Link
                 key={m}
-                href={`/marcas/${m.toLowerCase().replace(/ /g, "-")}`}
+                href={`/cosmetic/marcas/${m.toLowerCase().replace(/ /g, "-")}`}
                 className="font-serif text-xl md:text-2xl text-ink italic hover:text-rose-deep transition-colors"
               >
                 {m}
@@ -453,11 +453,11 @@ export default function CosmeticLanding() {
               Explora
             </h4>
             <ul className="space-y-2 text-clay">
-              <li><Link href="/productos" className="hover:text-ink">Productos</Link></li>
-              <li><Link href="/rutinas" className="hover:text-ink">Rutinas</Link></li>
-              <li><Link href="/marcas" className="hover:text-ink">Marcas</Link></li>
-              <li><Link href="/quiz" className="hover:text-ink">Quiz de piel</Link></li>
-              <li><Link href="/blog" className="hover:text-ink">Diario</Link></li>
+              <li><Link href="/cosmetic/productos" className="hover:text-ink">Productos</Link></li>
+              <li><Link href="/cosmetic/rutinas" className="hover:text-ink">Rutinas</Link></li>
+              <li><Link href="/cosmetic/marcas" className="hover:text-ink">Marcas</Link></li>
+              <li><Link href="/cosmetic/quiz" className="hover:text-ink">Quiz de piel</Link></li>
+              <li><Link href="/cosmetic/blog" className="hover:text-ink">Diario</Link></li>
             </ul>
           </div>
           <div className="space-y-3">
@@ -465,11 +465,11 @@ export default function CosmeticLanding() {
               Cuenta
             </h4>
             <ul className="space-y-2 text-clay">
-              <li><Link href="/cuenta" className="hover:text-ink">Iniciar sesión</Link></li>
-              <li><Link href="/mis-pedidos" className="hover:text-ink">Mis pedidos</Link></li>
-              <li><Link href="/envios" className="hover:text-ink">Envíos y devoluciones</Link></li>
-              <li><Link href="/contacto" className="hover:text-ink">Contacto</Link></li>
-              <li><Link href="/libro-reclamaciones" className="hover:text-ink">Libro de reclamaciones</Link></li>
+              <li><Link href="/cosmetic/cuenta" className="hover:text-ink">Iniciar sesión</Link></li>
+              <li><Link href="/cosmetic/mis-pedidos" className="hover:text-ink">Mis pedidos</Link></li>
+              <li><Link href="/cosmetic/envios" className="hover:text-ink">Envíos y devoluciones</Link></li>
+              <li><Link href="/cosmetic/contacto" className="hover:text-ink">Contacto</Link></li>
+              <li><Link href="/cosmetic/libro-reclamaciones" className="hover:text-ink">Libro de reclamaciones</Link></li>
             </ul>
           </div>
         </div>

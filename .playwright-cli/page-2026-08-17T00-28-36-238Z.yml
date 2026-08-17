@@ -1,0 +1,185 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - link "V Veliroz Cosmetic" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e6]: V
+          - generic [ref=e7]:
+            - generic [ref=e8]: Veliroz
+            - generic [ref=e9]: Cosmetic
+        - generic [ref=e10]:
+          - link "Productos" [ref=e11] [cursor=pointer]:
+            - /url: /cosmetic/productos
+          - link "Rutinas" [ref=e12] [cursor=pointer]:
+            - /url: /rutinas
+          - link "Marcas" [ref=e13] [cursor=pointer]:
+            - /url: /marcas
+          - link "Diario" [ref=e14] [cursor=pointer]:
+            - /url: /blog
+        - generic [ref=e15]:
+          - link "Iniciar sesión" [ref=e16] [cursor=pointer]:
+            - /url: /cuenta
+          - link "Ver carrito" [ref=e17] [cursor=pointer]:
+            - /url: /carrito
+            - img [ref=e18]
+    - generic [ref=e21]:
+      - navigation "Migas de pan" [ref=e22]:
+        - link "Inicio" [ref=e23] [cursor=pointer]:
+          - /url: /
+        - text: ·Catálogo
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - text: · Skincare curado por rutina ·
+          - heading "Catálogo. Encontrá lo que le hace bien a tu piel." [level=1] [ref=e26]
+          - paragraph [ref=e27]: 0 productos con los filtros aplicados.
+        - group [ref=e28]:
+          - generic "Ordenar productos" [ref=e29] [cursor=pointer]:
+            - generic [ref=e30]: Ordenar
+            - generic [ref=e31]: Destacados
+            - img [ref=e32]
+    - generic [ref=e35]:
+      - complementary [ref=e36]:
+        - generic [ref=e37]:
+          - heading "Filtros" [level=2] [ref=e38]
+          - link "Limpiar todo" [ref=e39] [cursor=pointer]:
+            - /url: /cosmetic/productos
+        - generic [ref=e40]:
+          - heading "Marca" [level=3] [ref=e41]
+          - generic [ref=e42]:
+            - 'link "Filtrar por marca: The Ordinary" [ref=e43] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon%2Cthe-ordinary&ingrediente=niacinamida
+              - generic [ref=e44]: The Ordinary
+            - 'link "Filtrar por marca: CeraVe" [ref=e45] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon%2Ccerave&ingrediente=niacinamida
+              - generic [ref=e46]: CeraVe
+            - 'link "Filtrar por marca: Beauty of Joseon" [ref=e47] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon%2Cbeauty-of-joseon&ingrediente=niacinamida
+              - generic [ref=e48]: Beauty of Joseon
+            - 'link "Filtrar por marca: COSRX" [ref=e49] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon%2Ccosrx&ingrediente=niacinamida
+              - generic [ref=e50]: COSRX
+            - 'link "Filtrar por marca: Xhekpon" [ref=e51] [cursor=pointer]':
+              - /url: /cosmetic/productos?ingrediente=niacinamida
+              - generic [ref=e52]: Xhekpon
+              - img [ref=e53]
+        - generic [ref=e55]:
+          - heading "Categoría" [level=3] [ref=e56]
+          - generic [ref=e57]:
+            - 'link "Filtrar por categoría: Sérum" [ref=e58] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida&categoria=serum
+              - generic [ref=e59]: Sérum
+            - 'link "Filtrar por categoría: Limpiador" [ref=e60] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida&categoria=limpiador
+              - generic [ref=e61]: Limpiador
+            - 'link "Filtrar por categoría: Protector solar" [ref=e62] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida&categoria=protector-solar
+              - generic [ref=e63]: Protector solar
+            - 'link "Filtrar por categoría: Hidratante" [ref=e64] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida&categoria=crema-hidratante
+              - generic [ref=e65]: Hidratante
+            - 'link "Filtrar por categoría: Essence" [ref=e66] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida&categoria=essence
+              - generic [ref=e67]: Essence
+        - generic [ref=e68]:
+          - heading "Tipo de piel" [level=3] [ref=e69]
+          - generic [ref=e70]:
+            - 'link "Filtrar por tipo de piel: Grasa" [ref=e71] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida&tipo_piel=grasa
+              - generic [ref=e72]: Grasa
+            - 'link "Filtrar por tipo de piel: Mixta" [ref=e73] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida&tipo_piel=mixta
+              - generic [ref=e74]: Mixta
+            - 'link "Filtrar por tipo de piel: Seca" [ref=e75] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida&tipo_piel=seca
+              - generic [ref=e76]: Seca
+            - 'link "Filtrar por tipo de piel: Sensible" [ref=e77] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida&tipo_piel=sensible
+              - generic [ref=e78]: Sensible
+            - 'link "Filtrar por tipo de piel: Normal" [ref=e79] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida&tipo_piel=normal
+              - generic [ref=e80]: Normal
+        - generic [ref=e81]:
+          - heading "Preocupación" [level=3] [ref=e82]
+          - generic [ref=e83]:
+            - 'link "Filtrar por preocupación: Poros" [ref=e84] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida&preocupacion=poros
+              - generic [ref=e85]: Poros
+            - 'link "Filtrar por preocupación: Grasitud" [ref=e86] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida&preocupacion=grasitud
+              - generic [ref=e87]: Grasitud
+            - 'link "Filtrar por preocupación: Hidratación" [ref=e88] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida&preocupacion=hidratacion
+              - generic [ref=e89]: Hidratación
+            - 'link "Filtrar por preocupación: Antiedad" [ref=e90] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida&preocupacion=antiedad
+              - generic [ref=e91]: Antiedad
+            - 'link "Filtrar por preocupación: Marcas post-acné" [ref=e92] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida&preocupacion=marcas-post-acne
+              - generic [ref=e93]: Marcas post-acné
+            - 'link "Filtrar por preocupación: Sensibilidad" [ref=e94] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida&preocupacion=sensibilidad
+              - generic [ref=e95]: Sensibilidad
+            - 'link "Filtrar por preocupación: Textura" [ref=e96] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida&preocupacion=textura
+              - generic [ref=e97]: Textura
+            - 'link "Filtrar por preocupación: Reparación" [ref=e98] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida&preocupacion=reparacion
+              - generic [ref=e99]: Reparación
+            - 'link "Filtrar por preocupación: Protección solar" [ref=e100] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida&preocupacion=proteccion-solar
+              - generic [ref=e101]: Protección solar
+            - 'link "Filtrar por preocupación: Barrera cutánea" [ref=e102] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida&preocupacion=barrera-cutanea
+              - generic [ref=e103]: Barrera cutánea
+        - generic [ref=e104]:
+          - heading "Ingrediente activo" [level=3] [ref=e105]
+          - generic [ref=e106]:
+            - 'link "Filtrar por ingrediente activo: Niacinamida" [ref=e107] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon
+              - generic [ref=e108]: Niacinamida
+              - img [ref=e109]
+            - 'link "Filtrar por ingrediente activo: Ác. hialurónico" [ref=e111] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida%2Cac-hialuronico
+              - generic [ref=e112]: Ác. hialurónico
+            - 'link "Filtrar por ingrediente activo: Ác. salicílico" [ref=e113] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida%2Cac-salicilico
+              - generic [ref=e114]: Ác. salicílico
+            - 'link "Filtrar por ingrediente activo: Ceramidas" [ref=e115] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida%2Cceramidas
+              - generic [ref=e116]: Ceramidas
+            - 'link "Filtrar por ingrediente activo: Mucina de caracol" [ref=e117] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida%2Cmucina-caracol
+              - generic [ref=e118]: Mucina de caracol
+            - 'link "Filtrar por ingrediente activo: SPF 50" [ref=e119] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida%2Cspf-50
+              - generic [ref=e120]: SPF 50
+            - 'link "Filtrar por ingrediente activo: Colágeno" [ref=e121] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida%2Ccolageno
+              - generic [ref=e122]: Colágeno
+            - 'link "Filtrar por ingrediente activo: Zinc" [ref=e123] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida%2Czinc
+              - generic [ref=e124]: Zinc
+            - 'link "Filtrar por ingrediente activo: Péptidos" [ref=e125] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida%2Cpeptidos
+              - generic [ref=e126]: Péptidos
+        - generic [ref=e127]:
+          - heading "Precio" [level=3] [ref=e128]
+          - generic [ref=e129]:
+            - 'link "Filtrar por precio: Menos de S/50" [ref=e130] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida&precio=0-50
+              - generic [ref=e131]: Menos de S/50
+            - 'link "Filtrar por precio: S/50 – S/100" [ref=e132] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida&precio=50-100
+              - generic [ref=e133]: S/50 – S/100
+            - 'link "Filtrar por precio: Más de S/100" [ref=e134] [cursor=pointer]':
+              - /url: /cosmetic/productos?marca=xhekpon&ingrediente=niacinamida&precio=100%2B
+              - generic [ref=e135]: Más de S/100
+      - generic [ref=e137]:
+        - text: Sin resultados
+        - heading "No encontramos productos con esos filtros." [level=3] [ref=e138]
+        - paragraph [ref=e139]: Probá quitar algún filtro o volvé al catálogo completo — 7 productos curados esperándote.
+        - link "Limpiar filtros" [ref=e141] [cursor=pointer]:
+          - /url: /cosmetic/productos
+  - button "Open Next.js Dev Tools" [ref=e147] [cursor=pointer]:
+    - img [ref=e148]

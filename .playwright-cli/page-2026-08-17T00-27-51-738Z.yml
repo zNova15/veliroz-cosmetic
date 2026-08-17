@@ -1,0 +1,252 @@
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - link "V Veliroz Cosmetic" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e6]: V
+          - generic [ref=e7]:
+            - generic [ref=e8]: Veliroz
+            - generic [ref=e9]: Cosmetic
+        - generic [ref=e10]:
+          - link "Productos" [ref=e11] [cursor=pointer]:
+            - /url: /cosmetic/productos
+          - link "Rutinas" [ref=e12] [cursor=pointer]:
+            - /url: /rutinas
+          - link "Marcas" [ref=e13] [cursor=pointer]:
+            - /url: /marcas
+          - link "Diario" [ref=e14] [cursor=pointer]:
+            - /url: /blog
+        - generic [ref=e15]:
+          - link "Iniciar sesión" [ref=e16] [cursor=pointer]:
+            - /url: /cuenta
+          - link "Ver carrito" [ref=e17] [cursor=pointer]:
+            - /url: /carrito
+            - img [ref=e18]
+    - generic [ref=e21]:
+      - navigation "Migas de pan" [ref=e22]:
+        - link "Inicio" [ref=e23] [cursor=pointer]:
+          - /url: /
+        - text: ·Catálogo
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - text: · Skincare curado por rutina ·
+          - heading "Catálogo. Encontrá lo que le hace bien a tu piel." [level=1] [ref=e26]
+          - paragraph [ref=e27]: 5 productos con los filtros aplicados.
+        - group [ref=e28]:
+          - generic "Ordenar productos" [ref=e29] [cursor=pointer]:
+            - generic [ref=e30]: Ordenar
+            - generic [ref=e31]: "Precio: menor a mayor"
+            - img [ref=e32]
+    - generic [ref=e35]:
+      - complementary [ref=e36]:
+        - generic [ref=e37]:
+          - heading "Filtros" [level=2] [ref=e38]
+          - link "Limpiar todo" [ref=e39] [cursor=pointer]:
+            - /url: /cosmetic/productos
+        - generic [ref=e40]:
+          - heading "Marca" [level=3] [ref=e41]
+          - generic [ref=e42]:
+            - 'link "Filtrar por marca: The Ordinary" [ref=e43] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&marca=the-ordinary
+              - generic [ref=e44]: The Ordinary
+            - 'link "Filtrar por marca: CeraVe" [ref=e45] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&marca=cerave
+              - generic [ref=e46]: CeraVe
+            - 'link "Filtrar por marca: Beauty of Joseon" [ref=e47] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&marca=beauty-of-joseon
+              - generic [ref=e48]: Beauty of Joseon
+            - 'link "Filtrar por marca: COSRX" [ref=e49] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&marca=cosrx
+              - generic [ref=e50]: COSRX
+            - 'link "Filtrar por marca: Xhekpon" [ref=e51] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&marca=xhekpon
+              - generic [ref=e52]: Xhekpon
+        - generic [ref=e53]:
+          - heading "Categoría" [level=3] [ref=e54]
+          - generic [ref=e55]:
+            - 'link "Filtrar por categoría: Sérum" [ref=e56] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&categoria=serum
+              - generic [ref=e57]: Sérum
+            - 'link "Filtrar por categoría: Limpiador" [ref=e58] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&categoria=limpiador
+              - generic [ref=e59]: Limpiador
+            - 'link "Filtrar por categoría: Protector solar" [ref=e60] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&categoria=protector-solar
+              - generic [ref=e61]: Protector solar
+            - 'link "Filtrar por categoría: Hidratante" [ref=e62] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&categoria=crema-hidratante
+              - generic [ref=e63]: Hidratante
+            - 'link "Filtrar por categoría: Essence" [ref=e64] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&categoria=essence
+              - generic [ref=e65]: Essence
+        - generic [ref=e66]:
+          - heading "Tipo de piel" [level=3] [ref=e67]
+          - generic [ref=e68]:
+            - 'link "Filtrar por tipo de piel: Grasa" [ref=e69] [cursor=pointer]':
+              - /url: /cosmetic/productos?sort=precio-asc
+              - generic [ref=e70]: Grasa
+              - img [ref=e71]
+            - 'link "Filtrar por tipo de piel: Mixta" [ref=e73] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa%2Cmixta&sort=precio-asc
+              - generic [ref=e74]: Mixta
+            - 'link "Filtrar por tipo de piel: Seca" [ref=e75] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa%2Cseca&sort=precio-asc
+              - generic [ref=e76]: Seca
+            - 'link "Filtrar por tipo de piel: Sensible" [ref=e77] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa%2Csensible&sort=precio-asc
+              - generic [ref=e78]: Sensible
+            - 'link "Filtrar por tipo de piel: Normal" [ref=e79] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa%2Cnormal&sort=precio-asc
+              - generic [ref=e80]: Normal
+        - generic [ref=e81]:
+          - heading "Preocupación" [level=3] [ref=e82]
+          - generic [ref=e83]:
+            - 'link "Filtrar por preocupación: Poros" [ref=e84] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&preocupacion=poros
+              - generic [ref=e85]: Poros
+            - 'link "Filtrar por preocupación: Grasitud" [ref=e86] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&preocupacion=grasitud
+              - generic [ref=e87]: Grasitud
+            - 'link "Filtrar por preocupación: Hidratación" [ref=e88] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&preocupacion=hidratacion
+              - generic [ref=e89]: Hidratación
+            - 'link "Filtrar por preocupación: Antiedad" [ref=e90] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&preocupacion=antiedad
+              - generic [ref=e91]: Antiedad
+            - 'link "Filtrar por preocupación: Marcas post-acné" [ref=e92] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&preocupacion=marcas-post-acne
+              - generic [ref=e93]: Marcas post-acné
+            - 'link "Filtrar por preocupación: Sensibilidad" [ref=e94] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&preocupacion=sensibilidad
+              - generic [ref=e95]: Sensibilidad
+            - 'link "Filtrar por preocupación: Textura" [ref=e96] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&preocupacion=textura
+              - generic [ref=e97]: Textura
+            - 'link "Filtrar por preocupación: Reparación" [ref=e98] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&preocupacion=reparacion
+              - generic [ref=e99]: Reparación
+            - 'link "Filtrar por preocupación: Protección solar" [ref=e100] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&preocupacion=proteccion-solar
+              - generic [ref=e101]: Protección solar
+            - 'link "Filtrar por preocupación: Barrera cutánea" [ref=e102] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&preocupacion=barrera-cutanea
+              - generic [ref=e103]: Barrera cutánea
+        - generic [ref=e104]:
+          - heading "Ingrediente activo" [level=3] [ref=e105]
+          - generic [ref=e106]:
+            - 'link "Filtrar por ingrediente activo: Niacinamida" [ref=e107] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&ingrediente=niacinamida
+              - generic [ref=e108]: Niacinamida
+            - 'link "Filtrar por ingrediente activo: Ác. hialurónico" [ref=e109] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&ingrediente=ac-hialuronico
+              - generic [ref=e110]: Ác. hialurónico
+            - 'link "Filtrar por ingrediente activo: Ác. salicílico" [ref=e111] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&ingrediente=ac-salicilico
+              - generic [ref=e112]: Ác. salicílico
+            - 'link "Filtrar por ingrediente activo: Ceramidas" [ref=e113] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&ingrediente=ceramidas
+              - generic [ref=e114]: Ceramidas
+            - 'link "Filtrar por ingrediente activo: Mucina de caracol" [ref=e115] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&ingrediente=mucina-caracol
+              - generic [ref=e116]: Mucina de caracol
+            - 'link "Filtrar por ingrediente activo: SPF 50" [ref=e117] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&ingrediente=spf-50
+              - generic [ref=e118]: SPF 50
+            - 'link "Filtrar por ingrediente activo: Colágeno" [ref=e119] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&ingrediente=colageno
+              - generic [ref=e120]: Colágeno
+            - 'link "Filtrar por ingrediente activo: Zinc" [ref=e121] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&ingrediente=zinc
+              - generic [ref=e122]: Zinc
+            - 'link "Filtrar por ingrediente activo: Péptidos" [ref=e123] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&ingrediente=peptidos
+              - generic [ref=e124]: Péptidos
+        - generic [ref=e125]:
+          - heading "Precio" [level=3] [ref=e126]
+          - generic [ref=e127]:
+            - 'link "Filtrar por precio: Menos de S/50" [ref=e128] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&precio=0-50
+              - generic [ref=e129]: Menos de S/50
+            - 'link "Filtrar por precio: S/50 – S/100" [ref=e130] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&precio=50-100
+              - generic [ref=e131]: S/50 – S/100
+            - 'link "Filtrar por precio: Más de S/100" [ref=e132] [cursor=pointer]':
+              - /url: /cosmetic/productos?tipo_piel=grasa&sort=precio-asc&precio=100%2B
+              - generic [ref=e133]: Más de S/100
+      - generic [ref=e135]:
+        - link "Limpiador CeraVe CeraVe Espuma Limpiadora piel Normal a Grasa 236 ml · Limpieza · Barrera cutánea S/. 54.00 Ver →" [ref=e136] [cursor=pointer]:
+          - /url: /cosmetic/producto/cerave-espuma-limpiadora-normal-grasa
+          - generic [ref=e138]:
+            - paragraph [ref=e139]: Limpiador
+            - paragraph [ref=e140]: CeraVe
+          - generic [ref=e141]:
+            - generic [ref=e142]:
+              - paragraph [ref=e143]: CeraVe
+              - heading "Espuma Limpiadora piel Normal a Grasa" [level=3] [ref=e144]
+              - paragraph [ref=e145]: 236 ml · Limpieza · Barrera cutánea
+            - generic [ref=e146]:
+              - paragraph [ref=e148]: S/. 54.00
+              - generic [ref=e149]: Ver →
+        - link "Sérum The Ordinary The Ordinary Hyaluronic Acid 2% + B5 30 ml · Hidratación · Deshidratacion S/. 55.00 Ver →" [ref=e150] [cursor=pointer]:
+          - /url: /cosmetic/producto/the-ordinary-hyaluronic-acid-2-b5
+          - generic [ref=e152]:
+            - paragraph [ref=e153]: Sérum
+            - paragraph [ref=e154]: The Ordinary
+          - generic [ref=e155]:
+            - generic [ref=e156]:
+              - paragraph [ref=e157]: The Ordinary
+              - heading "Hyaluronic Acid 2% + B5" [level=3] [ref=e158]
+              - paragraph [ref=e159]: 30 ml · Hidratación · Deshidratacion
+            - generic [ref=e160]:
+              - paragraph [ref=e162]: S/. 55.00
+              - generic [ref=e163]: Ver →
+        - link "· Hero · Sérum The Ordinary The Ordinary Niacinamida 10% + Zinc 1% 30 ml · Poros · Grasitud S/. 75.00 S/. 59.00 Ver →" [ref=e164] [cursor=pointer]:
+          - /url: /cosmetic/producto/the-ordinary-niacinamida-10-zinc-1
+          - generic [ref=e165]:
+            - generic [ref=e166]: · Hero ·
+            - generic [ref=e167]:
+              - paragraph [ref=e168]: Sérum
+              - paragraph [ref=e169]: The Ordinary
+          - generic [ref=e170]:
+            - generic [ref=e171]:
+              - paragraph [ref=e172]: The Ordinary
+              - heading "Niacinamida 10% + Zinc 1%" [level=3] [ref=e173]
+              - paragraph [ref=e174]: 30 ml · Poros · Grasitud
+            - generic [ref=e175]:
+              - generic [ref=e176]:
+                - paragraph [ref=e177]: S/. 75.00
+                - paragraph [ref=e178]: S/. 59.00
+              - generic [ref=e179]: Ver →
+        - link "· Hero · Essence COSRX COSRX Advanced Snail 96 Mucin Power Essence 100 ml · Reparación · Marcas post-acné S/. 59.00 Ver →" [ref=e180] [cursor=pointer]:
+          - /url: /cosmetic/producto/cosrx-snail-mucin-96-essence
+          - generic [ref=e181]:
+            - generic [ref=e182]: · Hero ·
+            - generic [ref=e183]:
+              - paragraph [ref=e184]: Essence
+              - paragraph [ref=e185]: COSRX
+          - generic [ref=e186]:
+            - generic [ref=e187]:
+              - paragraph [ref=e188]: COSRX
+              - heading "Advanced Snail 96 Mucin Power Essence" [level=3] [ref=e189]
+              - paragraph [ref=e190]: 100 ml · Reparación · Marcas post-acné
+            - generic [ref=e191]:
+              - paragraph [ref=e193]: S/. 59.00
+              - generic [ref=e194]: Ver →
+        - link "· Hero · Protector solar Beauty of Joseon Beauty of Joseon Relief Sun · Rice + Probiotics SPF 50+ PA++++ 50 ml · Protección solar · Luminosidad S/. 65.00 Ver →" [ref=e195] [cursor=pointer]:
+          - /url: /cosmetic/producto/beauty-of-joseon-relief-sun-spf-50
+          - generic [ref=e196]:
+            - generic [ref=e197]: · Hero ·
+            - generic [ref=e198]:
+              - paragraph [ref=e199]: Protector solar
+              - paragraph [ref=e200]: Beauty of Joseon
+          - generic [ref=e201]:
+            - generic [ref=e202]:
+              - paragraph [ref=e203]: Beauty of Joseon
+              - heading "Relief Sun · Rice + Probiotics SPF 50+ PA++++" [level=3] [ref=e204]
+              - paragraph [ref=e205]: 50 ml · Protección solar · Luminosidad
+            - generic [ref=e206]:
+              - paragraph [ref=e208]: S/. 65.00
+              - generic [ref=e209]: Ver →
+  - button "Open Next.js Dev Tools" [ref=e215] [cursor=pointer]:
+    - img [ref=e216]

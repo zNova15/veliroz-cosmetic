@@ -178,3 +178,49 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ============================================================
+   COMPAT Tailwind v4 — shorthand `utilidad-[--var]`
+   ------------------------------------------------------------
+   En Tailwind v3 `text-[--text-hero]` se resolvía como
+   `var(--text-hero)`. En v4 ese atajo YA NO existe (hay que escribir
+   `text-(length:--text-hero)` o `text-[length:var(--text-hero)]`), así
+   que las ~185 apariciones del patrón en /src no generaban ninguna
+   regla: el h1 del hero caía a 16px y todos los `border-[--border]`
+   pintaban currentColor (clay) en vez del 8% de ink del design system.
+
+   En vez de reescribir 20 archivos (y pelearnos con los diffs), acá se
+   declaran las clases literales que Tailwind ya no emite. Si algún día
+   se migran los class names, este bloque se borra entero.
+   ============================================================ */
+@layer utilities {
+  /* Tipografía escala */
+  [class~="text-[--text-hero]"]    { font-size: var(--text-hero); }
+  [class~="text-[--text-display]"] { font-size: var(--text-display); }
+
+  /* Colores de texto de soporte */
+  [class~="text-[--veliroz-danger]"]          { color: var(--veliroz-danger); }
+  [class~="text-[--veliroz-success]"]         { color: var(--veliroz-success); }
+  [class~="text-[--veliroz-leaf]"]            { color: var(--veliroz-leaf); }
+  [class~="text-[--veliroz-champagne-dark]"]  { color: var(--veliroz-champagne-dark); }
+
+  /* Bordes */
+  [class~="border-[--border]"]                  { border-color: var(--border); }
+  [class~="border-[--border-2]"]                { border-color: var(--border-2); }
+  [class~="border-[--veliroz-danger]"]          { border-color: var(--veliroz-danger); }
+  [class~="border-[--veliroz-leaf]"]            { border-color: var(--veliroz-leaf); }
+  [class~="border-[--veliroz-champagne]"]       { border-color: var(--veliroz-champagne); }
+  [class~="border-[--veliroz-champagne-dark]"]  { border-color: var(--veliroz-champagne-dark); }
+  [class~="divide-[--border]"] > :not(:last-child) { border-color: var(--border); }
+
+  /* Fondos */
+  [class~="bg-[--border]"]                  { background-color: var(--border); }
+  [class~="bg-[--border-2]"]                { background-color: var(--border-2); }
+  [class~="bg-[--veliroz-danger]"]          { background-color: var(--veliroz-danger); }
+  [class~="bg-[--veliroz-success]"]         { background-color: var(--veliroz-success); }
+  [class~="bg-[--veliroz-leaf]"]            { background-color: var(--veliroz-leaf); }
+  [class~="bg-[--veliroz-champagne-dark]"]  { background-color: var(--veliroz-champagne-dark); }
+
+  /* Radios */
+  [class~="rounded-[--radius-md]"] { border-radius: var(--radius-md); }
+}

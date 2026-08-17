@@ -229,6 +229,46 @@ function labelCategoria(cat: string): string {
   return LABELS_CATEGORIA[cat] ?? cat.replace(/-/g, " ");
 }
 
+/* ── Lectura segura de productos.meta (jsonb) ──────────────────
+   Campos PÚBLICOS: preventa, rating_ext, reviews_ext, evidencia.
+   Campos INTERNOS que NUNCA se renderizan al cliente:
+   precio_costo (columna), meta.proveedor_sugerido, meta.costo_est_pen. */
+type Meta = Record<string, unknown> | null;
+
+function metaNum(meta: Meta, key: string): number | null {
+  const raw = meta?.[key];
+  const n =
+    typeof raw === "number" ? raw : typeof raw === "string" ? Number(raw) : NaN;
+  return Number.isFinite(n) ? n : null;
+}
+
+function metaStr(meta: Meta, key: string): string | null {
+  const raw = meta?.[key];
+  return typeof raw === "string" && raw.trim() ? raw.trim() : null;
+}
+
+/* meta.evidencia viene MEZCLADA: fragmentos de social proof público
+   (rankings de StyleKorean / Olive Young / Amazon…) junto con research
+   interno de compras (proveedor AliExpress, márgenes 49-57%, "SIN NSO",
+   huecos de stock de la competencia). Publicarla cruda filtra sourcing y
+   margen al cliente, así que solo se muestran los fragmentos que citan una
+   fuente pública verificable y no tocan ningún tema interno.
+   Lo ideal a futuro: un meta.evidencia_publica curado en la BD. */
+const FUENTE_PUBLICA =
+  /stylekorean|jolse|olive\s*young|hwahae|amazon|byrdie|falabella|aruma|tiktok|allure|glamour|cosmopolitan/i;
+
+const FRAGMENTO_INTERNO =
+  /margen|aliexpress|alibaba|proveedor|costo|\bnso\b|oportunidad|anclar|sin\s+stock|S\/\s*\d/i;
+
+function evidenciaPublica(raw: string | null): string | null {
+  if (!raw) return null;
+  const fragmentos = raw
+    .split(/\s*·\s*/)
+    .map((f) => f.trim())
+    .filter((f) => f && FUENTE_PUBLICA.test(f) && !FRAGMENTO_INTERNO.test(f));
+  return fragmentos.length > 0 ? fragmentos.join(" · ") : null;
+}
+
 export default async function ProductoPage(
   props: PageProps<"/cosmetic/producto/[slug]">
 ) {
@@ -240,6 +280,23 @@ export default async function ProductoPage(
   const swatch = swatchFor(marca?.slug);
   const varianteRef: Variante | undefined = producto.variantes[0];
   const relacionados = await fetchRelacionados(producto);
+
+  /* Pre-venta: meta.preventa + ninguna variante con stock físico. */
+  const meta: Meta = producto.meta;
+  const preventaFlag = meta?.preventa === true;
+  const stockTotal = producto.variantes.reduce(
+    (acc, v) => acc + Number(v.stock ?? 0),
+    0
+  );
+  const enPreventa = preventaFlag && stockTotal <= 0;
+
+  /* Social proof externo (StyleKorean / Jolse / Amazon / Hwahae). */
+  const ratingExt = metaNum(meta, "rating_ext");
+  const reviewsExt = metaNum(meta, "reviews_ext");
+  /* SIEMPRE filtrada: meta.evidencia cruda mezcla social proof con research
+     interno de compras (proveedor, margen, NSO). Ver evidenciaPublica(). */
+  const evidencia = evidenciaPublica(metaStr(meta, "evidencia"));
+  const estrellasExt = ratingExt !== null ? Math.round(ratingExt) : 0;
 
   // JSON-LD structured data
   const jsonLd = {
@@ -259,7 +316,9 @@ export default async function ProductoPage(
         availability:
           Number(varianteRef.stock) > 0
             ? "https://schema.org/InStock"
-            : "https://schema.org/OutOfStock",
+            : enPreventa
+              ? "https://schema.org/PreOrder"
+              : "https://schema.org/OutOfStock",
         url: `https://veliroz.com/cosmetic/producto/${producto.slug}`,
       },
     }),
@@ -325,8 +384,9 @@ export default async function ProductoPage(
             productoNombre={producto.nombre}
             marcaNombre={marca?.nombre ?? "Veliroz"}
             swatch={swatch}
+            imagenUrl={producto.imagen_principal}
             destacado={producto.destacado}
-            vista3D
+            preventa={enPreventa}
           />
         </div>
 
@@ -352,6 +412,38 @@ export default async function ProductoPage(
             <p className="text-clay leading-relaxed text-pretty">
               {producto.descripcion_corta}
             </p>
+          )}
+
+          {/* Social proof externo — rating agregado de fuentes internacionales.
+              No entra al JSON-LD (aggregateRating solo admite reseñas propias). */}
+          {ratingExt !== null && (
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+              <span className="text-champagne-dark" aria-hidden>
+                {"★".repeat(estrellasExt)}
+                {"☆".repeat(Math.max(0, 5 - estrellasExt))}
+              </span>
+              <span className="font-mono text-ink">{ratingExt.toFixed(1)}</span>
+              {reviewsExt !== null && reviewsExt > 0 && (
+                <span className="text-clay">
+                  · {new Intl.NumberFormat("es-PE").format(reviewsExt)}{" "}
+                  {reviewsExt === 1
+                    ? "reseña internacional"
+                    : "reseñas internacionales"}
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* Curaduría Veliroz — por qué este producto entró al catálogo */}
+          {evidencia && (
+            <div className="bg-mist rounded-lg p-3 space-y-1.5 border border-[--border]">
+              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-taupe">
+                Por qué lo elegimos
+              </p>
+              <p className="text-[13px] text-clay leading-relaxed text-pretty">
+                {evidencia}
+              </p>
+            </div>
           )}
 
           {/* Rating summary — solo si hay reviews aprobadas */}
@@ -400,6 +492,7 @@ export default async function ProductoPage(
               marcaNombre={marca?.nombre ?? "Veliroz"}
               imagenSwatch={swatch}
               variantes={producto.variantes}
+              preventa={enPreventa}
             />
           </div>
 

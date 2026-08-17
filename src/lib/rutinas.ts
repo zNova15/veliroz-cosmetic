@@ -1,8 +1,30 @@
 /* ============================================================
    Rutinas curadas — data hardcoded.
-   Cada rutina = objetivo concreto + productos (slugs) + pasos.
-   Los slugs de productos MUST match los slugs reales en public.productos
-   (linea_negocio='cosmetic', migración 007+008).
+   Cada rutina = objetivo concreto + productos (slugs) + pasos + bundle.
+
+   Los slugs y SKUs de abajo son los REALES del catálogo (migración 013,
+   12 SKUs verificados contra Supabase el 2026-08-16):
+
+     producto slug                                | SKU                    | PVP
+     ---------------------------------------------|------------------------|-----
+     mixsoon-centella-cleansing-foam               | MIXSOON-FOAM-150ML     |  79
+     dr-althea-345-relief-cream                    | ALTHEA-345-50ML        |  89
+     beauty-of-joseon-relief-sun-spf50             | BOJ-SUN-50ML           |  79
+     anua-niacinamide-10-txa-4-serum               | ANUA-NIACIN-TXA-30ML   |  95
+     skin1004-madagascar-sun-serum-spf50           | S1004-SUNSERUM-50ML    |  79
+     celimax-vita-a-retinal-shot                   | CELIMAX-RETINAL-15ML   |  85
+     anua-pdrn-hyaluronic-capsule-serum            | ANUA-PDRN-30ML         | 115
+     round-lab-birch-juice-sunscreen-spf50         | RL-BIRCH-SUN-50ML      |  89
+     cosrx-advanced-snail-96-mucin-essence         | COSRX-SNAIL-100ML      |  75
+     biodance-bio-collagen-real-deep-mask          | BIODANCE-MASK-4PK      |  89
+     veliroz-gua-sha-roller-set                    | VLRZ-GUASHA-SET        |  35
+     veliroz-set-brochas-12                        | VLRZ-BROCHAS-12        |  69
+
+   `precioLista` es la suma de los PVP de la rutina; `precioBundle` es lo
+   que se cobra llevándola completa y `ahorro` la diferencia. Si los precios
+   cambian en la BD, actualizar estos tres campos acá (son copy, no cálculo:
+   la fuente de verdad de cobro sigue siendo variantes_producto.precio).
+
    La página /cosmetic/rutinas/[slug] resuelve los productos por slug con
    una sola query a Supabase (in-list).
    ============================================================ */
@@ -13,6 +35,7 @@ export type Momento = "am" | "pm" | "am+pm";
 export interface RutinaPaso {
   orden: number;
   productoSlug: string; // ← relaciona con productos.slug
+  sku: string; // ← variante real (variantes_producto.sku)
   momento: Momento;
   nota: string; // qué hace y cuándo
 }
@@ -21,11 +44,19 @@ export interface Rutina {
   slug: string;
   nombre: string;
   tag: string; // subtítulo corto
-  descripcion: string; // párrafo largo
+  descripcion: string; // 2-3 líneas: para quién es
   para: string[]; // "grasa", "poros"...
   tiempoMinutos: number; // por sesión
   dificultad: Dificultad;
   accent: string; // color de fondo card
+  /** SKUs reales de la rutina, en orden de uso. */
+  skus: string[];
+  /** Suma de los PVP individuales (S/). */
+  precioLista: number;
+  /** Precio llevando la rutina completa (S/). */
+  precioBundle: number;
+  /** precioLista - precioBundle (S/). */
+  ahorro: number;
   pasos: RutinaPaso[];
   advertencia?: string;
 }
@@ -36,218 +67,187 @@ export const RUTINAS: Rutina[] = [
     nombre: "Primera vez",
     tag: "Para arrancar bien",
     descripcion:
-      "Tres pasos, cero drama. Si nunca hiciste rutina antes, empezá acá: limpiador que respete la barrera, hidratante con ceramidas y protector solar. Nada más. En 4 semanas tu piel ya nota la diferencia.",
-    para: ["normal", "sin experiencia"],
+      "Para quien nunca hizo skincare y no quiere gastar de más probando. Tres pasos y nada más: limpieza que no reseca, crema que repone la barrera y SPF diario. Es la base sobre la que después se agrega cualquier activo.",
+    para: ["normal", "sin experiencia", "sensible"],
     tiempoMinutos: 5,
     dificultad: "inicial",
     accent: "#F7EFE6",
+    skus: ["MIXSOON-FOAM-150ML", "ALTHEA-345-50ML", "BOJ-SUN-50ML"],
+    precioLista: 247,
+    precioBundle: 225,
+    ahorro: 22,
     pasos: [
       {
         orden: 1,
-        productoSlug: "cerave-espuma-limpiadora-normal-grasa",
+        productoSlug: "mixsoon-centella-cleansing-foam",
+        sku: "MIXSOON-FOAM-150ML",
         momento: "am+pm",
-        nota: "Limpieza suave con ceramidas — no reseca ni pica.",
+        nota: "Espuma con centella — limpia sin dejar la piel tirante ni con ardor.",
       },
       {
         orden: 2,
-        productoSlug: "cerave-locion-hidratante-sa",
+        productoSlug: "dr-althea-345-relief-cream",
+        sku: "ALTHEA-345-50ML",
         momento: "am+pm",
-        nota: "Hidratante reparador que no deja película grasa.",
+        nota: "Ceramidas + péptidos. Repone barrera y no deja película grasa.",
       },
       {
         orden: 3,
-        productoSlug: "beauty-of-joseon-relief-sun-spf-50",
+        productoSlug: "beauty-of-joseon-relief-sun-spf50",
+        sku: "BOJ-SUN-50ML",
         momento: "am",
-        nota: "SPF 50+ diario. El paso no negociable. Reaplicar cada 3-4h con exposición.",
+        nota: "SPF50+ PA++++ sin residuo blanco. El paso no negociable — reaplicar cada 3-4h con exposición.",
       },
     ],
   },
   {
-    slug: "acne-poros",
-    nombre: "Acné + poros",
-    tag: "Grasitud controlada",
+    slug: "manchas-tono-desparejo",
+    nombre: "Manchas y tono desparejo",
+    tag: "Marcas post-acné",
     descripcion:
-      "Para piel mixta a grasa con poros dilatados y brotes recurrentes. La niacinamida al 10% regula sebo en 6-8 semanas, el limpiador SA disuelve el residuo del poro sin agredir. El SPF cierra: sin protector, todo lo demás rebota.",
-    para: ["grasa", "mixta", "poros", "grasitud"],
+      "Para piel con marcas oscuras que quedaron después de los granitos, o con el tono desparejo por sol acumulado. Niacinamida al 10% + ácido tranexámico al 4% es la dupla que sí mueve la aguja en 8-12 semanas, y el SPF evita que vuelvan a aparecer.",
+    para: ["manchas", "marcas-post-acne", "mixta", "grasa"],
     tiempoMinutos: 6,
     dificultad: "intermedia",
     accent: "#EEE4D8",
+    skus: ["MIXSOON-FOAM-150ML", "ANUA-NIACIN-TXA-30ML", "S1004-SUNSERUM-50ML"],
+    precioLista: 253,
+    precioBundle: 229,
+    ahorro: 24,
     pasos: [
       {
         orden: 1,
-        productoSlug: "cerave-espuma-limpiadora-normal-grasa",
+        productoSlug: "mixsoon-centella-cleansing-foam",
+        sku: "MIXSOON-FOAM-150ML",
         momento: "am+pm",
-        nota: "Limpieza inicial. Si sos muy grasa, cambiá por una versión con SA.",
+        nota: "Limpieza suave: la piel con manchas no necesita agresión, necesita constancia.",
       },
       {
         orden: 2,
-        productoSlug: "the-ordinary-niacinamida-10-zinc-1",
+        productoSlug: "anua-niacinamide-10-txa-4-serum",
+        sku: "ANUA-NIACIN-TXA-30ML",
         momento: "pm",
-        nota: "Aplicar sobre piel seca antes de hidratar. Empezar día por medio.",
+        nota: "Sobre piel seca, antes de hidratar. Arrancar día por medio la primera semana.",
       },
       {
         orden: 3,
-        productoSlug: "cerave-locion-hidratante-sa",
-        momento: "am+pm",
-        nota: "Hidratante que ayuda a la textura irregular.",
-      },
-      {
-        orden: 4,
-        productoSlug: "beauty-of-joseon-relief-sun-spf-50",
+        productoSlug: "skin1004-madagascar-sun-serum-spf50",
+        sku: "S1004-SUNSERUM-50ML",
         momento: "am",
-        nota: "SPF sin residuo blanco, ideal para piel grasa.",
+        nota: "Textura sérum, acabado invisible. Sin SPF, la niacinamida trabaja contra la corriente.",
       },
     ],
     advertencia:
-      "No usar niacinamida en la misma capa que vitamina C pura (L-AA).",
+      "No usar niacinamida en la misma capa que vitamina C pura (L-AA): separá AM y PM.",
   },
   {
     slug: "antiedad-honesta",
     nombre: "Antiedad honesta",
     tag: "Primeras líneas",
     descripcion:
-      "Para los 30+ que empiezan a ver líneas finas y pérdida de firmeza. La combinación hialurónico + mucina de caracol repara y rellena; Xhekpon suma colágeno donde más se descuida (cuello y escote). Sin humo: es constancia, no cirugía.",
-    para: ["antiedad", "hidratacion"],
+      "Para los 30+ que empiezan a ver líneas finas y pérdida de firmeza y quieren resultados sin promesas de cirugía. Retinal (10 veces más potente que el retinol) de noche, PDRN + hialurónico para reparar y rellenar, y un SPF hidratante que sostiene todo lo demás.",
+    para: ["antiedad", "arrugas", "firmeza"],
     tiempoMinutos: 8,
-    dificultad: "intermedia",
+    dificultad: "avanzada",
     accent: "#F3E8E8",
+    skus: ["CELIMAX-RETINAL-15ML", "ANUA-PDRN-30ML", "RL-BIRCH-SUN-50ML"],
+    precioLista: 289,
+    precioBundle: 259,
+    ahorro: 30,
     pasos: [
       {
         orden: 1,
-        productoSlug: "cerave-espuma-limpiadora-normal-grasa",
-        momento: "am+pm",
-        nota: "Limpieza suave que respeta la barrera.",
-      },
-      {
-        orden: 2,
-        productoSlug: "the-ordinary-hyaluronic-acid-2-b5",
-        momento: "am+pm",
-        nota: "Aplicar sobre piel húmeda para retener agua en la capa superficial.",
-      },
-      {
-        orden: 3,
-        productoSlug: "cosrx-snail-mucin-96-essence",
-        momento: "am+pm",
-        nota: "Essence reparadora — layer fino, dejar penetrar antes del siguiente paso.",
-      },
-      {
-        orden: 4,
-        productoSlug: "xhekpon-crema-cuello-rostro",
+        productoSlug: "celimax-vita-a-retinal-shot",
+        sku: "CELIMAX-RETINAL-15ML",
         momento: "pm",
-        nota: "Cuello y escote. La zona que casi nadie cuida y más envejece.",
-      },
-      {
-        orden: 5,
-        productoSlug: "beauty-of-joseon-relief-sun-spf-50",
-        momento: "am",
-        nota: "SPF 50+ diario. Sin esto, todo lo demás es decoración.",
-      },
-    ],
-  },
-  {
-    slug: "hidratacion-profunda",
-    nombre: "Hidratación profunda",
-    tag: "Piel deshidratada · tirante",
-    descripcion:
-      "Cuando la piel se siente tirante, opaca o áspera al final del día. Estrategia de doble hidratación: ácido hialurónico que retiene agua en las capas superficiales + mucina que repara y sella. Resultado: piel jugosa, no grasa.",
-    para: ["seca", "hidratacion", "sensible"],
-    tiempoMinutos: 7,
-    dificultad: "inicial",
-    accent: "#EAEEF3",
-    pasos: [
-      {
-        orden: 1,
-        productoSlug: "cerave-espuma-limpiadora-normal-grasa",
-        momento: "am+pm",
-        nota: "Limpieza sin quitar aceites naturales. Agua tibia, nunca caliente.",
+        nota: "Empezar 2 noches por semana y subir recién cuando la piel no reaccione.",
       },
       {
         orden: 2,
-        productoSlug: "the-ordinary-hyaluronic-acid-2-b5",
+        productoSlug: "anua-pdrn-hyaluronic-capsule-serum",
+        sku: "ANUA-PDRN-30ML",
         momento: "am+pm",
-        nota: "Sobre piel ligeramente húmeda — clave para que retenga agua hacia adentro.",
+        nota: "PDRN + hialurónico: repara de noche y compensa la sequedad del retinal.",
       },
       {
         orden: 3,
-        productoSlug: "cosrx-snail-mucin-96-essence",
-        momento: "am+pm",
-        nota: "Sella y repara. Sensación glass-skin instantánea.",
-      },
-      {
-        orden: 4,
-        productoSlug: "beauty-of-joseon-relief-sun-spf-50",
+        productoSlug: "round-lab-birch-juice-sunscreen-spf50",
+        sku: "RL-BIRCH-SUN-50ML",
         momento: "am",
-        nota: "SPF 50+ con arroz + probióticos — cuida barrera al mismo tiempo.",
-      },
-    ],
-  },
-  {
-    slug: "barrera-sensibilizada",
-    nombre: "Barrera dañada",
-    tag: "Piel reactiva · rojeces",
-    descripcion:
-      "Para cuando exageraste con activos (retinol, exfoliantes) y ahora tu piel arde, se pone roja o descama. Reset de 3-4 semanas: cero activos, solo reparar. Ceramidas + mucina son el kit de emergencia probado.",
-    para: ["sensible", "reparacion", "sensibilidad", "barrera-cutanea"],
-    tiempoMinutos: 5,
-    dificultad: "inicial",
-    accent: "#E9F0EC",
-    pasos: [
-      {
-        orden: 1,
-        productoSlug: "cerave-espuma-limpiadora-normal-grasa",
-        momento: "am+pm",
-        nota: "Muy suave. Si arde, saltar la limpieza AM y solo enjuagar con agua.",
-      },
-      {
-        orden: 2,
-        productoSlug: "cosrx-snail-mucin-96-essence",
-        momento: "am+pm",
-        nota: "Repara y calma. Aplicar generoso mientras dure la fase reactiva.",
-      },
-      {
-        orden: 3,
-        productoSlug: "cerave-locion-hidratante-sa",
-        momento: "am+pm",
-        nota: "Ceramidas reponen la barrera lipídica. Fundamental.",
-      },
-      {
-        orden: 4,
-        productoSlug: "beauty-of-joseon-relief-sun-spf-50",
-        momento: "am",
-        nota: "SPF suave, sin filtros irritantes. Reaplicar con exposición.",
+        nota: "SPF50+ hidratante. Con retinal en la rutina, el protector deja de ser opcional.",
       },
     ],
     advertencia:
-      "Pausar cualquier activo (retinol, AHA/BHA, vitamina C) durante 3-4 semanas.",
+      "Retinal: nunca en embarazo o lactancia. Si arde o descama, bajar a una vez por semana antes de abandonar.",
   },
   {
-    slug: "proteccion-diaria",
-    nombre: "Protección diaria",
-    tag: "El mínimo no negociable",
+    slug: "piel-reactiva",
+    nombre: "Piel reactiva",
+    tag: "Rojeces y barrera dañada",
     descripcion:
-      "Si solo vas a hacer una rutina en tu vida, que sea esta. Limpieza suave, hidratación básica y SPF. 3 pasos, 3 minutos, evita 80% del envejecimiento fotoinducido. Cero excusas.",
-    para: ["normal", "proteccion-solar"],
-    tiempoMinutos: 3,
+      "Para cuando exageraste con activos y la piel arde, se pone roja o descama. Reset de 3-4 semanas sin ácidos ni retinoides: limpieza mínima, mucina de caracol para reparar y una crema de ceramidas que sella. Es la rutina de rescate, no la de todos los meses.",
+    para: ["sensible", "rojeces", "barrera-cutanea", "reparacion"],
+    tiempoMinutos: 5,
     dificultad: "inicial",
-    accent: "#F4EDDD",
+    accent: "#E9F0EC",
+    skus: ["MIXSOON-FOAM-150ML", "COSRX-SNAIL-100ML", "ALTHEA-345-50ML"],
+    precioLista: 243,
+    precioBundle: 219,
+    ahorro: 24,
     pasos: [
       {
         orden: 1,
-        productoSlug: "cerave-espuma-limpiadora-normal-grasa",
+        productoSlug: "mixsoon-centella-cleansing-foam",
+        sku: "MIXSOON-FOAM-150ML",
         momento: "am+pm",
-        nota: "Limpieza de una pasada. Simple.",
+        nota: "Muy suave. Si arde, saltar la limpieza AM y enjuagar solo con agua tibia.",
       },
       {
         orden: 2,
-        productoSlug: "cerave-locion-hidratante-sa",
+        productoSlug: "cosrx-advanced-snail-96-mucin-essence",
+        sku: "COSRX-SNAIL-100ML",
         momento: "am+pm",
-        nota: "Hidratante multiuso.",
+        nota: "Mucina al 96%: calma y repara. Generoso mientras dure la fase reactiva.",
       },
       {
         orden: 3,
-        productoSlug: "beauty-of-joseon-relief-sun-spf-50",
+        productoSlug: "dr-althea-345-relief-cream",
+        sku: "ALTHEA-345-50ML",
+        momento: "am+pm",
+        nota: "Ceramidas + pantenol para sellar. La capa que corta la deshidratación.",
+      },
+    ],
+    advertencia:
+      "Pausar todo activo (retinoides, AHA/BHA, vitamina C) durante 3-4 semanas. En AM sumá tu protector solar habitual: sigue siendo obligatorio.",
+  },
+  {
+    slug: "glow-evento",
+    nombre: "Glow para evento",
+    tag: "48 horas antes",
+    descripcion:
+      "Para la semana de la boda, la sesión de fotos o la fiesta. La mascarilla de bio-colágeno se usa la noche anterior y deja la piel jugosa y con el poro cerrado; el gua sha desinflama la mañana del evento. No cambia tu piel, la pone en su mejor día.",
+    para: ["evento", "luminosidad", "firmeza", "hidratacion"],
+    tiempoMinutos: 20,
+    dificultad: "inicial",
+    accent: "#F4EDDD",
+    skus: ["BIODANCE-MASK-4PK", "VLRZ-GUASHA-SET"],
+    precioLista: 124,
+    precioBundle: 109,
+    ahorro: 15,
+    pasos: [
+      {
+        orden: 1,
+        productoSlug: "biodance-bio-collagen-real-deep-mask",
+        sku: "BIODANCE-MASK-4PK",
+        momento: "pm",
+        nota: "La noche anterior: 3 horas puesta (o dormir con ella). El pack trae 4 — una por ocasión.",
+      },
+      {
+        orden: 2,
+        productoSlug: "veliroz-gua-sha-roller-set",
+        sku: "VLRZ-GUASHA-SET",
         momento: "am",
-        nota: "SPF 50+. Reaplicar si hay exposición prolongada.",
+        nota: "La mañana del evento: 5 minutos de arrastre hacia arriba para desinflamar y marcar el contorno.",
       },
     ],
   },
@@ -261,6 +261,11 @@ export function getRutina(slug: string): Rutina | null {
 
 export function allRutinaSlugs(): Array<{ slug: string }> {
   return RUTINAS.map((r) => ({ slug: r.slug }));
+}
+
+/** Slugs de producto únicos de una rutina, en orden de paso. */
+export function slugsDeRutina(rutina: Rutina): string[] {
+  return Array.from(new Set(rutina.pasos.map((p) => p.productoSlug)));
 }
 
 /* Etiqueta legible para dificultad y momento. */

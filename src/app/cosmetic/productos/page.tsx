@@ -1,5 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
+import { swatchFor } from "@/lib/marcas";
 import {
   getSupabase,
   PRODUCTO_SELECT,
@@ -33,21 +35,28 @@ const FACETS = {
   marca: {
     label: "Marca",
     options: [
-      { slug: "the-ordinary", label: "The Ordinary" },
-      { slug: "cerave", label: "CeraVe" },
+      { slug: "anua", label: "Anua" },
       { slug: "beauty-of-joseon", label: "Beauty of Joseon" },
+      { slug: "biodance", label: "BIODANCE" },
+      { slug: "celimax", label: "celimax" },
       { slug: "cosrx", label: "COSRX" },
-      { slug: "xhekpon", label: "Xhekpon" },
+      { slug: "dr-althea", label: "Dr.Althea" },
+      { slug: "mixsoon", label: "Mixsoon" },
+      { slug: "round-lab", label: "Round Lab" },
+      { slug: "skin1004", label: "SKIN1004" },
+      { slug: "veliroz", label: "Veliroz" },
     ],
   },
   categoria: {
     label: "Categoría",
     options: [
-      { slug: "serum", label: "Sérum" },
-      { slug: "limpiador", label: "Limpiador" },
       { slug: "protector-solar", label: "Protector solar" },
+      { slug: "serum", label: "Sérum" },
       { slug: "crema-hidratante", label: "Hidratante" },
       { slug: "essence", label: "Essence" },
+      { slug: "limpiador", label: "Limpiador" },
+      { slug: "mascarilla", label: "Mascarilla" },
+      { slug: "herramientas", label: "Herramientas" },
     ],
   },
   tipo_piel: {
@@ -63,30 +72,43 @@ const FACETS = {
   preocupacion: {
     label: "Preocupación",
     options: [
+      { slug: "proteccion-solar", label: "Protección solar" },
+      { slug: "manchas", label: "Manchas" },
+      { slug: "acne", label: "Acné" },
+      { slug: "marcas-post-acne", label: "Marcas post-acné" },
       { slug: "poros", label: "Poros" },
-      { slug: "grasitud", label: "Grasitud" },
       { slug: "hidratacion", label: "Hidratación" },
       { slug: "antiedad", label: "Antiedad" },
-      { slug: "marcas-post-acne", label: "Marcas post-acné" },
+      { slug: "arrugas", label: "Arrugas" },
+      { slug: "firmeza", label: "Firmeza" },
+      { slug: "luminosidad", label: "Luminosidad" },
       { slug: "sensibilidad", label: "Sensibilidad" },
+      { slug: "rojeces", label: "Rojeces" },
+      { slug: "barrera-cutanea", label: "Barrera cutánea" },
       { slug: "textura", label: "Textura" },
       { slug: "reparacion", label: "Reparación" },
-      { slug: "proteccion-solar", label: "Protección solar" },
-      { slug: "barrera-cutanea", label: "Barrera cutánea" },
+      { slug: "limpieza", label: "Limpieza" },
     ],
   },
   ingrediente: {
     label: "Ingrediente activo",
     options: [
+      { slug: "spf-50", label: "SPF 50+" },
       { slug: "niacinamida", label: "Niacinamida" },
       { slug: "ac-hialuronico", label: "Ác. hialurónico" },
-      { slug: "ac-salicilico", label: "Ác. salicílico" },
-      { slug: "ceramidas", label: "Ceramidas" },
+      { slug: "ac-tranexamico", label: "Ác. tranexámico" },
+      { slug: "retinal", label: "Retinal" },
+      { slug: "pdrn", label: "PDRN" },
       { slug: "mucina-caracol", label: "Mucina de caracol" },
-      { slug: "spf-50", label: "SPF 50" },
-      { slug: "colageno", label: "Colágeno" },
-      { slug: "zinc", label: "Zinc" },
+      { slug: "centella-asiatica", label: "Centella asiática" },
+      { slug: "ceramidas", label: "Ceramidas" },
       { slug: "peptidos", label: "Péptidos" },
+      { slug: "colageno", label: "Colágeno" },
+      { slug: "pantenol", label: "Pantenol" },
+      { slug: "madecassoside", label: "Madecassoside" },
+      { slug: "extracto-arroz", label: "Extracto de arroz" },
+      { slug: "savia-abedul", label: "Savia de abedul" },
+      { slug: "probioticos", label: "Probióticos" },
     ],
   },
   precio: {
@@ -110,14 +132,8 @@ const SORT_OPTIONS = [
 
 type SortSlug = (typeof SORT_OPTIONS)[number]["slug"];
 
-/* Colores por marca (mismo mood que los swatches del hero landing). */
-const MARCA_SWATCH: Record<string, string> = {
-  "the-ordinary": "#F7EFE6",
-  cerave: "#E9F0EC",
-  "beauty-of-joseon": "#F4EDDD",
-  cosrx: "#EFECE4",
-  xhekpon: "#F3E8E8",
-};
+/* Los colores por marca viven en @/lib/marcas (swatchFor) — misma fuente
+   que PDP, /marcas y el quiz, para que un swatch nuevo se agregue una vez. */
 
 /* ────────────────── Utilidades de URL state ────────────────── */
 
@@ -212,6 +228,25 @@ function variantePrincipal(p: Producto): Variante | undefined {
   const vs = p.variantes ?? [];
   if (vs.length === 0) return undefined;
   return [...vs].sort((a, b) => Number(a.precio) - Number(b.precio))[0];
+}
+
+/* ── Lectura type-safe de meta (jsonb → Record<string, unknown> | null) ──
+   Nunca confiamos en la forma del jsonb: si la clave falta o viene con otro
+   tipo devolvemos null/false y la card simplemente no pinta ese bloque. */
+
+function metaNumber(
+  meta: Record<string, unknown> | null | undefined,
+  key: string,
+): number | null {
+  const raw = meta?.[key];
+  return typeof raw === "number" && Number.isFinite(raw) ? raw : null;
+}
+
+function metaFlag(
+  meta: Record<string, unknown> | null | undefined,
+  key: string,
+): boolean {
+  return meta?.[key] === true;
 }
 
 /* ────────────────── Filtro + orden en JS ────────────────── */
@@ -540,53 +575,110 @@ export default async function ProductosPage({
 
 function ProductoCard({ producto }: { producto: Producto }) {
   const v = variantePrincipal(producto);
-  const marcaSlug = producto.marca?.slug ?? "";
-  const swatch = MARCA_SWATCH[marcaSlug] ?? "#EFECE4";
+  const marcaNombre = producto.marca?.nombre ?? "Veliroz";
+  const swatch = swatchFor(producto.marca?.slug);
   const tipoLabel = labelForCategoria(producto.categoria);
   const para = subheadPara(producto);
+
   const sinStock = !v || v.stock <= 0;
+  /* Pre-venta = sin stock a propósito (Gabriel compra al confirmar el pedido).
+     Solo mostramos "Agotado" cuando NO es pre-venta: de lo contrario todo el
+     catálogo se leería como agotado. */
+  const preventa = sinStock && metaFlag(producto.meta, "preventa");
+  const agotado = sinStock && !preventa;
+
+  const rating = metaNumber(producto.meta, "rating_ext");
+  const reviews = metaNumber(producto.meta, "reviews_ext");
 
   return (
     <Link
       href={`/cosmetic/producto/${producto.slug}`}
       className="prod-card group focus:outline-none focus-visible:ring-2 focus-visible:ring-ink"
     >
-      <div
-        className="aspect-[4/5] flex items-center justify-center relative"
-        style={{ background: swatch }}
-      >
-        {producto.destacado && (
-          <span className="absolute top-4 left-4 font-mono text-[9px] tracking-[0.2em] uppercase text-ink bg-cream px-2 py-1 rounded-sm">
-            · Hero ·
+      {/* ── MEDIA ── aspect-square: los packshots reales son 1:1 con fondo
+          blanco, así que la card los muestra completos (object-contain) sobre
+          una base blanca con un velo del color de marca. */}
+      <div className="relative aspect-square bg-white">
+        {producto.imagen_principal && (
+          <div
+            aria-hidden
+            className="absolute inset-0 opacity-25"
+            style={{ background: swatch }}
+          />
+        )}
+
+        {preventa && (
+          <span className="absolute top-4 left-4 z-10 font-mono text-[9px] tracking-wider uppercase text-ink bg-champagne px-2 py-1 rounded-sm">
+            · Pre-venta ·
           </span>
         )}
-        {sinStock && (
-          <span className="absolute top-4 right-4 font-mono text-[9px] tracking-[0.18em] uppercase text-cream bg-ink/85 px-2 py-1 rounded-sm">
+        {agotado && (
+          <span className="absolute top-4 left-4 z-10 font-mono text-[9px] tracking-[0.18em] uppercase text-cream bg-ink/85 px-2 py-1 rounded-sm">
             Agotado
           </span>
         )}
-        <div className="text-center px-6">
-          <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-taupe mb-3">
-            {tipoLabel}
-          </p>
-          <p className="font-serif text-xl text-ink italic leading-tight">
-            {producto.marca?.nombre ?? "Veliroz"}
-          </p>
-        </div>
+        {producto.destacado && (
+          <span className="absolute top-4 right-4 z-10 font-mono text-[9px] tracking-[0.2em] uppercase text-ink bg-cream px-2 py-1 rounded-sm">
+            · Hero ·
+          </span>
+        )}
+
+        {producto.imagen_principal ? (
+          <Image
+            src={producto.imagen_principal}
+            alt={`${marcaNombre} — ${producto.nombre}`}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-contain p-6"
+          />
+        ) : (
+          /* Sin foto todavía → placeholder tipográfico sobre el swatch pleno. */
+          <div
+            className="absolute inset-0 flex items-center justify-center"
+            style={{ background: swatch }}
+          >
+            <div className="text-center px-6">
+              <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-taupe mb-3">
+                {tipoLabel}
+              </p>
+              <p className="font-serif text-xl text-ink italic leading-tight">
+                {marcaNombre}
+              </p>
+            </div>
+          </div>
+        )}
       </div>
+
       <div className="p-5 flex-1 flex flex-col gap-3">
         <div className="space-y-1">
           <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-taupe">
-            {producto.marca?.nombre ?? "Veliroz"}
+            {marcaNombre}
           </p>
           <h3 className="font-serif text-base text-ink leading-snug text-pretty">
             {producto.nombre}
           </h3>
+
+          {rating != null && (
+            <div
+              className="flex items-center gap-1.5 pt-0.5"
+              title="Valoración internacional verificada"
+            >
+              <Estrellas rating={rating} />
+              <span className="font-mono text-[10px] text-clay">
+                <span className="sr-only">Valoración internacional: </span>
+                {rating}
+                {reviews != null &&
+                  ` · ${reviews.toLocaleString("es-PE")} reseñas`}
+              </span>
+            </div>
+          )}
+
           <p className="text-xs text-clay">
             {v?.variante_label ?? "—"}
             {para && ` · ${para}`}
           </p>
         </div>
+
         <div className="flex items-end justify-between pt-3 mt-auto border-t border-[--border]">
           <div>
             {v?.precio_antes != null && Number(v.precio_antes) > Number(v.precio) && (
@@ -597,6 +689,9 @@ function ProductoCard({ producto }: { producto: Producto }) {
             <p className="font-mono text-lg text-ink">
               {v ? `S/. ${Number(v.precio).toFixed(2)}` : "—"}
             </p>
+            {preventa && (
+              <p className="text-[10px] text-clay mt-0.5">Entrega 5-7 días</p>
+            )}
           </div>
           <span className="text-xs text-ink underline underline-offset-4 group-hover:text-rose-deep">
             Ver →
@@ -604,6 +699,25 @@ function ProductoCard({ producto }: { producto: Producto }) {
         </div>
       </div>
     </Link>
+  );
+}
+
+/* Estrellas de valoración externa (StyleKorean / Jolse / Amazon / Hwahae).
+   Rellenas = rating redondeado; el resto quedan en gris para que se lea
+   como una escala sobre 5 y no como una fila decorativa. */
+function Estrellas({ rating }: { rating: number }) {
+  const llenas = Math.round(rating);
+  return (
+    <span aria-hidden className="inline-flex items-center gap-px text-[10px] leading-none">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <span
+          key={i}
+          className={i <= llenas ? "text-champagne-dark" : "text-stone/40"}
+        >
+          ★
+        </span>
+      ))}
+    </span>
   );
 }
 
@@ -617,8 +731,8 @@ function EmptyState() {
         No encontramos productos con esos filtros.
       </h3>
       <p className="text-sm text-clay max-w-md mx-auto text-pretty">
-        Probá quitar algún filtro o volvé al catálogo completo — 7 productos
-        curados esperándote.
+        Probá quitar algún filtro o volvé al catálogo completo — todo el
+        curado de Veliroz esperándote.
       </p>
       <div className="pt-2">
         <Link href="/cosmetic/productos" className="btn-outline">

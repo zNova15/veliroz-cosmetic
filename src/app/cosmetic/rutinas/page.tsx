@@ -11,8 +11,9 @@ import { RUTINAS, DIFICULTAD_LABEL } from "@/lib/rutinas";
 
 export const metadata: Metadata = {
   title: "Rutinas curadas · según tu piel",
-  description:
-    "No compres productos, comprá rutinas. 6 secuencias curadas por objetivo — primera vez, acné, antiedad, hidratación, barrera dañada, protección diaria. 3-5 pasos, evidencia real, cero humo.",
+  description: `No compres productos, comprá rutinas. ${RUTINAS.length} secuencias curadas por objetivo — ${RUTINAS.map(
+    (r) => r.nombre.toLowerCase()
+  ).join(", ")}. 2-3 pasos, evidencia real, cero humo.`,
   alternates: { canonical: "/cosmetic/rutinas" },
 };
 
@@ -92,13 +93,21 @@ export default function RutinasPage() {
                 </li>
               </ul>
 
-              <div className="pt-4 mt-auto border-t border-[--border] flex items-center justify-between">
-                <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-taupe">
-                  Ver receta
-                </span>
+              <div className="pt-4 mt-auto border-t border-[--border] flex items-end justify-between gap-3">
+                <div>
+                  <p className="font-mono text-[10px] text-stone line-through">
+                    S/. {r.precioLista.toFixed(2)}
+                  </p>
+                  <p className="font-mono text-lg text-ink">
+                    S/. {r.precioBundle.toFixed(2)}
+                  </p>
+                  <p className="font-mono text-[9px] tracking-[0.16em] uppercase text-champagne-dark">
+                    Ahorrás S/{r.ahorro}
+                  </p>
+                </div>
                 <Link
                   href={`/cosmetic/rutinas/${r.slug}`}
-                  className="text-xs text-ink underline underline-offset-4 hover:text-rose-deep"
+                  className="text-xs text-ink underline underline-offset-4 hover:text-rose-deep shrink-0"
                 >
                   Ver rutina →
                 </Link>
@@ -106,6 +115,12 @@ export default function RutinasPage() {
             </article>
           ))}
         </div>
+
+        <p className="mt-8 text-[11px] text-stone text-center text-pretty max-w-xl mx-auto">
+          Todo el catálogo está en pre-venta: reservás hoy y despachamos en 5-7
+          días. El precio de rutina se aplica al confirmar tu reserva por
+          WhatsApp; el carrito suma los precios sueltos.
+        </p>
       </section>
 
       {/* ────────────────── CROSS-LINK QUIZ ────────────────── */}

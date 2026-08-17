@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -7,6 +8,7 @@ import {
   type RutinaCartItem,
 } from "@/components/AddRutinaToCartButton";
 import {
+  RUTINAS,
   getRutina,
   allRutinaSlugs,
   DIFICULTAD_LABEL,
@@ -123,6 +125,8 @@ export default async function RutinaDetallePage(
       varianteLabel: variante!.variante_label,
       precio: Number(variante!.precio),
       stock: Number(variante!.stock ?? 0),
+      /* Catálogo en pre-venta: stock 0 = reservable, no agotado. */
+      preventa: producto!.meta?.preventa === true,
     })
   );
 
@@ -191,6 +195,18 @@ export default async function RutinaDetallePage(
                     {DIFICULTAD_LABEL[rutina.dificultad]}
                   </dd>
                 </div>
+                <div className="flex justify-between pt-3 border-t border-[--border]">
+                  <dt className="text-clay">Suelto</dt>
+                  <dd className="text-stone font-mono line-through">
+                    S/. {rutina.precioLista.toFixed(2)}
+                  </dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className="text-clay">Rutina completa</dt>
+                  <dd className="text-ink font-mono">
+                    S/. {rutina.precioBundle.toFixed(2)}
+                  </dd>
+                </div>
               </dl>
 
               {rutina.para.length > 0 && (
@@ -230,7 +246,9 @@ export default async function RutinaDetallePage(
           {pasosResueltos.map(({ paso, producto, variante }) => {
             const swatch = swatchFor(producto?.marca?.slug ?? null);
             const marcaNombre = producto?.marca?.nombre ?? "—";
-            const sinStock = !variante || Number(variante.stock ?? 0) <= 0;
+            const enPreventa = producto?.meta?.preventa === true;
+            const sinStock =
+              !enPreventa && (!variante || Number(variante.stock ?? 0) <= 0);
 
             return (
               <li
@@ -245,15 +263,35 @@ export default async function RutinaDetallePage(
                     </span>
                   </div>
 
-                  {/* Swatch + marca */}
-                  <div
-                    className="hidden md:flex items-center justify-center py-6 border-r border-[--border]"
-                    style={{ background: swatch }}
-                  >
-                    <p className="font-italic-serif text-xl text-ink text-center px-4 leading-tight">
-                      {marcaNombre}
-                    </p>
-                  </div>
+                  {/* Packshot real (misma receta que landing/catálogo: base
+                      blanca + velo de marca, object-contain). Si el producto
+                      todavía no tiene foto —los sets Veliroz— cae al swatch
+                      tipográfico de antes. */}
+                  {producto?.imagen_principal ? (
+                    <div className="hidden md:block relative border-r border-[--border] bg-white">
+                      <div
+                        aria-hidden
+                        className="absolute inset-0 opacity-25"
+                        style={{ background: swatch }}
+                      />
+                      <Image
+                        src={producto.imagen_principal}
+                        alt={`${marcaNombre} — ${producto.nombre}`}
+                        fill
+                        sizes="180px"
+                        className="object-contain p-4"
+                      />
+                    </div>
+                  ) : (
+                    <div
+                      className="hidden md:flex items-center justify-center py-6 border-r border-[--border]"
+                      style={{ background: swatch }}
+                    >
+                      <p className="font-italic-serif text-xl text-ink text-center px-4 leading-tight">
+                        {marcaNombre}
+                      </p>
+                    </div>
+                  )}
 
                   {/* Contenido */}
                   <div className="p-5 md:p-6 space-y-2.5">
@@ -276,6 +314,11 @@ export default async function RutinaDetallePage(
                         <span className="font-mono text-ink">
                           S/. {Number(variante.precio).toFixed(2)}
                         </span>
+                      </p>
+                    )}
+                    {enPreventa && producto && (
+                      <p className="font-mono text-[10px] tracking-[0.18em] uppercase text-champagne-dark">
+                        · Pre-venta · entrega 5-7 días
                       </p>
                     )}
                     {sinStock && producto && (
@@ -324,6 +367,8 @@ export default async function RutinaDetallePage(
           <AddRutinaToCartButton
             items={carritoItems}
             rutinaNombre={rutina.nombre}
+            precioBundle={rutina.precioBundle}
+            ahorro={rutina.ahorro}
           />
         </div>
       </section>
@@ -337,7 +382,7 @@ export default async function RutinaDetallePage(
               href="/cosmetic/rutinas"
               className="text-ink underline underline-offset-4"
             >
-              6 rutinas curadas
+              {RUTINAS.length} rutinas curadas
             </Link>{" "}
             o hacé el{" "}
             <Link

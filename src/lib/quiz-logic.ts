@@ -5,14 +5,18 @@
    `recomendarRutina(perfil)` devuelve la rutina hero (2-4 slugs reales).
 
    Los slugs devueltos deben existir en `public.productos` con
-   `linea_negocio='cosmetic'` — verificado contra la BD 2026-08-16:
-     · cerave-espuma-limpiadora-normal-grasa   (limpiador)
-     · cerave-locion-hidratante-sa             (crema-hidratante)
-     · the-ordinary-niacinamida-10-zinc-1      (serum · niacinamida)
-     · the-ordinary-hyaluronic-acid-2-b5       (serum · ácido hialurónico)
-     · cosrx-snail-mucin-96-essence            (essence · reparación)
-     · xhekpon-crema-cuello-rostro             (crema-hidratante · antiedad)
-     · beauty-of-joseon-relief-sun-spf-50      (protector-solar)
+   `linea_negocio='cosmetic'` — verificados contra la BD 2026-08-16
+   (migración 013, catálogo real de 12 SKUs):
+     · mixsoon-centella-cleansing-foam         (limpiador · centella)
+     · dr-althea-345-relief-cream              (crema-hidratante · ceramidas)
+     · anua-niacinamide-10-txa-4-serum         (serum · niacinamida + TXA)
+     · anua-pdrn-hyaluronic-capsule-serum      (serum · PDRN + hialurónico)
+     · celimax-vita-a-retinal-shot             (serum · retinal)
+     · cosrx-advanced-snail-96-mucin-essence   (essence · mucina de caracol)
+     · beauty-of-joseon-relief-sun-spf50       (protector-solar)
+     · round-lab-birch-juice-sunscreen-spf50   (protector-solar · hidratante)
+     · skin1004-madagascar-sun-serum-spf50     (protector-solar · centella)
+     · biodance-bio-collagen-real-deep-mask    (mascarilla · colágeno)
    ============================================================ */
 
 /* -------------------- Tipos base -------------------- */
@@ -163,18 +167,18 @@ export interface Rutina {
 
 /* Tabla hardcoded: perfil de rutina → producto hero por paso.
    Máximo 4 slugs para no abrumar; siempre incluye SPF (paso no negociable).
-   Los slugs se verificaron en Supabase 2026-08-16 (linea_negocio='cosmetic'). */
+   Los slugs se verificaron en Supabase 2026-08-16 (linea_negocio='cosmetic',
+   migración 013 — catálogo real de 12 SKUs, todos en pre-venta). */
 const RUTINAS: Record<string, Rutina> = {
   antiedad: {
     slug: "antiedad",
     rutina_nombre: "Rutina Antiedad · Firmeza + luminosidad",
     descripcion:
-      "Hidratación profunda, reparación con mucina y firmeza con colágeno — cerrada con SPF alto para no perder terreno.",
+      "Retinal de noche para líneas finas, PDRN + hialurónico para reparar y rellenar, y un SPF hidratante que evita perder lo ganado.",
     productos_slugs: [
-      "the-ordinary-hyaluronic-acid-2-b5",
-      "cosrx-snail-mucin-96-essence",
-      "xhekpon-crema-cuello-rostro",
-      "beauty-of-joseon-relief-sun-spf-50",
+      "celimax-vita-a-retinal-shot",
+      "anua-pdrn-hyaluronic-capsule-serum",
+      "round-lab-birch-juice-sunscreen-spf50",
     ],
     filtro_url: "/cosmetic/productos?preocupacion=antiedad",
   },
@@ -182,23 +186,23 @@ const RUTINAS: Record<string, Rutina> = {
     slug: "manchas",
     rutina_nombre: "Rutina Antimanchas · Tono uniforme",
     descripcion:
-      "Niacinamida al 10% para aclarar marcas, mucina de caracol para reparar y SPF 50 para bloquear que aparezcan más.",
+      "Niacinamida 10% + ácido tranexámico 4% para aclarar marcas, mucina de caracol para reparar y SPF 50 para bloquear que aparezcan más.",
     productos_slugs: [
-      "the-ordinary-niacinamida-10-zinc-1",
-      "cosrx-snail-mucin-96-essence",
-      "beauty-of-joseon-relief-sun-spf-50",
+      "anua-niacinamide-10-txa-4-serum",
+      "cosrx-advanced-snail-96-mucin-essence",
+      "skin1004-madagascar-sun-serum-spf50",
     ],
-    filtro_url: "/cosmetic/productos?preocupacion=marcas-post-acne",
+    filtro_url: "/cosmetic/productos?preocupacion=manchas",
   },
   "acne-graso": {
     slug: "acne-graso",
     rutina_nombre: "Rutina Piel Grasa · Poros + grasitud",
     descripcion:
-      "Limpieza en profundidad sin agredir la barrera, niacinamida para regular el sebo y SPF ligero que no engrasa.",
+      "Limpieza con centella que no agrede la barrera, niacinamida para regular el sebo y afinar poros, y SPF ligero que no engrasa.",
     productos_slugs: [
-      "cerave-espuma-limpiadora-normal-grasa",
-      "the-ordinary-niacinamida-10-zinc-1",
-      "beauty-of-joseon-relief-sun-spf-50",
+      "mixsoon-centella-cleansing-foam",
+      "anua-niacinamide-10-txa-4-serum",
+      "beauty-of-joseon-relief-sun-spf50",
     ],
     filtro_url: "/cosmetic/productos?tipo_piel=grasa&preocupacion=poros",
   },
@@ -206,11 +210,11 @@ const RUTINAS: Record<string, Rutina> = {
     slug: "hidratacion",
     rutina_nombre: "Rutina Hidratación · Piel calmada",
     descripcion:
-      "Ácido hialurónico para reponer agua, mucina de caracol para reparar la barrera y SPF calmante con arroz + probióticos.",
+      "Limpieza suave que no reseca, PDRN + hialurónico para reponer agua y firmeza, y un SPF de savia de abedul que hidrata mientras protege.",
     productos_slugs: [
-      "the-ordinary-hyaluronic-acid-2-b5",
-      "cosrx-snail-mucin-96-essence",
-      "beauty-of-joseon-relief-sun-spf-50",
+      "mixsoon-centella-cleansing-foam",
+      "anua-pdrn-hyaluronic-capsule-serum",
+      "round-lab-birch-juice-sunscreen-spf50",
     ],
     filtro_url: "/cosmetic/productos?tipo_piel=seca&preocupacion=hidratacion",
   },
@@ -218,11 +222,11 @@ const RUTINAS: Record<string, Rutina> = {
     slug: "primera-vez",
     rutina_nombre: "Rutina Primer Paso · 3 productos esenciales",
     descripcion:
-      "Sin ácidos ni activos fuertes. Limpieza suave, hidratación con ceramidas y SPF alto — la base sobre la que se construye todo.",
+      "Sin ácidos ni activos fuertes. Limpieza suave, crema de ceramidas y SPF alto — la base sobre la que se construye todo lo demás.",
     productos_slugs: [
-      "cerave-espuma-limpiadora-normal-grasa",
-      "cerave-locion-hidratante-sa",
-      "beauty-of-joseon-relief-sun-spf-50",
+      "mixsoon-centella-cleansing-foam",
+      "dr-althea-345-relief-cream",
+      "beauty-of-joseon-relief-sun-spf50",
     ],
     filtro_url: "/cosmetic/productos",
   },
@@ -230,11 +234,11 @@ const RUTINAS: Record<string, Rutina> = {
     slug: "sensibilidad",
     rutina_nombre: "Rutina Piel Sensible · Reparación suave",
     descripcion:
-      "Sin ácidos ni fragancias agresivas. Hidratación con hialurónico, reparación con mucina y SPF calmante.",
+      "Sin ácidos ni fragancias agresivas. Limpieza con centella, crema de ceramidas + péptidos para reparar la barrera y SPF calmante con madecassoside.",
     productos_slugs: [
-      "the-ordinary-hyaluronic-acid-2-b5",
-      "cosrx-snail-mucin-96-essence",
-      "beauty-of-joseon-relief-sun-spf-50",
+      "mixsoon-centella-cleansing-foam",
+      "dr-althea-345-relief-cream",
+      "skin1004-madagascar-sun-serum-spf50",
     ],
     filtro_url: "/cosmetic/productos?tipo_piel=sensible",
   },

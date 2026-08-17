@@ -16,6 +16,10 @@ import { trackAddToCart } from "@/lib/track";
    Estado 100% cliente. El precio y stock se toman del snapshot del server
    (variantes vienen como prop) — la fuente de verdad sigue siendo Supabase
    al momento de checkout.
+
+   MODO PRE-VENTA (prop `preventa` + stock 0): el stock 0 NO significa
+   agotado sino "todavía no comprado". Se muestra bloque champagne, el CTA
+   dice "Reservar" y sigue agregando al carrito con normalidad.
    ============================================================ */
 
 interface Props {
@@ -24,10 +28,14 @@ interface Props {
   marcaNombre: string;
   imagenSwatch: string;
   variantes: Variante[];
+  /** meta.preventa del producto — stock 0 se lee como reserva, no agotado. */
+  preventa?: boolean;
   waNumero?: string;
 }
 
 const WA_DEFAULT = "51967456364";
+/* Tope de unidades reservables cuando no hay stock físico todavía. */
+const MAX_PREVENTA = 10;
 
 export function AddToCartButton({
   productoSlug,
@@ -35,6 +43,7 @@ export function AddToCartButton({
   marcaNombre,
   imagenSwatch,
   variantes,
+  preventa = false,
   waNumero = WA_DEFAULT,
 }: Props) {
   // Ya llegan ordenadas del server (order('orden')). Solo filtramos activas.
@@ -66,9 +75,12 @@ export function AddToCartButton({
   }
 
   const stock = Number(variante.stock ?? 0);
-  const agotado = stock <= 0;
+  const enPreventa = preventa && stock <= 0;
+  const agotado = stock <= 0 && !enPreventa;
   const stockLimitado = stock > 0 && stock <= 5;
-  const maxCantidad = Math.max(1, Math.min(stock, 20));
+  const maxCantidad = enPreventa
+    ? MAX_PREVENTA
+    : Math.max(1, Math.min(stock, 20));
 
   const handleAdd = () => {
     if (agotado) return;
@@ -99,7 +111,9 @@ export function AddToCartButton({
   };
 
   const waHref = `https://wa.me/${waNumero}?text=${encodeURIComponent(
-    `Hola, quiero consultar por ${productoNombre} (${variante.variante_label}).`
+    enPreventa
+      ? `Hola, quiero reservar ${productoNombre} (${variante.variante_label}).`
+      : `Hola, quiero consultar por ${productoNombre} (${variante.variante_label}).`
   )}`;
 
   return (
@@ -113,7 +127,8 @@ export function AddToCartButton({
           <div className="flex flex-wrap gap-2">
             {activasOrdenadas.map((v) => {
               const activa = v.id === variante.id;
-              const sinStock = Number(v.stock ?? 0) <= 0;
+              // En pre-venta el stock 0 es lo normal → no tachar nada.
+              const sinStock = !preventa && Number(v.stock ?? 0) <= 0;
               return (
                 <button
                   key={v.id}
@@ -154,7 +169,17 @@ export function AddToCartButton({
         )}
       </div>
 
-      {/* Stock */}
+      {/* Stock — o bloque de pre-venta si todavía no hay unidades compradas */}
+      {enPreventa ? (
+        <div className="rounded-lg border border-champagne/60 bg-champagne/15 px-4 py-3.5 space-y-1.5">
+          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-champagne-dark">
+            · Pre-venta ·
+          </p>
+          <p className="text-sm text-clay leading-relaxed text-pretty">
+            Reservá tu unidad. Entrega estimada 5-7 días hábiles.
+          </p>
+        </div>
+      ) : (
       <div className="text-sm">
         {agotado ? (
           <span className="inline-flex items-center gap-2 text-[--veliroz-danger]">
@@ -173,6 +198,7 @@ export function AddToCartButton({
           </span>
         )}
       </div>
+      )}
 
       {/* Cantidad */}
       {!agotado && (
@@ -216,7 +242,7 @@ export function AddToCartButton({
         disabled={agotado}
         className="btn-primary w-full justify-center disabled:opacity-40 disabled:cursor-not-allowed"
       >
-        {agotado ? "Agotado" : "Agregar al carrito"}
+        {agotado ? "Agotado" : enPreventa ? "Reservar" : "Agregar al carrito"}
         {!agotado && (
           <svg
             className="w-4 h-4"
@@ -244,7 +270,7 @@ export function AddToCartButton({
 
       <Toast
         open={toastOpen}
-        mensaje="Agregado al carrito"
+        mensaje={enPreventa ? "Reserva agregada al carrito" : "Agregado al carrito"}
         subMensaje={`${cantidad} × ${variante.variante_label}`}
       />
     </div>

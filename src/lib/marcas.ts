@@ -10,6 +10,15 @@ export const MARCA_SWATCH: Record<string, string> = {
   "beauty-of-joseon": "#F4EDDD",
   cosrx: "#EFECE4",
   xhekpon: "#F3E8E8",
+  /* Catálogo K-beauty real (migración 013) */
+  "round-lab": "#E8F0F2",
+  skin1004: "#E9F1E7",
+  anua: "#F3EDE4",
+  "dr-althea": "#F1ECF3",
+  biodance: "#EAF0F4",
+  celimax: "#F6EDE2",
+  mixsoon: "#EDF1EA",
+  veliroz: "#F5E9EA",
 };
 
 export function swatchFor(marcaSlug: string | null | undefined): string {

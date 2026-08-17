@@ -6,6 +6,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import {
   AddRutinaToCartButton,
   type RutinaCartItem,
+  type RutinaBundle,
 } from "@/components/AddRutinaToCartButton";
 import {
   RUTINAS,
@@ -61,9 +62,18 @@ export async function generateMetadata(
 
 /* ────────────────── Data ────────────────── */
 
-/** Trae todos los productos de una rutina en una sola query. */
+/**
+ * Trae los productos de los pasos Y, en la misma query, el bundle comprable
+ * de la rutina (producto tipo='bundle', slug `rutina-<slug>`, migración 017).
+ * Va junto para no pagar un segundo round-trip a Supabase.
+ */
 async function fetchProductosDeRutina(rutina: Rutina): Promise<Producto[]> {
-  const slugs = Array.from(new Set(rutina.pasos.map((p) => p.productoSlug)));
+  const slugs = Array.from(
+    new Set([
+      ...rutina.pasos.map((p) => p.productoSlug),
+      `rutina-${rutina.slug}`,
+    ]),
+  );
   if (slugs.length === 0) return [];
   const { data, error } = await getSupabase()
     .from("productos")
@@ -127,8 +137,26 @@ export default async function RutinaDetallePage(
       stock: Number(variante!.stock ?? 0),
       /* Catálogo en pre-venta: stock 0 = reservable, no agotado. */
       preventa: producto!.meta?.preventa === true,
-    })
+    }),
   );
+
+  /* Bundle comprable de esta rutina. Si existe, el botón cobra un solo ítem
+     al precio de la rutina en vez de sumar los sueltos. Se exige que el SKU
+     coincida con rutinas.ts para no cobrar un precio que la página no anunció. */
+  const productoBundle = bySlug.get(`rutina-${rutina.slug}`);
+  const varianteBundle = productoBundle
+    ? varianteReferencia(productoBundle)
+    : undefined;
+  const bundle: RutinaBundle | null =
+    productoBundle && varianteBundle && varianteBundle.sku === rutina.bundleSku
+      ? {
+          sku: varianteBundle.sku,
+          productoSlug: productoBundle.slug,
+          nombre: productoBundle.nombre,
+          precio: Number(varianteBundle.precio),
+          preventa: productoBundle.meta?.preventa === true,
+        }
+      : null;
 
   return (
     <main className="min-h-screen">
@@ -369,6 +397,7 @@ export default async function RutinaDetallePage(
             rutinaNombre={rutina.nombre}
             precioBundle={rutina.precioBundle}
             ahorro={rutina.ahorro}
+            bundle={bundle}
           />
         </div>
       </section>

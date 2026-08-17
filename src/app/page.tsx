@@ -42,6 +42,7 @@ const MAX_CARDS = 8;
 
 /* Etiqueta legible por categoría — mismos slugs que usa el catálogo. */
 const CATEGORIA_LABEL: Record<string, string> = {
+  rutina: "Rutina completa",
   serum: "Sérum",
   limpiador: "Limpiador",
   "protector-solar": "Protector solar",

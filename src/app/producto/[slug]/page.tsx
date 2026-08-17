@@ -216,12 +216,14 @@ export async function generateMetadata(
 /* ────────────────── Página ────────────────── */
 
 const LABELS_CATEGORIA: Record<string, string> = {
+  rutina: "Rutina completa",
   serum: "Sérum",
   limpiador: "Limpiador",
   "protector-solar": "Protector solar",
   "crema-hidratante": "Hidratante",
   essence: "Essence",
   mascarilla: "Mascarilla",
+  herramientas: "Herramientas",
   tonico: "Tónico",
 };
 

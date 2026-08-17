@@ -13,11 +13,19 @@ import { Toast } from "./Toast";
    MODO PRE-VENTA (item.preventa + stock 0): igual que en AddToCartButton,
    stock 0 no es "agotado" sino "todavía no comprado" → el ítem se reserva.
 
-   `precioBundle` es el precio de la rutina completa (copy de
-   src/lib/rutinas.ts). El carrito sigue cobrando precio por ítem: el
-   ajuste de rutina se aplica al confirmar la reserva por WhatsApp, y así
-   se avisa en pantalla — nunca mostramos un total que no vamos a cobrar
-   sin decir cómo se llega a él.
+   DOS MODOS DE COBRO:
+
+   1. `bundle` presente (lo normal desde la migración 017) — se agrega UN
+      ítem, el SKU del bundle, al precio de la rutina. El carrito muestra
+      exactamente lo que promete la página y el checkout cobra eso.
+
+   2. `bundle` ausente (fallback) — se agregan los N productos sueltos y
+      el carrito suma los precios de lista. Este era el único modo antes:
+      el descuento de rutina se ajustaba a mano al confirmar por WhatsApp,
+      así que el cliente veía S/247 después de que la página le dijera
+      S/225. Se mantiene sólo para rutinas sin bundle creado, y avisa en
+      pantalla cómo se llega al total — nunca mostramos un número que no
+      vamos a cobrar sin explicar la diferencia.
    ============================================================ */
 
 export interface RutinaCartItem {
@@ -33,6 +41,16 @@ export interface RutinaCartItem {
   preventa?: boolean;
 }
 
+/** Bundle comprable que espeja la rutina (variantes_producto del tipo bundle). */
+export interface RutinaBundle {
+  sku: string;
+  productoSlug: string;
+  nombre: string;
+  precio: number;
+  /** true si el bundle está en pre-venta (stock 0 = reserva, no agotado). */
+  preventa: boolean;
+}
+
 interface Props {
   items: RutinaCartItem[];
   rutinaNombre: string;
@@ -40,6 +58,8 @@ interface Props {
   precioBundle?: number;
   /** Ahorro respecto de comprar suelto (S/). */
   ahorro?: number;
+  /** Si viene, se cobra como un solo ítem en vez de N sueltos. */
+  bundle?: RutinaBundle | null;
 }
 
 export function AddRutinaToCartButton({
@@ -47,6 +67,7 @@ export function AddRutinaToCartButton({
   rutinaNombre,
   precioBundle,
   ahorro,
+  bundle,
 }: Props) {
   const add = useCartStore((s) => s.add);
   const [toastOpen, setToastOpen] = useState(false);
@@ -60,6 +81,30 @@ export function AddRutinaToCartButton({
 
   const handleAdd = () => {
     if (noHayNada) return;
+
+    /* Modo bundle: un solo ítem al precio de la rutina. */
+    if (bundle) {
+      add({
+        sku: bundle.sku,
+        cantidad: 1,
+        snapshot: makeSnapshot({
+          productoSlug: bundle.productoSlug,
+          productoNombre: bundle.nombre,
+          marcaNombre: "Veliroz",
+          varianteLabel: `Rutina completa · ${disponibles.length} productos`,
+          precio: Number(bundle.precio),
+          imagenSwatch: swatchFor("veliroz"),
+        }),
+      });
+      setSubMensaje(
+        `${disponibles.length} productos · S/. ${Number(bundle.precio).toFixed(2)}`,
+      );
+      setToastOpen(true);
+      window.setTimeout(() => setToastOpen(false), 2800);
+      return;
+    }
+
+    /* Fallback: los productos sueltos. */
     let agregados = 0;
     for (const it of disponibles) {
       add({
@@ -81,8 +126,10 @@ export function AddRutinaToCartButton({
     window.setTimeout(() => setToastOpen(false), 2800);
   };
 
+  /* Con bundle el precio a mostrar es el del bundle; sin él, el copy de la rutina. */
+  const precioMostrado = bundle ? Number(bundle.precio) : precioBundle;
   const hayAjuste =
-    typeof precioBundle === "number" && precioBundle < totalRutina;
+    typeof precioMostrado === "number" && precioMostrado < totalRutina;
 
   return (
     <div className="space-y-3">
@@ -97,16 +144,18 @@ export function AddRutinaToCartButton({
             </span>
           )}
           <span className="font-mono text-2xl text-ink">
-            S/. {(hayAjuste ? precioBundle! : totalRutina).toFixed(2)}
+            S/. {(hayAjuste ? precioMostrado! : totalRutina).toFixed(2)}
           </span>
         </span>
       </div>
 
       {hayAjuste && (
         <p className="text-[11px] text-clay text-center text-pretty">
-          Ahorrás S/{ahorro ?? Math.round(totalRutina - precioBundle!)} llevando
-          la rutina completa. El carrito suma los precios sueltos: el ajuste de
-          rutina lo aplicamos al confirmar tu reserva por WhatsApp.
+          Ahorrás S/{ahorro ?? Math.round(totalRutina - precioMostrado!)} llevando
+          la rutina completa
+          {bundle
+            ? " — es el precio que va al carrito."
+            : ". El carrito suma los precios sueltos: el ajuste de rutina lo aplicamos al confirmar tu reserva por WhatsApp."}
         </p>
       )}
 

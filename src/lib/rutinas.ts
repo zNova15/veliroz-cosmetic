@@ -51,6 +51,15 @@ export interface Rutina {
   accent: string; // color de fondo card
   /** SKUs reales de la rutina, en orden de uso. */
   skus: string[];
+  /**
+   * SKU del bundle comprable que espeja esta rutina (migración 017).
+   * Con esto el carrito lleva UN ítem al precio de la rutina en vez de
+   * N sueltos: antes el carrito sumaba `precioLista` y el descuento se
+   * ajustaba a mano por WhatsApp, así que el cliente veía un total
+   * distinto al que le prometía la página.
+   * Si es null, el botón vuelve al modo viejo (ítems sueltos).
+   */
+  bundleSku: string | null;
   /** Suma de los PVP individuales (S/). */
   precioLista: number;
   /** Precio llevando la rutina completa (S/). */
@@ -73,6 +82,7 @@ export const RUTINAS: Rutina[] = [
     dificultad: "inicial",
     accent: "#F7EFE6",
     skus: ["MIXSOON-FOAM-150ML", "ALTHEA-345-50ML", "BOJ-SUN-50ML"],
+    bundleSku: "RUTINA-PRIMERA-VEZ",
     precioLista: 247,
     precioBundle: 225,
     ahorro: 22,
@@ -111,6 +121,7 @@ export const RUTINAS: Rutina[] = [
     dificultad: "intermedia",
     accent: "#EEE4D8",
     skus: ["MIXSOON-FOAM-150ML", "ANUA-NIACIN-TXA-30ML", "S1004-SUNSERUM-50ML"],
+    bundleSku: "RUTINA-MANCHAS-TONO",
     precioLista: 253,
     precioBundle: 229,
     ahorro: 24,
@@ -151,6 +162,7 @@ export const RUTINAS: Rutina[] = [
     dificultad: "avanzada",
     accent: "#F3E8E8",
     skus: ["CELIMAX-RETINAL-15ML", "ANUA-PDRN-30ML", "RL-BIRCH-SUN-50ML"],
+    bundleSku: "RUTINA-ANTIEDAD-HON",
     precioLista: 289,
     precioBundle: 259,
     ahorro: 30,
@@ -191,6 +203,7 @@ export const RUTINAS: Rutina[] = [
     dificultad: "inicial",
     accent: "#E9F0EC",
     skus: ["MIXSOON-FOAM-150ML", "COSRX-SNAIL-100ML", "ALTHEA-345-50ML"],
+    bundleSku: "RUTINA-PIEL-REACTIVA",
     precioLista: 243,
     precioBundle: 219,
     ahorro: 24,
@@ -231,6 +244,7 @@ export const RUTINAS: Rutina[] = [
     dificultad: "inicial",
     accent: "#F4EDDD",
     skus: ["BIODANCE-MASK-4PK", "VLRZ-GUASHA-SET"],
+    bundleSku: "RUTINA-GLOW-EVENTO",
     precioLista: 124,
     precioBundle: 109,
     ahorro: 15,

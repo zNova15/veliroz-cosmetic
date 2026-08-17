@@ -1,0 +1,28 @@
+-- ============================================================
+-- 016 — Bundles de rutina  ⚠️ REVERTIDA POR LA 017
+-- Aplicada: 2026-08-17 · project usfpzlxmmgruydqbymsx
+-- ============================================================
+--
+-- QUÉ HIZO: creó 3 productos tipo='bundle' ("Rutina Primeros Pasos"
+-- S/209, "Rutina Manchas y Marcas" S/305, "Rutina Antiedad" S/335)
+-- con sus variantes y su bundle_composicion.
+--
+-- POR QUÉ ESTÁ VACÍA: fue un error. El front ya tenía 5 rutinas
+-- curadas en src/lib/rutinas.ts con SUS PROPIOS SKUs y precios
+-- (primera-vez S/225, manchas-tono-desparejo S/229, antiedad-honesta
+-- S/259, piel-reactiva S/219, glow-evento S/109), y esta migración
+-- inventó composiciones y precios distintos sin mirarlos. Quedaban
+-- dos fuentes de verdad contradictorias: /rutinas ofrecía "Primera
+-- vez" a S/225 con 3 productos y /productos "Rutina Primeros Pasos"
+-- a S/209 con otros 3.
+--
+-- La 017 borra todo lo que creó esta y lo rehace espejando
+-- rutinas.ts. El SQL original no se conserva porque no aporta al
+-- estado final: aplicar 017 sobre una base sin 016 da el mismo
+-- resultado (sus DELETE son no-ops si no hay nada que borrar).
+--
+-- LECCIÓN: antes de sembrar datos de catálogo, revisar si el front
+-- ya tiene una capa curada que los defina. Ver MIGRACIONES.md.
+-- ============================================================
+
+-- Intencionalmente sin sentencias. Ver 017_bundles_alineados_a_rutinas.sql.

@@ -50,6 +50,9 @@ const FACETS = {
   categoria: {
     label: "Categoría",
     options: [
+      /* Rutinas primero: son los bundles (productos tipo='bundle') y lo que
+         queremos que el visitante mire antes que los productos sueltos. */
+      { slug: "rutina", label: "Rutinas completas" },
       { slug: "protector-solar", label: "Protector solar" },
       { slug: "serum", label: "Sérum" },
       { slug: "crema-hidratante", label: "Hidratante" },

@@ -28,6 +28,8 @@ Por eso las migraciones están repartidas entre repos y conviene tener el orden 
 | 20260817015759 | `013_catalogo_real_12_skus` | ⚠️ **solo en Studio** | Catálogo real: 8 marcas nuevas + 12 productos + 12 variantes, borra el seed de la 008 |
 | 20260817044338 | `014_fix_imagen_mixsoon` | ⚠️ **solo en Studio** | Mixsoon apuntaba al packshot de Purito → `imagen_principal = null` |
 | — | `015_desactivar_marcas_sin_productos` | ⚠️ **solo en Studio** | The Ordinary, CeraVe y Xhekpon quedaron sin productos → `activo = false` |
+| 20260817… | `016_bundles_rutina` | `veliroz-cosmetic/supabase/migrations/` | ⚠️ **revertida por la 017.** Creó 3 bundles inventando precios y composiciones, ignorando que `src/lib/rutinas.ts` ya definía 5 rutinas curadas. El .sql quedó sin sentencias (su contenido no aporta al estado final) |
+| 20260817… | `017_bundles_alineados_a_rutinas` | idem | Deshace la 016 y crea **un bundle comprable por rutina** espejando `rutinas.ts` (mismos SKUs, mismos precios, mismos textos) + `meta.rutina_slug`. Así el carrito cobra el precio que la página anuncia en vez de sumar los sueltos |
 
 ## El riesgo
 
@@ -63,4 +65,12 @@ guardar el `.sql` acá.
 2. **Las de Cosmetic van en este repo**, las del CRM en `Veliroz CRM`, las de
    Flores en `Veliroz Flores eternas`.
 3. **Toda migración aplicada en Studio se commitea el mismo día.** Es la regla
-   que se rompió acá y por eso existe este documento.
+   que se rompió acá y por eso existe este documento. Las 016 y 017 sí están
+   versionadas; las ⚠️ de arriba siguen pendientes de `db pull`.
+4. **Antes de sembrar datos de catálogo, revisar si el front ya los define.**
+   La 016 creó bundles con precios propios sin ver que `src/lib/rutinas.ts`
+   ya tenía 5 rutinas curadas con SUS precios, y dejó dos fuentes de verdad
+   contradictorias (la misma rutina a S/225 en un lado y S/209 en el otro).
+   El catálogo de Cosmetic vive en tres capas —`productos`/`variantes_producto`
+   en la BD, `rutinas.ts` para las rutinas curadas y los `FACETS` hardcodeados
+   de `productos/page.tsx`— y cambiar una obliga a mirar las otras dos.

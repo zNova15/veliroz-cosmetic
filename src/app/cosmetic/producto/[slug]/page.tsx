@@ -13,6 +13,7 @@ import { swatchFor } from "@/lib/marcas";
 import { Gallery } from "@/components/Gallery";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { ProductTabs } from "@/components/ProductTabs";
+import { ViewProductTracker } from "@/components/ViewProductTracker";
 
 /* ============================================================
    Veliroz Cosmetic — /cosmetic/producto/[slug]
@@ -279,10 +280,18 @@ export default async function ProductoPage(
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* ────────────────── NAV ────────────────── */}
-      <PDPNav />
-      <div className="h-[68px]" />
+      {/* Analytics: view_item / ViewContent — dispara al montar en cliente */}
+      {varianteRef && (
+        <ViewProductTracker
+          sku={varianteRef.sku}
+          marca={marca?.nombre ?? "Veliroz"}
+          precio={Number(varianteRef.precio)}
+          productoNombre={producto.nombre}
+          categoria={producto.categoria}
+        />
+      )}
 
+      {/* NAV + spacer los provee /cosmetic/layout.tsx */}
       {/* ────────────────── BREADCRUMB ────────────────── */}
       <div className="max-w-7xl mx-auto px-6 md:px-10 pt-8">
         <nav aria-label="Breadcrumb" className="font-mono text-[10px] uppercase tracking-[0.22em] text-taupe">
@@ -478,50 +487,6 @@ export default async function ProductoPage(
 }
 
 /* ────────────────── SUB-COMPONENTES SERVER ────────────────── */
-
-function PDPNav() {
-  return (
-    <nav className="fixed top-0 inset-x-0 z-40 bg-cream/85 backdrop-blur-md border-b border-[--border]">
-      <div className="max-w-7xl mx-auto px-6 md:px-10 py-4 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2.5 shrink-0">
-          <span className="w-8 h-8 rounded-full bg-ink text-cream flex items-center justify-center font-serif italic text-lg font-bold">
-            V
-          </span>
-          <div className="hidden sm:flex flex-col leading-none">
-            <span className="font-serif text-ink text-base font-semibold tracking-tight">
-              Veliroz
-            </span>
-            <span className="text-[9px] tracking-[0.18em] text-clay uppercase mt-1">
-              Cosmetic
-            </span>
-          </div>
-        </Link>
-        <div className="hidden md:flex items-center gap-8 text-sm">
-          <Link href="/cosmetic/productos" className="text-clay hover:text-ink">
-            Productos
-          </Link>
-          <Link href="/rutinas" className="text-clay hover:text-ink">
-            Rutinas
-          </Link>
-          <Link href="/marcas" className="text-clay hover:text-ink">
-            Marcas
-          </Link>
-        </div>
-        <div className="flex items-center gap-4">
-          <Link href="/carrito" className="text-ink hover:text-rose-deep" aria-label="Ver carrito">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
-              />
-            </svg>
-          </Link>
-        </div>
-      </div>
-    </nav>
-  );
-}
 
 /* Card compacta para el bloque "Podría interesarte".
    Reusa .prod-card + swatch por marca. Sin next/image. */

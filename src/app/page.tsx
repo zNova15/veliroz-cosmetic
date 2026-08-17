@@ -1,9 +1,13 @@
 import Link from "next/link";
+import { CosmeticHeader } from "@/components/CosmeticHeader";
+import { CartDrawer } from "@/components/CartDrawer";
 
 /* ============================================================
    Veliroz Cosmetic — Landing placeholder (Sprint 1)
    Estilo editorial cream+ink+rose (Aesop/Rare Beauty inspiration).
    Datos hardcoded para MVP; en Sprint 2 se conectan a Supabase.
+   La landing vive en '/' (fuera del segmento /cosmetic), por eso monta
+   CosmeticHeader + CartDrawer inline en vez de heredarlos del layout.
    ============================================================ */
 
 const PRODUCTOS_HERO = [
@@ -85,55 +89,9 @@ const PRODUCTOS_HERO = [
 
 export default function CosmeticLanding() {
   return (
-    <main className="min-h-screen">
-      {/* ────────────────── NAV ────────────────── */}
-      <nav className="fixed top-0 inset-x-0 z-50 bg-cream/85 backdrop-blur-md border-b border-[--border]">
-        <div className="max-w-7xl mx-auto px-6 md:px-10 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5 shrink-0">
-            <span className="w-8 h-8 rounded-full bg-ink text-cream flex items-center justify-center font-serif italic text-lg font-bold">
-              V
-            </span>
-            <div className="hidden sm:flex flex-col leading-none">
-              <span className="font-serif text-ink text-base font-semibold tracking-tight">
-                Veliroz
-              </span>
-              <span className="text-[9px] tracking-[0.18em] text-clay uppercase mt-1">
-                Cosmetic
-              </span>
-            </div>
-          </Link>
-          <div className="hidden md:flex items-center gap-8 text-sm">
-            <Link href="/cosmetic/productos" className="text-clay hover:text-ink transition-colors">
-              Productos
-            </Link>
-            <Link href="/cosmetic/rutinas" className="text-clay hover:text-ink transition-colors">
-              Rutinas
-            </Link>
-            <Link href="/cosmetic/marcas" className="text-clay hover:text-ink transition-colors">
-              Marcas
-            </Link>
-            <Link href="/cosmetic/blog" className="text-clay hover:text-ink transition-colors">
-              Diario
-            </Link>
-          </div>
-          <div className="flex items-center gap-4">
-            <Link href="/cosmetic/cuenta" className="text-clay hover:text-ink text-sm hidden md:inline">
-              Iniciar sesión
-            </Link>
-            <Link
-              href="/cosmetic/carrito"
-              className="relative text-ink hover:text-rose-deep transition-colors"
-              aria-label="Ver carrito"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/>
-              </svg>
-            </Link>
-          </div>
-        </div>
-      </nav>
-      <div className="h-[68px]" />
-
+    <>
+      <CosmeticHeader />
+      <main className="min-h-screen">
       {/* ────────────────── HERO ────────────────── */}
       <section className="max-w-7xl mx-auto px-6 md:px-10 pt-16 md:pt-24 pb-20 grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
         <div className="md:col-span-7 space-y-8">
@@ -482,6 +440,8 @@ export default function CosmeticLanding() {
           </div>
         </div>
       </footer>
-    </main>
+      </main>
+      <CartDrawer />
+    </>
   );
 }

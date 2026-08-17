@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useCartStore, makeSnapshot } from "@/lib/store";
 import type { Variante } from "@/lib/types";
 import { Toast } from "./Toast";
+import { trackAddToCart } from "@/lib/track";
 
 /* ============================================================
    Bloque interactivo de compra:
@@ -71,6 +72,7 @@ export function AddToCartButton({
 
   const handleAdd = () => {
     if (agotado) return;
+    const precio = Number(variante.precio);
     add({
       sku: variante.sku,
       cantidad,
@@ -79,9 +81,17 @@ export function AddToCartButton({
         productoNombre,
         marcaNombre,
         varianteLabel: variante.variante_label,
-        precio: Number(variante.precio),
+        precio,
         imagenSwatch,
       }),
+    });
+    // Analytics: GA4 + Meta Pixel (no-op si scripts no cargaron)
+    trackAddToCart({
+      sku: variante.sku,
+      precio,
+      marca: marcaNombre,
+      productoNombre,
+      cantidad,
     });
     setToastOpen(true);
     // auto-dismiss

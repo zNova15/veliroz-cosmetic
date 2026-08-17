@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@/components/Analytics";
 
 /* ============================================================
    Fuentes Veliroz Cosmetic (self-hosted via next/font):
@@ -67,7 +68,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${fraunces.variable} ${inter.variable} ${jetbrains.variable}`}
       suppressHydrationWarning
     >
-      <body className="paper-grain antialiased min-h-screen">{children}</body>
+      <body className="paper-grain antialiased min-h-screen">
+        {children}
+        {/* Analytics stack: Vercel Web Analytics + GA4 + Meta Pixel.
+            Vive en el root para cubrir /, /cosmetic/**, /carrito, /pago/**, etc.
+            Cada script chequea su env var y hace fallback silencioso si falta. */}
+        <Analytics />
+      </body>
     </html>
   );
 }

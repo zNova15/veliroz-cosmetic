@@ -29,6 +29,8 @@ Por eso las migraciones están repartidas entre repos y conviene tener el orden 
 | 20260817044338 | `014_fix_imagen_mixsoon` | ⚠️ **solo en Studio** | Mixsoon apuntaba al packshot de Purito → `imagen_principal = null` |
 | — | `015_desactivar_marcas_sin_productos` | ⚠️ **solo en Studio** | The Ordinary, CeraVe y Xhekpon quedaron sin productos → `activo = false` |
 | 20260817… | `016_bundles_rutina` | `veliroz-cosmetic/supabase/migrations/` | ⚠️ **revertida por la 017.** Creó 3 bundles inventando precios y composiciones, ignorando que `src/lib/rutinas.ts` ya definía 5 rutinas curadas. El .sql quedó sin sentencias (su contenido no aporta al estado final) |
+| 20260817… | `018_referidos` | idem (consolidada con el fix 018d) | Programa de referidos: `referidos` (código VELI-XXXX por cliente), `referidos_usos`, `referidos_config` (parámetros sin deploy), `clientes.credito_disponible`, 3 RPC SECURITY DEFINER + trigger que acredita al pasar a `pagado`. **Trampa:** `ON CONFLICT` contra índice único PARCIAL exige repetir el `WHERE` o tira 42P10 |
+| — | `018b/c/e/f_sim_referidos*` | no versionadas | Simulación temporal para verificar el anti-abuso (dominio `@veliroz-sim.invalid`). Datos borrados en la 018f; base verificada en 0 |
 | 20260817… | `017_bundles_alineados_a_rutinas` | idem | Deshace la 016 y crea **un bundle comprable por rutina** espejando `rutinas.ts` (mismos SKUs, mismos precios, mismos textos) + `meta.rutina_slug`. Así el carrito cobra el precio que la página anuncia en vez de sumar los sueltos |
 
 ## El riesgo

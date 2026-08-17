@@ -31,6 +31,10 @@ Por eso las migraciones están repartidas entre repos y conviene tener el orden 
 | 20260817… | `016_bundles_rutina` | `veliroz-cosmetic/supabase/migrations/` | ⚠️ **revertida por la 017.** Creó 3 bundles inventando precios y composiciones, ignorando que `src/lib/rutinas.ts` ya definía 5 rutinas curadas. El .sql quedó sin sentencias (su contenido no aporta al estado final) |
 | 20260817… | `017_bundles_alineados_a_rutinas` | idem | Deshace la 016 y crea **un bundle comprable por rutina** espejando `rutinas.ts` (mismos SKUs, mismos precios, mismos textos) + `meta.rutina_slug`. Así el carrito cobra el precio que la página anuncia en vez de sumar los sueltos |
 | 20260817… | `018_referidos` | idem (consolidada con el fix 018d) | Programa de referidos: `referidos` (código VELI-XXXX por cliente), `referidos_usos`, `referidos_config` (parámetros sin deploy), `clientes.credito_disponible`, 3 RPC SECURITY DEFINER + trigger que acredita al pasar a `pagado`. **Trampa:** `ON CONFLICT` contra índice único PARCIAL exige repetir el `WHERE` o tira 42P10 |
+| 20260817… | `019_codigo_referido_por_email` | `veliroz-cosmetic/supabase/migrations/` | `obtener_mi_codigo_referido(email)` — la página /referidos funciona sin login. Exige un pedido previo para no volverse generador de clientes basura |
+| 20260817… | `020_crear_pedido_con_referido` | idem | Wrapper que aplica el descuento de referido **server-side** sin tocar el `crear_pedido` compartido. El cliente manda el código, nunca el monto |
+| 20260817… | **`021_fix_crear_pedido_item_ambiguo`** | idem | 🔴 **CRÍTICO.** `crear_pedido` abortaba con 42702 (`item` ambiguo entre variable y alias): **el checkout estaba caído en las 4 líneas**. Detectado al probar la 020; se reprodujo llamando al RPC solo. Probable reintroducción por la 006 |
+| — | `020b/021b/021c_sim_*` + `022_limpieza` | no versionadas | Simulación del wrapper y verificación del fix. Base confirmada en 0 SIM y 1 pedido real |
 | — | `018b/c/e/f_sim_referidos*` | no versionadas | Simulación temporal para verificar el anti-abuso (dominio `@veliroz-sim.invalid`). Datos borrados en la 018f; base verificada en 0 |
 
 ## El riesgo

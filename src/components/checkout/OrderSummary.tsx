@@ -5,7 +5,7 @@ import { useCartStore } from "@/lib/store";
 import { useCheckoutStore, calcularCostoEnvio } from "@/lib/checkout-store";
 import {
   crearPedidoAction,
-  validarCuponAction,
+  validarCodigoAction,
 } from "@/lib/actions/pedidos";
 
 /* ============================================================
@@ -58,11 +58,18 @@ export function OrderSummary({
       return;
     }
     setValidando(true);
-    const res = await validarCuponAction(code, subtotal);
+    /* El email va porque las reglas del referido dependen de quién compra
+       (no podés usar tu propio código, ni en una segunda compra). */
+    const res = await validarCodigoAction(
+      code,
+      subtotal,
+      useCheckoutStore.getState().email,
+    );
     setValidando(false);
     if (!res.ok) {
       const msgs: Record<string, string> = {
-        inexistente: "Ese cupón no existe.",
+        /* cupones */
+        inexistente: "Ese código no existe.",
         vencido: "El cupón venció.",
         agotado: "El cupón ya no tiene usos disponibles.",
         min_subtotal:
@@ -70,11 +77,23 @@ export function OrderSummary({
             ? `Necesitás llegar a S/${Number(res.min).toFixed(2)} de subtotal.`
             : "No llegás al mínimo del cupón.",
         db_error: "Error del servidor. Intentá de nuevo.",
+        /* referidos */
+        referido_sin_email:
+          "Completá tu email en el paso 1 y volvé a aplicar el código.",
+        codigo_propio: "No podés usar tu propio código de referido.",
+        ya_referido: "Ya usaste un código de referido antes.",
+        no_es_primera_compra:
+          "Los códigos de referido son solo para la primera compra.",
+        subtotal_bajo:
+          res.min != null
+            ? `El código de referido aplica desde S/${Number(res.min).toFixed(2)}.`
+            : "Tu pedido no llega al mínimo del código.",
+        programa_inactivo: "El programa de referidos está en pausa.",
       };
-      limpiarCupon(msgs[res.razon ?? ""] ?? "Cupón no válido.");
+      limpiarCupon(msgs[res.razon ?? ""] ?? "Código no válido.");
       return;
     }
-    aplicarCupon(code, res.descuento ?? 0, res.label ?? code);
+    aplicarCupon(code, res.descuento ?? 0, res.label ?? code, res.esReferido);
     setCuponInput("");
   };
 
@@ -119,7 +138,11 @@ export function OrderSummary({
           cantidad: i.cantidad,
           imagen: i.snapshot.imagenSwatch,
         })),
-        cupon: s.cupon || undefined,
+        /* Un solo campo en la UI, dos caminos en el backend: el wrapper
+           crear_pedido_con_referido revalida el código y recalcula el
+           descuento, así que acá sólo se manda cuál es cuál. */
+        cupon: s.cupon && !s.cuponEsReferido ? s.cupon : undefined,
+        codigoReferido: s.cupon && s.cuponEsReferido ? s.cupon : undefined,
         subtotalCliente: c.total(),
         costoEnvio,
       });
@@ -181,7 +204,7 @@ export function OrderSummary({
           htmlFor="cupon-input"
           className="font-mono text-[10px] tracking-[0.2em] uppercase text-taupe"
         >
-          Cupón de descuento
+          Cupón o código de referido
         </label>
         {cupon ? (
           <div className="flex items-center justify-between rounded-md bg-mist/60 border border-champagne/40 px-3 py-2">
@@ -205,7 +228,7 @@ export function OrderSummary({
               id="cupon-input"
               value={cuponInput}
               onChange={(e) => setCuponInput(e.target.value.toUpperCase())}
-              placeholder="VELIROZ10"
+              placeholder="COSMETIC10 o VELI-XXXX"
               className="flex-1 px-3 py-2 rounded-md border border-[--border-2] bg-surface text-sm outline-none focus:border-ink"
             />
             <button

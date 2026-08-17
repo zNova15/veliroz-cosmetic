@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { RUTINAS } from "@/lib/rutinas";
 import { swatchFor } from "@/lib/marcas";
+import { Carousel, CarouselSlide } from "@/components/Carousel";
 import {
   getSupabase,
   PRODUCTO_SELECT,
@@ -38,7 +39,6 @@ export const metadata: Metadata = {
 /* Producto que ocupa el bloque visual del hero. Si no existe (o la query
    falla), caemos al primer destacado y después al primero de la lista. */
 const HERO_SLUG = "beauty-of-joseon-relief-sun-spf50";
-const MAX_CARDS = 8;
 
 /* Etiqueta legible por categoría — mismos slugs que usa el catálogo. */
 const CATEGORIA_LABEL: Record<string, string> = {
@@ -131,7 +131,16 @@ function fmtNum(n: number): string {
 /* ────────────────── Página ────────────────── */
 
 export default async function CosmeticLanding() {
-  const productos = await fetchCatalogo();
+  const todos = await fetchCatalogo();
+
+  /* Los bundles de rutina (migración 017) tienen destacado=true y el orden de
+     la query es `destacado desc`, así que ocupaban los primeros 5 slots de la
+     vitrina y desplazaban productos reales — además de repetir lo que la
+     sección "Rutinas" ya muestra más abajo con su propio diseño.
+     La vitrina de productos son SOLO los individuales; las rutinas van en su
+     sección. Ojo: los contadores también, o el hero diría "17 productos"
+     contando sets que son recombinaciones de los mismos 12. */
+  const productos = todos.filter((p) => p.tipo !== "bundle");
 
   /* Contadores REALES: marcas que efectivamente tienen producto activo
      (no las 13 filas de `marcas`, varias sin catálogo todavía). */
@@ -169,20 +178,25 @@ export default async function CosmeticLanding() {
   const heroVariante = hero ? variantePrincipal(hero) : undefined;
   const heroRating = hero ? ratingExt(hero) : null;
 
-  /* La grilla de la landing es la vitrina: solo entran productos con packshot
-     real. Sin este filtro, el orden de la BD (destacado desc, nombre asc) mete
-     el set Gua Sha —todavía sin foto— en el slot 8 y deja fuera al SKIN1004,
-     que sí tiene. Los sets Veliroz siguen visibles en /productos.
-     El fallback tipográfico de ProductoCard queda igual: si algún día no hay
-     8 productos fotografiados, la grilla se completa igual en vez de vaciarse. */
+  /* La vitrina prioriza los productos con packshot real: sin este orden, el
+     de la BD (destacado desc, nombre asc) dejaba el set Gua Sha —todavía sin
+     foto— por delante del SKIN1004, que sí tiene.
+     Ya no se recorta a MAX_CARDS: al ser carrusel entran los 12 sin estirar
+     la página, así que la home muestra el catálogo completo en vez de la
+     mitad. El fallback tipográfico de ProductoCard sigue cubriendo a los que
+     no tienen foto. */
   const cards = [
     ...productos.filter((p) => p.imagen_principal),
     ...productos.filter((p) => !p.imagen_principal),
-  ].slice(0, MAX_CARDS);
+  ];
 
-  /* Índice slug → producto para resolver las líneas de cada rutina. */
-  const porSlug = new Map(productos.map((p) => [p.slug, p]));
-  const rutinasDestacadas = RUTINAS.slice(0, 3);
+  /* Índice slug → producto para resolver las líneas de cada rutina.
+     Va sobre `todos` porque una rutina puede referenciar cualquier producto. */
+  const porSlug = new Map(todos.map((p) => [p.slug, p]));
+
+  /* Las 5 rutinas, no 3: en carrusel no cuesta espacio y cada una tiene su
+     bundle comprable desde la 017. */
+  const rutinasDestacadas = RUTINAS;
 
   return (
     <>
@@ -396,11 +410,16 @@ export default async function CosmeticLanding() {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <Carousel ariaLabel={`${cards.length} productos de la selección`}>
               {cards.map((p) => (
-                <ProductoCard key={p.id} producto={p} />
+                <CarouselSlide
+                  key={p.id}
+                  className="w-[78%] sm:w-[46%] lg:w-[31%] xl:w-[23.5%]"
+                >
+                  <ProductoCard producto={p} />
+                </CarouselSlide>
               ))}
-            </div>
+            </Carousel>
           )}
 
           <p className="mt-8 text-[11px] text-stone text-center md:text-left text-pretty">
@@ -440,7 +459,7 @@ export default async function CosmeticLanding() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Carousel ariaLabel={`${rutinasDestacadas.length} rutinas curadas`}>
             {rutinasDestacadas.map((r) => {
               const lineas = r.pasos
                 .map((paso) => {
@@ -453,9 +472,15 @@ export default async function CosmeticLanding() {
                 .filter((x): x is string => Boolean(x));
 
               return (
-                <article
+                /* h-full + items-stretch del flex de Embla = todas las cards
+                   con la misma altura, así el footer con el precio queda
+                   alineado entre slides (el mt-auto de abajo lo necesita). */
+                <CarouselSlide
                   key={r.slug}
-                  className="rounded-lg p-8 flex flex-col gap-5 border border-[--border]"
+                  className="w-[82%] sm:w-[54%] lg:w-[36%] xl:w-[31%]"
+                >
+                <article
+                  className="h-full rounded-lg p-8 flex flex-col gap-5 border border-[--border]"
                   style={{ background: r.accent }}
                 >
                   <div className="space-y-1">
@@ -500,14 +525,18 @@ export default async function CosmeticLanding() {
                     </Link>
                   </div>
                 </article>
+                </CarouselSlide>
               );
             })}
-          </div>
+          </Carousel>
 
           <div className="mt-10 text-center space-y-3">
+            {/* Antes decía que el ajuste de rutina se aplicaba a mano por
+                WhatsApp. Desde la 017 cada rutina es un bundle comprable:
+                el precio de abajo es el que se cobra. */}
             <p className="text-[11px] text-stone text-pretty max-w-xl mx-auto">
-              El precio de rutina se aplica al confirmar tu reserva por
-              WhatsApp; el carrito suma los precios sueltos.
+              El precio de rutina es el que va al carrito — no hay que pedir
+              ningún ajuste.
             </p>
             <Link
               href="/rutinas"

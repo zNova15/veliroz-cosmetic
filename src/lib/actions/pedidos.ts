@@ -61,6 +61,11 @@ export interface CheckoutPayload {
   /* cupón opcional */
   cupon?: string;
 
+  /* Código de referido. Va SEPARADO de `cupon` aunque la UI use un solo
+     campo: son tablas distintas y el RPC los aplica por caminos distintos.
+     El monto del descuento NO viaja acá — lo recalcula el server. */
+  codigoReferido?: string;
+
   /* auditoría cliente (informativo — el server manda) */
   subtotalCliente: number;
   costoEnvio: number;
@@ -75,6 +80,10 @@ export interface CrearPedidoResult {
   costoEnvio?: number;
   total?: number;
   error?: string;
+  /** El referido se aplicó de verdad (lo decide el server, no el cliente). */
+  referidoAplicado?: boolean;
+  /** Por qué no se aplicó, cuando corresponda. */
+  referidoMotivo?: string;
 }
 
 export interface ValidarCuponResult {
@@ -84,6 +93,8 @@ export interface ValidarCuponResult {
   label?: string;
   razon?: string;
   min?: number;
+  /** true cuando el código resultó ser de referido, no un cupón. */
+  esReferido?: boolean;
 }
 
 /* ---------- Utilidades server-side ---------- */
@@ -209,9 +220,16 @@ export async function crearPedidoAction(
       items,
     };
 
-    const { data, error } = await sb.rpc("crear_pedido", {
-      payload: rpcPayload,
-    });
+    /* Con código de referido usamos el wrapper (migración 020): valida y
+       aplica el descuento server-side en la misma transacción. Sin código,
+       el RPC de siempre — así el camino de las otras 3 líneas no cambia. */
+    const referido = payload.codigoReferido?.trim();
+    const { data, error } = referido
+      ? await sb.rpc("crear_pedido_con_referido", {
+          payload: rpcPayload,
+          referido_codigo: referido,
+        })
+      : await sb.rpc("crear_pedido", { payload: rpcPayload });
     if (error) return { ok: false, error: error.message };
 
     const r = (data ?? null) as Record<string, unknown> | null;
@@ -227,6 +245,10 @@ export async function crearPedidoAction(
       descuento: Number(r.descuento ?? 0),
       costoEnvio: Number(r.costo_envio ?? 0),
       total: Number(r.total ?? 0),
+      referidoAplicado:
+        r.referido_aplicado === true ? true : r.referido_aplicado === false ? false : undefined,
+      referidoMotivo:
+        typeof r.referido_motivo === "string" ? r.referido_motivo : undefined,
     };
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
@@ -257,6 +279,83 @@ export async function validarCuponAction(
       label: typeof r.label === "string" ? r.label : undefined,
       razon: typeof r.razon === "string" ? r.razon : undefined,
       min: r.min != null ? Number(r.min) : undefined,
+    };
+  } catch {
+    return { ok: false, razon: "excepcion" };
+  }
+}
+
+/* ============================================================
+   Un solo campo para cupón Y código de referido.
+
+   POR QUÉ UNIFICADO: pedirle al cliente que distinga entre "cupón" y
+   "código de referido" es hacerle administrar nuestra taxonomía. Él
+   tiene un código y quiere usarlo. Probamos cupón primero (es el caso
+   más común y no necesita email) y si no existe, probamos referido.
+
+   El referido necesita el email porque sus reglas dependen de quién
+   compra: no podés usar tu propio código ni el de una segunda compra.
+   Si el checkout todavía no tiene email, se informa en vez de fallar
+   en silencio.
+
+   El monto NUNCA se confía: acá se valida para MOSTRAR, y
+   crear_pedido_con_referido lo recalcula server-side al cobrar.
+   ============================================================ */
+export async function validarCodigoAction(
+  code: string,
+  subtotal: number,
+  email?: string,
+): Promise<ValidarCuponResult> {
+  const limpio = (code ?? "").trim();
+  if (limpio.length === 0) return { ok: false, razon: "sin_codigo" };
+
+  /* 1. ¿Es un cupón? */
+  const cupon = await validarCuponAction(limpio, subtotal);
+  if (cupon.ok) return cupon;
+
+  /* Si el cupón existe pero no aplica (vencido, mínimo no alcanzado…),
+     ese motivo es más útil que "código inválido" — no seguimos probando. */
+  const motivosDeCuponReal = new Set([
+    "vencido",
+    "min_subtotal",
+    "sin_usos",
+    "solo_primera_compra",
+    "agotado",
+  ]);
+  if (cupon.razon && motivosDeCuponReal.has(cupon.razon)) return cupon;
+
+  /* 2. ¿Es un código de referido? */
+  const mail = (email ?? "").trim().toLowerCase();
+  if (!mail) {
+    return { ok: false, razon: "referido_sin_email", esReferido: true };
+  }
+
+  try {
+    const sb = getSupabase();
+    const { data, error } = await sb.rpc("validar_codigo_referido", {
+      p_codigo: limpio,
+      p_email: mail,
+      p_subtotal: subtotal,
+    });
+    if (error) return { ok: false, razon: "db_error" };
+    const r = (data ?? null) as Record<string, unknown> | null;
+    if (!r) return { ok: false, razon: "sin_respuesta" };
+
+    if (r.ok !== true) {
+      return {
+        ok: false,
+        esReferido: true,
+        razon: typeof r.motivo === "string" ? r.motivo : "codigo_invalido",
+        min: r.min_subtotal != null ? Number(r.min_subtotal) : undefined,
+      };
+    }
+
+    return {
+      ok: true,
+      esReferido: true,
+      descuento: Number(r.descuento ?? 0),
+      tipo: "referido",
+      label: `Código de referido · ${r.descuento_pct}% (tope S/${r.tope})`,
     };
   } catch {
     return { ok: false, razon: "excepcion" };

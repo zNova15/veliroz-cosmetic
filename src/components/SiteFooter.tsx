@@ -68,6 +68,11 @@ export function SiteFooter() {
                 Diario
               </Link>
             </li>
+            <li>
+              <Link href="/referidos" className="hover:text-ink">
+                Referí y ganá
+              </Link>
+            </li>
           </ul>
         </div>
         <div className="space-y-3">

@@ -54,12 +54,21 @@ export interface CheckoutState {
   cuponDescuento: number;
   cuponLabel: string;
   cuponError: string;
+  /* El campo del checkout es uno solo, pero el backend distingue: los
+     cupones viven en `cupones` y los referidos en `referidos`, y se
+     aplican por RPC distintos. Esta bandera dice cuál de los dos es. */
+  cuponEsReferido: boolean;
 
   /* setters */
   setStep: (s: CheckoutState["step"]) => void;
   patch: (p: Partial<CheckoutState>) => void;
   reset: () => void;
-  aplicarCupon: (code: string, descuento: number, label: string) => void;
+  aplicarCupon: (
+    code: string,
+    descuento: number,
+    label: string,
+    esReferido?: boolean,
+  ) => void;
   limpiarCupon: (mensaje?: string) => void;
 }
 
@@ -94,6 +103,7 @@ const INITIAL: Omit<
   cuponDescuento: 0,
   cuponLabel: "",
   cuponError: "",
+  cuponEsReferido: false,
 };
 
 export const useCheckoutStore = create<CheckoutState>()(
@@ -103,18 +113,20 @@ export const useCheckoutStore = create<CheckoutState>()(
       setStep: (step) => set({ step }),
       patch: (p) => set(p),
       reset: () => set({ ...INITIAL }),
-      aplicarCupon: (code, descuento, label) =>
+      aplicarCupon: (code, descuento, label, esReferido = false) =>
         set({
           cupon: code.trim().toUpperCase(),
           cuponDescuento: descuento,
           cuponLabel: label,
           cuponError: "",
+          cuponEsReferido: esReferido,
         }),
       limpiarCupon: (mensaje = "") =>
         set({
           cupon: "",
           cuponDescuento: 0,
           cuponLabel: "",
+          cuponEsReferido: false,
           cuponError: mensaje,
         }),
     }),

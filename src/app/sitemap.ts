@@ -41,6 +41,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${site}/marcas`, lastModified: now, changeFrequency: "weekly" as ChangeFreq, priority: 0.7 },
     { url: `${site}/blog`, lastModified: now, changeFrequency: "weekly" as ChangeFreq, priority: 0.7 },
     { url: `${site}/quiz`, lastModified: now, changeFrequency: "monthly" as ChangeFreq, priority: 0.6 },
+    { url: `${site}/referidos`, lastModified: now, changeFrequency: "monthly" as ChangeFreq, priority: 0.6 },
     /* Institucionales + legales: indexables (robots.index = true en su
        metadata) y consultadas antes de comprar, así que entran al sitemap.
        /cuenta, /pago y /mis-pedidos quedan fuera a propósito — son noindex. */

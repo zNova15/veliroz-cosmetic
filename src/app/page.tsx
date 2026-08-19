@@ -257,7 +257,12 @@ export default async function CosmeticLanding() {
             <div className="flex flex-wrap gap-8 text-xs text-clay border-t border-[--border] pt-8">
               <div className="space-y-1">
                 <p className="font-mono text-ink text-lg">{totalMarcas}</p>
-                <p>Marcas curadas</p>
+                {/* "en catálogo", no "curadas": el párrafo de arriba dice
+                    "las N marcas coreanas" y este contador incluye a Veliroz
+                    (marca propia, no K-beauty). Con el label viejo quedaban
+                    dos números distintos —9 y 10— a la vista en el mismo
+                    bloque, que es de esos detalles que hacen dudar del resto. */}
+                <p>Marcas en catálogo</p>
               </div>
               <div className="space-y-1">
                 <p className="font-mono text-ink text-lg">{totalProductos}</p>

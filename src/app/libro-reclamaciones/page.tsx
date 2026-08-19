@@ -201,7 +201,7 @@ export default function LibroReclamacionesPage() {
                 type="text"
                 name="descripcion_bien"
                 required
-                placeholder="Ej: Serum Niacinamida 10% + Zinc 1% · The Ordinary"
+                placeholder="Ej: Relief Sun SPF50+ · Beauty of Joseon"
                 className="w-full px-4 py-2.5 rounded-md border border-[--border-2] bg-cream text-ink text-sm focus:outline-none focus:border-ink"
               />
             </label>

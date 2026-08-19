@@ -22,7 +22,7 @@ import {
 export const metadata: Metadata = {
   title: "Catálogo de skincare",
   description:
-    "Todos los productos Veliroz Cosmetic — The Ordinary, CeraVe, Beauty of Joseon, COSRX, Xhekpon. Filtrá por tipo de piel, preocupación e ingrediente activo.",
+    "Todos los productos Veliroz Cosmetic — Beauty of Joseon, Anua, Round Lab, COSRX, SKIN1004 y más. Filtrá por tipo de piel, preocupación e ingrediente activo.",
   alternates: { canonical: "/productos" },
 };
 

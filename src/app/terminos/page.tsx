@@ -382,8 +382,8 @@ export default function TerminosPage() {
           con nuestro contenido.
         </p>
         <p>
-          Las marcas de terceros que aparecen en el catálogo (The Ordinary,
-          CeraVe, COSRX, Beauty of Joseon, Anua y las demás) pertenecen a sus
+          Las marcas de terceros que aparecen en el catálogo (Beauty of
+          Joseon, Anua, Round Lab, COSRX, SKIN1004 y las demás) pertenecen a sus
           titulares. Las mostramos porque vendemos sus productos, no porque
           representemos oficialmente a esas marcas.
         </p>

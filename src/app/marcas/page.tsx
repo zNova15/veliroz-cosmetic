@@ -14,7 +14,7 @@ import { swatchFor } from "@/lib/marcas";
 export const metadata: Metadata = {
   title: "Marcas curadas",
   description:
-    "The Ordinary, CeraVe, Beauty of Joseon, COSRX, Xhekpon — todas las marcas que trabajamos en Veliroz Cosmetic. Producto original, formulaciones que sí funcionan.",
+    "Beauty of Joseon, Anua, Round Lab, COSRX, SKIN1004, Dr.Althea, BIODANCE, celimax y Mixsoon — todas las marcas que trabajamos en Veliroz Cosmetic. Producto original, formulaciones que sí funcionan.",
   alternates: { canonical: "/marcas" },
 };
 

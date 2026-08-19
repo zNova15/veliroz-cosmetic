@@ -24,7 +24,7 @@ import { Toast } from "@/components/Toast";
 
 /* ============================================================
    Veliroz Cosmetic — /quiz
-   Quiz interactivo de 7 preguntas para armar una rutina hero.
+   Quiz interactivo (QUIZ_PREGUNTAS define cuántas) para armar una rutina.
 
    Flujo:
    1) intro  → CTA "Empezar" (o "Ver mi rutina" si ya hay perfil guardado)
@@ -230,13 +230,18 @@ function IntroPantalla({
         Quiz Veliroz — 2 min
       </p>
       <h1 className="font-serif text-[--text-display] text-ink text-balance leading-[1.05]">
+        {/* Dinámico a propósito: al sumar la pregunta de embarazo el título
+            se quedó diciendo "7 preguntas" mientras el contador marcaba 8. */}
         Encontrá tu rutina en{" "}
-        <span className="font-italic-serif text-rose-deep">7 preguntas</span>.
+        <span className="font-italic-serif text-rose-deep">
+          {QUIZ_TOTAL_PREGUNTAS} preguntas
+        </span>
+        .
       </h1>
       <p className="mt-6 text-clay text-lg max-w-xl mx-auto text-pretty">
         Respondé como si estuvieras hablándonos por WhatsApp. Al final te
-        devolvemos 3 o 4 productos hero elegidos entre The Ordinary, CeraVe,
-        Beauty of Joseon, COSRX y Xhekpon — sin bullshit.
+        devolvemos 3 o 4 productos elegidos entre Beauty of Joseon, Anua, Round Lab, COSRX y SKIN1004 — con el
+        motivo de cada uno, sin vueltas.
       </p>
 
       <div className="mt-10 flex flex-wrap items-center justify-center gap-3">

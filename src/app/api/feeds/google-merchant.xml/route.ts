@@ -116,7 +116,7 @@ export async function GET(): Promise<Response> {
   <channel>
     <title>Veliroz Cosmetic — Catálogo</title>
     <link>${xmlEscape(site)}</link>
-    <description>Skincare clínico y honesto en Perú — The Ordinary, CeraVe, Beauty of Joseon, COSRX, Xhekpon.</description>
+    <description>Skincare coreano curado por rutina en Perú — Beauty of Joseon, Anua, Round Lab, COSRX y SKIN1004.</description>
     <lastBuildDate>${xmlEscape(now)}</lastBuildDate>
 ${rows.join("\n")}
   </channel>

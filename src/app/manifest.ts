@@ -25,7 +25,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Veliroz Cosmetic",
     short_name: "Veliroz",
     description:
-      "Skincare clínico y honesto — The Ordinary, CeraVe, Beauty of Joseon, COSRX, Xhekpon. Rutinas curadas según tu piel.",
+      "Skincare coreano curado por rutina — Beauty of Joseon, Anua, Round Lab, COSRX y SKIN1004. Rutinas curadas según tu piel.",
     start_url: "/",
     scope: "/",
     display: "standalone",

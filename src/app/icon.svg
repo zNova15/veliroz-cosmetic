@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Favicon Veliroz Cosmetic — monograma V.
+       Dibujado con paths (no <text>) para no depender de que el
+       renderer tenga la fuente: un favicon que cae a Times se ve roto.
+       Contraste grueso/fino imitando la serif de la marca (Fraunces). -->
+  <rect width="100" height="100" rx="22" fill="#1A1613"/>
+  <path d="M18 24 L38 24 L51 62 L64 24 L82 24 L58 80 L42 80 Z" fill="#D4B896"/>
+</svg>

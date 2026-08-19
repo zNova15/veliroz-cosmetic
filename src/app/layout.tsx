@@ -39,26 +39,50 @@ export const metadata: Metadata = {
     default: "Veliroz Cosmetic · Skincare clínico y honesto en Perú",
     template: "%s · Veliroz Cosmetic",
   },
+  /* OJO: esta descripción nombra marcas, así que tiene que coincidir con el
+     catálogo REAL. Antes prometía The Ordinary y CeraVe — desactivadas en la
+     migración 015 por no tener ni un producto — y Google la mostraba tal cual.
+     Si se agrega o quita una marca, actualizar acá y en `keywords`. */
   description:
-    "The Ordinary, CeraVe, Beauty of Joseon, COSRX y más — curados por rutina según tu piel. Envío nacional Shalom, entrega en Lima y Cajamarca.",
+    "Beauty of Joseon, Anua, Round Lab, COSRX, SKIN1004 y más — K-beauty curada por rutina según tu piel. Envío nacional Shalom, entrega en Lima y Cajamarca.",
   metadataBase: new URL("https://veliroz.com"),
   alternates: { canonical: "/" },
   openGraph: {
     title: "Veliroz Cosmetic",
-    description: "Skincare clínico y honesto. Rutinas curadas según tu piel.",
+    description: "Skincare coreano curado por rutina, no por marketing.",
     url: "https://veliroz.com",
     siteName: "Veliroz",
     locale: "es_PE",
     type: "website",
+    /* Sin esta imagen, compartir el link por WhatsApp —el canal principal de
+       venta en Perú— mostraba un rectángulo vacío. 1200x630 es la relación que
+       WhatsApp, Facebook e Instagram recortan sin cortar el wordmark. */
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Veliroz Cosmetic — skincare coreano curado por rutina",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Veliroz Cosmetic",
+    description: "Skincare coreano curado por rutina, no por marketing.",
+    images: ["/og.png"],
   },
   robots: { index: true, follow: true },
   authors: [{ name: "Veliroz", url: "https://veliroz.com" }],
   keywords: [
-    "the ordinary peru",
-    "cerave peru",
     "beauty of joseon peru",
+    "anua peru",
+    "round lab peru",
     "cosrx peru",
-    "skincare peru",
+    "skin1004 peru",
+    "kbeauty peru",
+    "skincare coreano peru",
+    "protector solar coreano",
     "cosmeticos cajamarca",
     "cosmeticos lima",
   ],

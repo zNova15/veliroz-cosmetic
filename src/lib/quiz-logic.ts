@@ -43,6 +43,13 @@ export type TiempoRutina = "2min" | "5min" | "10min";
 export type SPFDiario = "nunca" | "a-veces" | "siempre";
 export type Budget = "low" | "med" | "high" | "premium";
 
+/* Gate de seguridad, no una preferencia. Los retinoides (incl. el retinal de
+   CELIMAX) están contraindicados en embarazo y lactancia. Antes esto vivía
+   sólo como texto en la `advertencia` de la rutina antiedad — o sea que el
+   motor podía recomendarle retinal a una embarazada y el aviso aparecía
+   recién en la letra chica, después. */
+export type EmbarazoLactancia = "no" | "si";
+
 export interface QuizPerfil {
   tipo_piel: TipoPiel;
   preocupacion: Preocupacion;
@@ -51,6 +58,10 @@ export interface QuizPerfil {
   tiempo: TiempoRutina;
   spf_diario: SPFDiario;
   budget: Budget;
+  /* Opcional para no romper los perfiles ya guardados en localStorage de
+     antes de esta pregunta. Ausente se trata como "no informado" y el gate
+     NO se aplica — sólo bloquea ante un "sí" explícito. */
+  embarazo_lactancia?: EmbarazoLactancia;
   /* Timestamp ISO del momento en que se completó (para debug / auditoría). */
   completado_at?: string;
 }
@@ -115,6 +126,20 @@ export const QUIZ_PREGUNTAS = [
       { value: "30-39", label: "30 a 39", hint: "Prevención antiedad" },
       { value: "40-mas", label: "40 o más", hint: "Firmeza y reparación" },
     ] as QuizOpcion<EdadSegmento>[],
+  },
+  {
+    key: "embarazo_lactancia",
+    hero: "¿Estás embarazada o amamantando?",
+    subtitulo:
+      "Lo preguntamos por seguridad: hay activos que se evitan en esta etapa.",
+    opciones: [
+      { value: "no", label: "No", hint: "Sin restricciones" },
+      {
+        value: "si",
+        label: "Sí",
+        hint: "Te armamos la rutina sin retinoides",
+      },
+    ] as QuizOpcion<EmbarazoLactancia>[],
   },
   {
     key: "tiempo",
@@ -248,6 +273,31 @@ const RUTINAS: Record<string, Rutina> = {
    Orden intencional: antiedad prioriza sobre budget bajo, sensibilidad
    sobre primer-paso, etc. */
 export function recomendarRutina(perfil: QuizPerfil): Rutina {
+  /* 0) GATE DE SEGURIDAD — va primero que todo, incluso antes de sensibilidad.
+     Los retinoides (el retinal de CELIMAX incluido) están contraindicados en
+     embarazo y lactancia, así que la rutina antiedad no puede recomendarse
+     acá por ninguna vía: ni pedida explícitamente, ni por la regla de 40+,
+     ni por la de 30-39 preventiva.
+     Se deriva a `manchas`, que trabaja el mismo objetivo cosmético con
+     niacinamida + SPF, ambos seguros en el embarazo.
+     Sólo bloquea ante un "sí" explícito: un perfil viejo sin el campo no
+     queda atrapado acá. */
+  if (perfil.embarazo_lactancia === "si") {
+    if (perfil.preocupacion === "sensibilidad") return RUTINAS["sensibilidad"];
+    if (perfil.tipo_piel === "seca" || perfil.tipo_piel === "muy-seca") {
+      return RUTINAS["hidratacion"];
+    }
+    if (
+      perfil.preocupacion === "acne" ||
+      perfil.preocupacion === "poros" ||
+      perfil.tipo_piel === "grasa" ||
+      perfil.tipo_piel === "muy-grasa"
+    ) {
+      return RUTINAS["acne-graso"];
+    }
+    return RUTINAS["manchas"];
+  }
+
   // 1) Sensibilidad SIEMPRE gana (piel reactiva → no dar ácidos aunque los pida).
   if (perfil.preocupacion === "sensibilidad") return RUTINAS["sensibilidad"];
 

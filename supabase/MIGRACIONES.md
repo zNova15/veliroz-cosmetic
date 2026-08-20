@@ -37,6 +37,8 @@ Por eso las migraciones están repartidas entre repos y conviene tener el orden 
 | — | `020b/021b/021c_sim_*` + `022_limpieza` | no versionadas | Simulación del wrapper y verificación del fix. Base confirmada en 0 SIM y 1 pedido real |
 | — | `018b/c/e/f_sim_referidos*` | no versionadas | Simulación temporal para verificar el anti-abuso (dominio `@veliroz-sim.invalid`). Datos borrados en la 018f; base verificada en 0 |
 
+| 20260819… | `023_piel_reactiva_spf` | `veliroz-cosmetic/supabase/migrations/` | Suma el protector solar que faltaba en el bundle de piel reactiva (la rutina de barrera comprometida, la MÁS fotosensible, era la única sin SPF) y reprecia 219→289. **Trampa:** `bundle_composicion` usa `bundle_id → productos.id`, no `bundle_variante_id` |
+
 ## El riesgo
 
 Las marcadas con ⚠️ **no tienen respaldo en git**. Si la base se resetea o hay que

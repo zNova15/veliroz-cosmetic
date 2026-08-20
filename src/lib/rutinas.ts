@@ -202,11 +202,22 @@ export const RUTINAS: Rutina[] = [
     tiempoMinutos: 5,
     dificultad: "inicial",
     accent: "#E9F0EC",
-    skus: ["MIXSOON-FOAM-150ML", "COSRX-SNAIL-100ML", "ALTHEA-345-50ML"],
+    skus: [
+      "MIXSOON-FOAM-150ML",
+      "COSRX-SNAIL-100ML",
+      "ALTHEA-345-50ML",
+      "S1004-SUNSERUM-50ML",
+    ],
     bundleSku: "RUTINA-PIEL-REACTIVA",
-    precioLista: 243,
-    precioBundle: 219,
-    ahorro: 24,
+    /* 322 = 79 + 75 + 89 + 79. Antes eran 243 sin protector solar: la
+       advertencia mandaba a "sumá tu protector habitual", o sea que a la
+       única rutina de piel con barrera comprometida —la MÁS fotosensible de
+       todas— se le pedía conseguir por fuera justo el producto que más le
+       importa, y que vendemos nosotros. Además la home promete
+       "limpieza, activo y protección" para todas las rutinas. */
+    precioLista: 322,
+    precioBundle: 289,
+    ahorro: 33,
     pasos: [
       {
         orden: 1,
@@ -229,9 +240,16 @@ export const RUTINAS: Rutina[] = [
         momento: "am+pm",
         nota: "Ceramidas + pantenol para sellar. La capa que corta la deshidratación.",
       },
+      {
+        orden: 4,
+        productoSlug: "skin1004-madagascar-sun-serum-spf50",
+        sku: "S1004-SUNSERUM-50ML",
+        momento: "am",
+        nota: "Centella asiática, textura de sérum y filtro químico suave. La piel reactiva es MÁS fotosensible, no menos: sin este paso lo demás se pierde.",
+      },
     ],
     advertencia:
-      "Pausar todo activo (retinoides, AHA/BHA, vitamina C) durante 3-4 semanas. En AM sumá tu protector solar habitual: sigue siendo obligatorio.",
+      "Pausar todo activo (retinoides, AHA/BHA, vitamina C) durante 3-4 semanas. El protector va sí o sí en AM, aunque no salgas.",
   },
   {
     slug: "glow-evento",

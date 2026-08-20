@@ -21,6 +21,9 @@ import {
 import { swatchFor } from "@/lib/marcas";
 import { useCartStore, makeSnapshot } from "@/lib/store";
 import { Toast } from "@/components/Toast";
+import { DiagnosticoPanel } from "@/components/DiagnosticoPanel";
+import { diagnosticar } from "@/lib/diagnostico";
+import { getRutina } from "@/lib/rutinas";
 
 /* ============================================================
    Veliroz Cosmetic — /quiz
@@ -426,6 +429,9 @@ function ResultadoPantalla({
   const [toastMsg, setToastMsg] = useState("Rutina agregada al carrito");
   const add = useCartStore((s) => s.add);
 
+  /* La rutina curada equivalente, si existe (ver bundleSlug en quiz-logic). */
+  const bundle = rutina.bundleSlug ? getRutina(rutina.bundleSlug) : null;
+
   /* Fetch client-side de los productos por slug (anon key). */
   useEffect(() => {
     let cancelado = false;
@@ -599,17 +605,14 @@ function ResultadoPantalla({
         </div>
       )}
 
-      {/* Grid de productos hero */}
-      <div className="divider-champagne mt-12 mb-10" />
-
-      <div className="flex items-baseline justify-between mb-6">
-        <h2 className="font-serif text-2xl text-ink">Tu rutina, paso a paso</h2>
-        {productos && productos.length > 0 && (
-          <p className="font-mono text-sm text-clay" suppressHydrationWarning>
-            Total: <span className="text-ink">S/. {total.toFixed(2)}</span>
-          </p>
-        )}
+      {/* El diagnóstico va ANTES de la recomendación: primero se explica de
+          dónde sale, después se recomienda. Al revés se lee como una venta
+          con la justificación pegada atrás. */}
+      <div className="mt-10">
+        <DiagnosticoPanel diag={diagnosticar(perfil)} />
       </div>
+
+      <div className="divider-champagne mt-12 mb-10" />
 
       {cargando && <ProductosSkeleton count={rutina.productos_slugs.length} />}
 
@@ -619,11 +622,67 @@ function ResultadoPantalla({
         </div>
       )}
 
+      {/* Si esta rutina tiene un bundle curado equivalente, se ofrece a
+          precio de bundle. Antes el quiz mandaba a /productos?filtro=… y
+          la persona tenía que rearmar sola lo que ya le habíamos armado
+          —y más caro, porque sumaba los sueltos. */}
+      {bundle && (
+        <div className="mt-10 rounded-lg border border-champagne/50 bg-cream p-6 md:p-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-5">
+            <div className="min-w-0">
+              <p className="font-mono text-[10px] tracking-[0.24em] uppercase text-taupe">
+                Llevala completa
+              </p>
+              <p className="mt-2 font-serif text-2xl text-ink italic leading-tight">
+                {bundle.nombre}
+              </p>
+              <p className="mt-1.5 text-sm text-clay">
+                {bundle.pasos.length} pasos · comprando el set ahorrás S/
+                {bundle.ahorro}
+              </p>
+            </div>
+
+            <div className="shrink-0 flex items-end gap-4">
+              <div className="text-right">
+                <p className="font-mono text-[11px] text-stone line-through">
+                  S/ {bundle.precioLista.toFixed(2)}
+                </p>
+                <p className="font-serif text-3xl text-ink leading-none">
+                  S/ {bundle.precioBundle.toFixed(2)}
+                </p>
+              </div>
+              <Link
+                href={`/rutinas/${bundle.slug}`}
+                className="btn-primary whitespace-nowrap"
+              >
+                Ver la rutina
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
       {!cargando && !errorMsg && productos && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {productos.map((p, i) => (
-            <ProductoResultadoCard key={p.slug} p={p} paso={i + 1} />
-          ))}
+        <div className="mt-10">
+          {/* El total va acá y no arriba: es la suma de los productos SUELTOS.
+              Arriba quedaba enfrentado al precio del bundle —"Total S/249"
+              contra "S/229"— y se leían como dos precios en conflicto para lo
+              mismo. Acá queda claro que es el costo de armarla por separado. */}
+          <div className="flex items-baseline justify-between gap-4 mb-4">
+            <p className="font-mono text-[10px] tracking-[0.24em] uppercase text-taupe">
+              {bundle ? "O armala vos, producto por producto" : "Tu rutina, paso a paso"}
+            </p>
+            {productos && productos.length > 0 && (
+              <p className="font-mono text-xs text-clay shrink-0" suppressHydrationWarning>
+                Suelto: <span className="text-ink">S/. {total.toFixed(2)}</span>
+              </p>
+            )}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {productos.map((p, i) => (
+              <ProductoResultadoCard key={p.slug} p={p} paso={i + 1} />
+            ))}
+          </div>
         </div>
       )}
 

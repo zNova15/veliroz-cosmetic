@@ -188,6 +188,17 @@ export interface Rutina {
   productos_slugs: string[];
   /* Query params que llevan a `/productos` prefiltrado. */
   filtro_url: string;
+  /* Slug de la rutina curada de `src/lib/rutinas.ts` que corresponde a este
+     resultado, cuando existe una equivalente.
+
+     POR QUÉ: el quiz y las rutinas comprables nacieron como dos sistemas
+     paralelos. El quiz terminaba mandando a `/productos?filtro=…` —una grilla
+     donde el usuario tiene que volver a elegir— mientras que rutinas.ts ya
+     tenía el mismo set armado como UN bundle de un clic y más barato.
+     Con esto el resultado del quiz ofrece el bundle al precio de bundle.
+     `null` cuando no hay equivalente: es preferible mostrar los productos
+     sueltos a mandar a la persona a una rutina que no es la suya. */
+  bundleSlug: string | null;
 }
 
 /* Tabla hardcoded: perfil de rutina → producto hero por paso.
@@ -197,6 +208,7 @@ export interface Rutina {
 const RUTINAS: Record<string, Rutina> = {
   antiedad: {
     slug: "antiedad",
+    bundleSlug: "antiedad-honesta",
     rutina_nombre: "Rutina Antiedad · Firmeza + luminosidad",
     descripcion:
       "Retinal de noche para líneas finas, PDRN + hialurónico para reparar y rellenar, y un SPF hidratante que evita perder lo ganado.",
@@ -209,6 +221,7 @@ const RUTINAS: Record<string, Rutina> = {
   },
   manchas: {
     slug: "manchas",
+    bundleSlug: "manchas-tono-desparejo",
     rutina_nombre: "Rutina Antimanchas · Tono uniforme",
     descripcion:
       "Niacinamida 10% + ácido tranexámico 4% para aclarar marcas, mucina de caracol para reparar y SPF 50 para bloquear que aparezcan más.",
@@ -221,6 +234,7 @@ const RUTINAS: Record<string, Rutina> = {
   },
   "acne-graso": {
     slug: "acne-graso",
+    bundleSlug: null,
     rutina_nombre: "Rutina Piel Grasa · Poros + grasitud",
     descripcion:
       "Limpieza con centella que no agrede la barrera, niacinamida para regular el sebo y afinar poros, y SPF ligero que no engrasa.",
@@ -233,6 +247,7 @@ const RUTINAS: Record<string, Rutina> = {
   },
   hidratacion: {
     slug: "hidratacion",
+    bundleSlug: null,
     rutina_nombre: "Rutina Hidratación · Piel calmada",
     descripcion:
       "Limpieza suave que no reseca, PDRN + hialurónico para reponer agua y firmeza, y un SPF de savia de abedul que hidrata mientras protege.",
@@ -245,6 +260,7 @@ const RUTINAS: Record<string, Rutina> = {
   },
   "primera-vez": {
     slug: "primera-vez",
+    bundleSlug: "primera-vez",
     rutina_nombre: "Rutina Primer Paso · 3 productos esenciales",
     descripcion:
       "Sin ácidos ni activos fuertes. Limpieza suave, crema de ceramidas y SPF alto — la base sobre la que se construye todo lo demás.",
@@ -257,6 +273,7 @@ const RUTINAS: Record<string, Rutina> = {
   },
   sensibilidad: {
     slug: "sensibilidad",
+    bundleSlug: "piel-reactiva",
     rutina_nombre: "Rutina Piel Sensible · Reparación suave",
     descripcion:
       "Sin ácidos ni fragancias agresivas. Limpieza con centella, crema de ceramidas + péptidos para reparar la barrera y SPF calmante con madecassoside.",

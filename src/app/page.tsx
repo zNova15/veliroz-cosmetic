@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { RUTINAS } from "@/lib/rutinas";
+import { RUTINAS_ACTIVAS } from "@/lib/rutinas";
 import { swatchFor } from "@/lib/marcas";
 import { Carousel, CarouselSlide } from "@/components/Carousel";
 import {
@@ -194,9 +194,9 @@ export default async function CosmeticLanding() {
      Va sobre `todos` porque una rutina puede referenciar cualquier producto. */
   const porSlug = new Map(todos.map((p) => [p.slug, p]));
 
-  /* Las 5 rutinas, no 3: en carrusel no cuesta espacio y cada una tiene su
-     bundle comprable desde la 017. */
-  const rutinasDestacadas = RUTINAS;
+  /* Todas las activas, no un slice: en carrusel no cuesta espacio y cada
+     una tiene su bundle comprable desde la 017. */
+  const rutinasDestacadas = RUTINAS_ACTIVAS;
 
   return (
     <>
@@ -562,7 +562,7 @@ export default async function CosmeticLanding() {
               href="/rutinas"
               className="text-sm text-clay hover:text-ink underline underline-offset-4"
             >
-              Las {RUTINAS.length} rutinas curadas →
+              Las {RUTINAS_ACTIVAS.length} rutinas curadas →
             </Link>
           </div>
         </section>

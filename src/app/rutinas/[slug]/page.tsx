@@ -10,6 +10,7 @@ import {
 } from "@/components/AddRutinaToCartButton";
 import {
   RUTINAS,
+  RUTINAS_ACTIVAS,
   getRutina,
   allRutinaSlugs,
   DIFICULTAD_LABEL,
@@ -411,7 +412,7 @@ export default async function RutinaDetallePage(
               href="/rutinas"
               className="text-ink underline underline-offset-4"
             >
-              {RUTINAS.length} rutinas curadas
+              {RUTINAS_ACTIVAS.length} rutinas curadas
             </Link>{" "}
             o hacé el{" "}
             <Link

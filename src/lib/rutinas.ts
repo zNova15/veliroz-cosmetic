@@ -55,6 +55,12 @@ export interface Rutina {
      fundir el fondo blanco de los packshots con el acento — los PNG del
      CDN no traen canal alfa. */
   imagen: string;
+  /* Espeja `productos.activo` del bundle en Supabase. Se apagó
+     `glow-evento` porque su composición era mascarilla + gua sha, y el
+     gua sha salió del catálogo (migración 026): un bundle de un solo
+     producto no es un bundle, es el producto a precio de set.
+     Al volver el gua sha hay que reactivar ambos, acá y en la BD. */
+  activa: boolean;
   /** SKUs reales de la rutina, en orden de uso. */
   skus: string[];
   /**
@@ -86,6 +92,7 @@ export const RUTINAS: Rutina[] = [
     para: ["normal", "sin experiencia", "sensible"],
     tiempoMinutos: 5,
     dificultad: "inicial",
+    activa: true,
     imagen: "https://usfpzlxmmgruydqbymsx.supabase.co/storage/v1/object/public/productos/rutinas/primera-vez.jpg",
     accent: "#F7EFE6",
     skus: ["MIXSOON-FOAM-150ML", "ALTHEA-345-50ML", "BOJ-SUN-50ML"],
@@ -126,6 +133,7 @@ export const RUTINAS: Rutina[] = [
     para: ["manchas", "marcas-post-acne", "mixta", "grasa"],
     tiempoMinutos: 6,
     dificultad: "intermedia",
+    activa: true,
     imagen: "https://usfpzlxmmgruydqbymsx.supabase.co/storage/v1/object/public/productos/rutinas/manchas-tono-desparejo.jpg",
     accent: "#EEE4D8",
     skus: ["MIXSOON-FOAM-150ML", "ANUA-NIACIN-TXA-30ML", "S1004-SUNSERUM-50ML"],
@@ -168,6 +176,7 @@ export const RUTINAS: Rutina[] = [
     para: ["antiedad", "arrugas", "firmeza"],
     tiempoMinutos: 8,
     dificultad: "avanzada",
+    activa: true,
     imagen: "https://usfpzlxmmgruydqbymsx.supabase.co/storage/v1/object/public/productos/rutinas/antiedad-honesta.jpg",
     accent: "#F3E8E8",
     skus: ["CELIMAX-RETINAL-15ML", "ANUA-PDRN-30ML", "RL-BIRCH-SUN-50ML"],
@@ -210,6 +219,7 @@ export const RUTINAS: Rutina[] = [
     para: ["sensible", "rojeces", "barrera-cutanea", "reparacion"],
     tiempoMinutos: 5,
     dificultad: "inicial",
+    activa: true,
     imagen: "https://usfpzlxmmgruydqbymsx.supabase.co/storage/v1/object/public/productos/rutinas/piel-reactiva.jpg",
     accent: "#E9F0EC",
     skus: [
@@ -270,6 +280,7 @@ export const RUTINAS: Rutina[] = [
     para: ["evento", "luminosidad", "firmeza", "hidratacion"],
     tiempoMinutos: 20,
     dificultad: "inicial",
+    activa: false,
     imagen: "https://usfpzlxmmgruydqbymsx.supabase.co/storage/v1/object/public/productos/rutinas/glow-evento.jpg",
     accent: "#F4EDDD",
     skus: ["BIODANCE-MASK-4PK", "VLRZ-GUASHA-SET"],
@@ -298,12 +309,19 @@ export const RUTINAS: Rutina[] = [
 
 /* Helpers */
 
+/** Las rutinas que se muestran. RUTINAS mantiene todas, incluidas las
+    apagadas, para no perder el copy ni romper links viejos. */
+export const RUTINAS_ACTIVAS: Rutina[] = RUTINAS.filter((r) => r.activa);
+
 export function getRutina(slug: string): Rutina | null {
   return RUTINAS.find((r) => r.slug === slug) ?? null;
 }
 
 export function allRutinaSlugs(): Array<{ slug: string }> {
-  return RUTINAS.map((r) => ({ slug: r.slug }));
+  /* Sólo las activas. La página de rutina tiene dynamicParams = false, así
+     que una apagada devuelve 404 en vez de mostrar un botón de comprar
+     sobre un bundle que está inactivo en la base. */
+  return RUTINAS_ACTIVAS.map((r) => ({ slug: r.slug }));
 }
 
 /** Slugs de producto únicos de una rutina, en orden de paso. */

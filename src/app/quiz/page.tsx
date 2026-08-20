@@ -24,7 +24,7 @@ import { useCartStore, makeSnapshot } from "@/lib/store";
 import { Toast } from "@/components/Toast";
 import { DiagnosticoPanel } from "@/components/DiagnosticoPanel";
 import { diagnosticar, rutinasAlternativas } from "@/lib/diagnostico";
-import { getRutina, RUTINAS } from "@/lib/rutinas";
+import { getRutina, RUTINAS_ACTIVAS } from "@/lib/rutinas";
 
 /* ============================================================
    Veliroz Cosmetic — /quiz
@@ -439,7 +439,7 @@ function ResultadoPantalla({
      sin salida a quien no se siente identificado, y esa persona se va en vez
      de mirar otra cosa. */
   const alternativas = useMemo(
-    () => rutinasAlternativas(RUTINAS, perfil, bundle?.slug ?? null, diag, 2),
+    () => rutinasAlternativas(RUTINAS_ACTIVAS, perfil, bundle?.slug ?? null, diag, 2),
     [perfil, bundle, diag],
   );
 

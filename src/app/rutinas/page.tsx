@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { SiteFooter } from "@/components/SiteFooter";
-import { RUTINAS, DIFICULTAD_LABEL } from "@/lib/rutinas";
+import { RUTINAS_ACTIVAS, DIFICULTAD_LABEL } from "@/lib/rutinas";
 
 /* ============================================================
    /rutinas — landing de rutinas curadas.
@@ -11,7 +11,7 @@ import { RUTINAS, DIFICULTAD_LABEL } from "@/lib/rutinas";
 
 export const metadata: Metadata = {
   title: "Rutinas curadas · según tu piel",
-  description: `No compres productos, comprá rutinas. ${RUTINAS.length} secuencias curadas por objetivo — ${RUTINAS.map(
+  description: `No compres productos, comprá rutinas. ${RUTINAS_ACTIVAS.length} secuencias curadas por objetivo — ${RUTINAS_ACTIVAS.map(
     (r) => r.nombre.toLowerCase()
   ).join(", ")}. 2-3 pasos, evidencia real, cero humo.`,
   alternates: { canonical: "/rutinas" },
@@ -61,7 +61,7 @@ export default function RutinasPage() {
       {/* ────────────────── GRID DE RUTINAS ────────────────── */}
       <section className="max-w-7xl mx-auto px-6 md:px-10 pb-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {RUTINAS.map((r) => (
+          {RUTINAS_ACTIVAS.map((r) => (
             <article
               key={r.slug}
               className="rounded-lg p-8 flex flex-col gap-5 border border-[--border] transition-transform hover:-translate-y-1"

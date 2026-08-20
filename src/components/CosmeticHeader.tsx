@@ -101,29 +101,24 @@ export function CosmeticHeader({ current }: Props = {}) {
                 header y la pestaña muestran letras distintas, la marca se
                 lee como dos. Va inline y no como <img> para que no
                 parpadee en la primera carga. */}
-            {/* Mismo capullo que el favicon (src/app/icon.svg): si el header
-                y la pestaña muestran símbolos distintos, la marca se lee como
-                dos. Inline y no <img> para que no parpadee al cargar. */}
+            {/* Misma letra que el favicon (src/app/icon.svg): la V de Bodoni
+                72 Italic, convertida a path con fontTools para no depender de
+                que el visitante tenga la fuente. Inline y no <img> para que no
+                parpadee al cargar. Si el header y la pestaña muestran marcas
+                distintas, se leen como dos. */}
             <svg
               className="w-8 h-8 shrink-0"
               viewBox="0 0 100 100"
               role="img"
               aria-label="Veliroz"
             >
-              <rect width="100" height="100" rx="22" fill="var(--veliroz-ink, #1A1613)" />
-              <path
-                d="M50 80 C42 62 42 40 50 22 C58 40 58 62 50 80 Z"
+              <rect width="100" height="100" rx="24" fill="var(--veliroz-ink, #1A1613)" />
+              <g
                 fill="var(--veliroz-champagne, #D4B896)"
-                opacity=".45"
-              />
-              <path
-                d="M48 83 C26 64 20 42 29 25 C41 32 47 44 48 60 Z"
-                fill="var(--veliroz-champagne, #D4B896)"
-              />
-              <path
-                d="M52 83 C74 64 80 42 71 25 C59 32 53 44 52 60 Z"
-                fill="var(--veliroz-champagne, #D4B896)"
-              />
+                transform="translate(0.63 86.60) scale(0.10780 -0.10780)"
+              >
+                <path d="M777 684Q777 676 743 674Q690 671 671 648Q665 641 615 574L334 192Q304 151 276 111Q190 -13 187 -13Q183 -13 183 -4Q183 3 184 15Q186 31 186 35L191 122L216 595Q218 633 218 653Q218 668 201.0 672.0Q184 676 163 676Q139 676 139 683Q139 692 163 692Q180 692 199 691Q236 689 279 689Q305 689 361.0 690.0Q417 691 424 691H441Q449 691 449 686Q449 675 420 672Q402 672 384 672Q345 671 335.5 669.0Q326 667 321 658Q318 653 317 639L315 604L285 166L586 570Q637 638 637 656Q637 671 608 675Q603 675 566 675Q557 675 557 680Q557 687 571.0 688.0Q585 689 660 689Q777 689 777 684Z" />
+              </g>
             </svg>
             <div className="hidden sm:flex flex-col leading-none">
               <span className="font-serif text-ink text-base font-semibold tracking-tight">

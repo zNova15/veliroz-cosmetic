@@ -49,6 +49,12 @@ export interface Rutina {
   tiempoMinutos: number; // por sesión
   dificultad: Dificultad;
   accent: string; // color de fondo card
+  /* Composición con los packshots reales de la rutina sobre su color de
+     acento (bucket `productos/rutinas/`, migración 024). Las cards eran
+     sólo color y texto y se veían apagadas. Se compuso con multiply para
+     fundir el fondo blanco de los packshots con el acento — los PNG del
+     CDN no traen canal alfa. */
+  imagen: string;
   /** SKUs reales de la rutina, en orden de uso. */
   skus: string[];
   /**
@@ -80,6 +86,7 @@ export const RUTINAS: Rutina[] = [
     para: ["normal", "sin experiencia", "sensible"],
     tiempoMinutos: 5,
     dificultad: "inicial",
+    imagen: "https://usfpzlxmmgruydqbymsx.supabase.co/storage/v1/object/public/productos/rutinas/primera-vez.jpg",
     accent: "#F7EFE6",
     skus: ["MIXSOON-FOAM-150ML", "ALTHEA-345-50ML", "BOJ-SUN-50ML"],
     bundleSku: "RUTINA-PRIMERA-VEZ",
@@ -119,6 +126,7 @@ export const RUTINAS: Rutina[] = [
     para: ["manchas", "marcas-post-acne", "mixta", "grasa"],
     tiempoMinutos: 6,
     dificultad: "intermedia",
+    imagen: "https://usfpzlxmmgruydqbymsx.supabase.co/storage/v1/object/public/productos/rutinas/manchas-tono-desparejo.jpg",
     accent: "#EEE4D8",
     skus: ["MIXSOON-FOAM-150ML", "ANUA-NIACIN-TXA-30ML", "S1004-SUNSERUM-50ML"],
     bundleSku: "RUTINA-MANCHAS-TONO",
@@ -160,6 +168,7 @@ export const RUTINAS: Rutina[] = [
     para: ["antiedad", "arrugas", "firmeza"],
     tiempoMinutos: 8,
     dificultad: "avanzada",
+    imagen: "https://usfpzlxmmgruydqbymsx.supabase.co/storage/v1/object/public/productos/rutinas/antiedad-honesta.jpg",
     accent: "#F3E8E8",
     skus: ["CELIMAX-RETINAL-15ML", "ANUA-PDRN-30ML", "RL-BIRCH-SUN-50ML"],
     bundleSku: "RUTINA-ANTIEDAD-HON",
@@ -201,6 +210,7 @@ export const RUTINAS: Rutina[] = [
     para: ["sensible", "rojeces", "barrera-cutanea", "reparacion"],
     tiempoMinutos: 5,
     dificultad: "inicial",
+    imagen: "https://usfpzlxmmgruydqbymsx.supabase.co/storage/v1/object/public/productos/rutinas/piel-reactiva.jpg",
     accent: "#E9F0EC",
     skus: [
       "MIXSOON-FOAM-150ML",
@@ -260,6 +270,7 @@ export const RUTINAS: Rutina[] = [
     para: ["evento", "luminosidad", "firmeza", "hidratacion"],
     tiempoMinutos: 20,
     dificultad: "inicial",
+    imagen: "https://usfpzlxmmgruydqbymsx.supabase.co/storage/v1/object/public/productos/rutinas/glow-evento.jpg",
     accent: "#F4EDDD",
     skus: ["BIODANCE-MASK-4PK", "VLRZ-GUASHA-SET"],
     bundleSku: "RUTINA-GLOW-EVENTO",

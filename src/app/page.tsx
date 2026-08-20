@@ -485,9 +485,23 @@ export default async function CosmeticLanding() {
                   className="w-[82%] sm:w-[54%] lg:w-[36%] xl:w-[31%]"
                 >
                 <article
-                  className="h-full rounded-lg p-8 flex flex-col gap-5 border border-[--border]"
+                  className="h-full rounded-lg overflow-hidden flex flex-col border border-[--border]"
                   style={{ background: r.accent }}
                 >
+                  {/* La imagen se compuso sobre el MISMO accent que la card,
+                      así que el borde inferior de la foto funde con el fondo
+                      y no se ve un recuadro pegado. */}
+                  <div className="relative aspect-[3/2] w-full">
+                    <Image
+                      src={r.imagen}
+                      alt={`Productos de la rutina ${r.nombre}`}
+                      fill
+                      sizes="(min-width: 1280px) 31vw, (min-width: 640px) 54vw, 82vw"
+                      className="object-cover"
+                    />
+                  </div>
+
+                  <div className="p-8 pt-6 flex flex-col gap-5 flex-1">
                   <div className="space-y-1">
                     <span className="font-mono text-[9px] tracking-[0.24em] uppercase text-taupe">
                       {r.tag}
@@ -528,6 +542,7 @@ export default async function CosmeticLanding() {
                     >
                       Ver rutina →
                     </Link>
+                  </div>
                   </div>
                 </article>
                 </CarouselSlide>

@@ -101,6 +101,9 @@ export function CosmeticHeader({ current }: Props = {}) {
                 header y la pestaña muestran letras distintas, la marca se
                 lee como dos. Va inline y no como <img> para que no
                 parpadee en la primera carga. */}
+            {/* Mismo capullo que el favicon (src/app/icon.svg): si el header
+                y la pestaña muestran símbolos distintos, la marca se lee como
+                dos. Inline y no <img> para que no parpadee al cargar. */}
             <svg
               className="w-8 h-8 shrink-0"
               viewBox="0 0 100 100"
@@ -109,7 +112,16 @@ export function CosmeticHeader({ current }: Props = {}) {
             >
               <rect width="100" height="100" rx="22" fill="var(--veliroz-ink, #1A1613)" />
               <path
-                d="M14 25 H40 V30 H34.5 L50 68 L64 30 H58.5 V25 H84 V30 H78 L57 82 H45 L22 30 H14 Z"
+                d="M50 80 C42 62 42 40 50 22 C58 40 58 62 50 80 Z"
+                fill="var(--veliroz-champagne, #D4B896)"
+                opacity=".45"
+              />
+              <path
+                d="M48 83 C26 64 20 42 29 25 C41 32 47 44 48 60 Z"
+                fill="var(--veliroz-champagne, #D4B896)"
+              />
+              <path
+                d="M52 83 C74 64 80 42 71 25 C59 32 53 44 52 60 Z"
                 fill="var(--veliroz-champagne, #D4B896)"
               />
             </svg>

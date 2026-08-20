@@ -46,6 +46,8 @@ const CATEGORIA_LABEL: Record<string, string> = {
   serum: "Sérum",
   limpiador: "Limpiador",
   "protector-solar": "Protector solar",
+  exfoliante: "Exfoliante",
+  tratamiento: "Tratamiento",
   "crema-hidratante": "Hidratante",
   essence: "Essence",
   mascarilla: "Mascarilla",

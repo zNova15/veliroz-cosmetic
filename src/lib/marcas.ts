@@ -46,6 +46,7 @@ export const MARCA_IMAGEN: Record<string, string> = {
   "dr-althea": `${STORAGE}/marcas/dr-althea.jpg`,
   "round-lab": `${STORAGE}/marcas/round-lab.jpg`,
   skin1004: `${STORAGE}/marcas/skin1004.jpg`,
+  "the-ordinary": `${STORAGE}/marcas/the-ordinary.jpg`,
 };
 
 /** Imagen de la marca, o null si todavía no tiene packshots. */

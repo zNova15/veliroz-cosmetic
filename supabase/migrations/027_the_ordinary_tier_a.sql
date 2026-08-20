@@ -1,0 +1,41 @@
+-- ============================================================
+-- 027 — The Ordinary: los 4 SKUs que sobreviven al análisis de margen
+-- Aplicada: 2026-08-20 · project usfpzlxmmgruydqbymsx
+-- (027a policy temporal → subida de packshots → 027c revocada,
+--  027d simplifica los activos redundantes)
+-- ============================================================
+--
+-- De los 13 SKUs cotizados entran SÓLO 4. Ver docs/COMPRA-DERMO.md por
+-- la evidencia completa. Resumen del descarte:
+--   · 6 los vende Falabella POR DEBAJO del costo cotizado (NMF −43%,
+--     Glycolic −24%, Salicylic −14%, Caffeine −12%, Hyaluronic −10%,
+--     Squalane −9%).
+--   · Niacinamide 10%: duplica la de Anua y Falabella la repondrá a
+--     S/39–49.
+--   · Granactive Retinoid: para la segunda compra, no ahora.
+--
+-- Los 4 que entran comparten dos cosas: Falabella NO los vende (no hay
+-- ancla oficial que reviente el margen) y cubren huecos reales del
+-- catálogo — no había exfoliante químico, ni tratamiento de rojeces,
+-- ni antioxidante de mañana.
+--
+--   TO-PEELING-30ML   S/50 → S/79   36.7%
+--   TO-VITC23-30ML    S/59 → S/89   33.7%
+--   TO-AZELAIC-30ML   S/69 → S/99   30.3%
+--   TO-RETINAL-15ML   S/75 → S/129  41.9%
+--
+-- 🔴 DOS CONDICIONES SIN RESOLVER (en meta.nso_pendiente de cada uno):
+--   1. La investigación NO encontró importador peruano declarado de
+--      Deciem. Sin NSO vigente exhibido por el proveedor, esto NO se
+--      compra: es la regla dura del negocio.
+--   2. Si la cotización es SIN IGV, el costo sube 18% y sólo sobreviven
+--      Peeling y Retinal (el Azelaico caería a 17.8%).
+--
+-- TRAMPA: `productos.tipo` sólo acepta individual|bundle|kit — 'serum'
+-- va en `categoria`. El primer intento puso tipo='serum' y rebotó el
+-- CHECK. Verificar constraints antes de escribir, siempre.
+--
+-- El SQL completo quedó registrado en el historial de migraciones de
+-- Supabase (027b). Acá se documenta la decisión, que es lo que se
+-- pierde si sólo se guarda el INSERT.
+-- ============================================================

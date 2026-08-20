@@ -44,6 +44,10 @@ const FACETS = {
       { slug: "mixsoon", label: "Mixsoon" },
       { slug: "round-lab", label: "Round Lab" },
       { slug: "skin1004", label: "SKIN1004" },
+      { slug: "the-ordinary", label: "The Ordinary" },
+      /* Veliroz sigue en la lista aunque sus dos productos propios salieron
+         del catálogo (migración 026): las 4 RUTINAS cuelgan de esta marca,
+         porque las armamos nosotros. Sacarla dejaba los bundles sin filtro. */
       { slug: "veliroz", label: "Veliroz" },
     ],
   },
@@ -55,11 +59,12 @@ const FACETS = {
       { slug: "rutina", label: "Rutinas completas" },
       { slug: "protector-solar", label: "Protector solar" },
       { slug: "serum", label: "Sérum" },
+      { slug: "tratamiento", label: "Tratamiento" },
+      { slug: "exfoliante", label: "Exfoliante" },
       { slug: "crema-hidratante", label: "Hidratante" },
       { slug: "essence", label: "Essence" },
       { slug: "limpiador", label: "Limpiador" },
       { slug: "mascarilla", label: "Mascarilla" },
-      { slug: "herramientas", label: "Herramientas" },
     ],
   },
   tipo_piel: {

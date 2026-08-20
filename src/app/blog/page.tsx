@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { listPosts, type BlogPostMeta } from "@/lib/blog";
@@ -146,11 +147,21 @@ function PostCard({ post }: { post: BlogPostMeta }) {
       href={`/blog/${frontmatter.slug}`}
       className="group flex flex-col focus:outline-none focus-visible:ring-2 focus-visible:ring-ink rounded-md"
     >
-      {/* Hero visual — gradient de marca, sin foto real */}
+      {/* Portada: la composición con los packshots del post si existe, y si
+          no el gradiente de marca de siempre (fallback válido). */}
       <div
         className="aspect-[4/3] rounded-md overflow-hidden relative flex items-end p-6"
         style={{ background: frontmatter.hero_gradient }}
       >
+        {frontmatter.hero_imagen && (
+          <Image
+            src={frontmatter.hero_imagen}
+            alt=""
+            fill
+            sizes="(min-width: 1024px) 31vw, (min-width: 640px) 46vw, 92vw"
+            className="object-cover"
+          />
+        )}
         <div className="absolute top-4 left-4">
           <span className="font-mono text-[9px] tracking-[0.22em] uppercase text-ink bg-cream/90 backdrop-blur px-2.5 py-1 rounded-sm">
             {frontmatter.categoria}

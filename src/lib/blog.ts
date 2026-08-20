@@ -28,6 +28,10 @@ export interface BlogFrontmatter {
   categoria: string;             // ej. "Educacional", "Rutinas", "Ingredientes"
   tags: string[];
   hero_gradient: string;         // CSS gradient string p/background sin foto real
+  /* Portada compuesta con los packshots de los productos que menciona el
+     post (bucket `productos/blog/`, migración 025). Null → se usa el
+     gradiente, que sigue siendo un fallback válido. */
+  hero_imagen: string | null;
   tiempo_lectura_min?: number;   // override manual — si falta usamos reading-time
   og_image?: string;             // opcional (fallback = og genérico del sitio)
   actualizado?: string;          // ISO opcional
@@ -108,6 +112,7 @@ function normalizeFrontmatter(
     tags: Array.isArray(fm.tags) ? fm.tags.map((t) => String(t)) : [],
     hero_gradient:
       (fm.hero_gradient ?? "linear-gradient(135deg, #F5EFE7 0%, #E8B4B8 100%)").toString(),
+    hero_imagen: fm.hero_imagen ? String(fm.hero_imagen) : null,
     tiempo_lectura_min:
       typeof fm.tiempo_lectura_min === "number" ? fm.tiempo_lectura_min : undefined,
     og_image: fm.og_image?.toString(),

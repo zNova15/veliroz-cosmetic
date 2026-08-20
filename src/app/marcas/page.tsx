@@ -1,8 +1,9 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { SiteFooter } from "@/components/SiteFooter";
 import { getSupabase, type Marca } from "@/lib/supabase";
-import { swatchFor } from "@/lib/marcas";
+import { swatchFor, imagenMarca } from "@/lib/marcas";
 
 /* ============================================================
    /marcas — grid de marcas activas.
@@ -38,6 +39,12 @@ async function fetchMarcas(): Promise<Marca[]> {
   const { data, error } = await getSupabase()
     .from("marcas")
     .select("id, slug, nombre, logo_url, pais_origen")
+    /* Sin este filtro entraban The Ordinary, CeraVe y Xhekpon, dadas de baja
+       en la migración 015 por quedarse sin ningún producto: la página se
+       titula "Marcas que sí funcionan" y listaba 13 cuando el catálogo tiene
+       10, contradiciendo el contador del hero. Y al hacer clic en una de
+       ellas se llegaba a una marca vacía. */
+    .eq("activo", true)
     .order("nombre", { ascending: true });
   if (error) {
     // eslint-disable-next-line no-console
@@ -94,6 +101,7 @@ export default async function MarcasPage() {
             {marcas.map((m) => {
               const swatch = swatchFor(m.slug);
               const intro = MARCA_INTRO[m.slug];
+              const foto = imagenMarca(m.slug);
               return (
                 <article
                   key={m.id}
@@ -105,18 +113,46 @@ export default async function MarcasPage() {
                     style={{ background: swatch }}
                     aria-label={`Ver marca ${m.nombre}`}
                   >
-                    <div className="text-center px-6">
-                      {m.pais_origen && (
-                        <p className="font-mono text-[9px] uppercase tracking-[0.24em] text-taupe mb-2">
-                          {m.pais_origen}
+                    {/* Con foto, el nombre NO va encima: los packshots ocupan
+                        el centro y la composición de BIODANCE es una modelo,
+                        así que el texto caía sobre el producto o sobre la
+                        cara. Va abajo, en el bloque de contenido — igual que
+                        en las cards de rutina. Sin foto se mantiene el bloque
+                        tipográfico centrado, que ahí sí tiene todo el espacio. */}
+                    {foto ? (
+                      <Image
+                        src={foto}
+                        alt={`Productos de ${m.nombre}`}
+                        fill
+                        sizes="(min-width: 1024px) 31vw, (min-width: 640px) 46vw, 92vw"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="text-center px-6">
+                        {m.pais_origen && (
+                          <p className="font-mono text-[9px] uppercase tracking-[0.24em] text-taupe mb-2">
+                            {m.pais_origen}
+                          </p>
+                        )}
+                        <p className="font-serif italic text-3xl md:text-4xl text-ink leading-tight">
+                          {m.nombre}
                         </p>
-                      )}
-                      <p className="font-serif italic text-3xl md:text-4xl text-ink leading-tight">
-                        {m.nombre}
-                      </p>
-                    </div>
+                      </div>
+                    )}
                   </Link>
-                  <div className="p-6 flex flex-col gap-4 flex-1">
+                  <div className="p-6 flex flex-col gap-3 flex-1">
+                    {foto && (
+                      <div>
+                        {m.pais_origen && (
+                          <p className="font-mono text-[9px] uppercase tracking-[0.24em] text-taupe mb-1">
+                            {m.pais_origen}
+                          </p>
+                        )}
+                        <p className="font-serif italic text-2xl text-ink leading-tight">
+                          {m.nombre}
+                        </p>
+                      </div>
+                    )}
                     {intro && (
                       <p className="text-sm text-clay leading-relaxed text-pretty">
                         {intro}

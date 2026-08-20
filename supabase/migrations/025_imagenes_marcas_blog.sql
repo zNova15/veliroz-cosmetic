@@ -1,0 +1,28 @@
+-- ============================================================
+-- 025 — Imágenes de marca y portadas de blog (a/c: policy + revocación)
+-- Aplicada: 2026-08-20 · project usfpzlxmmgruydqbymsx
+-- ============================================================
+--
+-- /marcas mostraba rectángulos de color plano con el nombre encima, y el
+-- blog usaba gradientes CSS. Al lado de las cards de producto, vacías.
+--
+-- Se compuso, con la misma técnica de la 024 (packshots reales +
+-- multiply sobre el color de la marca):
+--   · productos/marcas/<slug>.jpg  — 8 marcas con packshot, cuadrado
+--   · productos/blog/<slug>.jpg    — 5 posts, apaisado 3:2, con los
+--     productos que el post efectivamente menciona
+--
+-- Las URLs de marca viven en `src/lib/marcas.ts` (MARCA_IMAGEN), al lado
+-- del swatch con el que se compusieron. NO se usó `marcas.logo_url`: ese
+-- campo es para el logotipo de la marca, que es material de terceros y no
+-- tenemos. Las del blog van en el frontmatter (`hero_imagen`).
+--
+-- Sin entrada, ambas vistas caen al color/gradiente de antes, que sigue
+-- siendo un fallback válido. Mixsoon y Veliroz no tienen packshot todavía.
+--
+-- PROCEDIMIENTO: 025a abre INSERT/UPDATE al rol anon acotado a marcas/ y
+-- blog/, se suben los 13 archivos, 025c revoca. Verificado: lectura
+-- pública 200, escritura 400.
+-- ============================================================
+drop policy if exists productos_upload_temp_mb on storage.objects;
+drop policy if exists productos_update_temp_mb on storage.objects;

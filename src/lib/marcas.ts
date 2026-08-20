@@ -21,6 +21,39 @@ export const MARCA_SWATCH: Record<string, string> = {
   veliroz: "#F5E9EA",
 };
 
+/* ============================================================
+   Imagen por marca — composición con SUS packshots sobre SU swatch
+   (bucket `productos/marcas/`, migración 025).
+
+   Las cards de /marcas eran un rectángulo de color plano con el nombre
+   encima: al lado de las de producto se veían vacías. La tabla `marcas`
+   tiene `logo_url`, pero eso es para el logotipo de la marca —que no
+   tenemos y que además es material de terceros— así que la foto de
+   producto vive acá, junto al swatch con el que se compuso.
+
+   Sin entrada = la card cae al color plano de antes, que sigue siendo
+   un fallback válido. Mixsoon y Veliroz no tienen packshot todavía.
+   ============================================================ */
+const STORAGE =
+  "https://usfpzlxmmgruydqbymsx.supabase.co/storage/v1/object/public/productos";
+
+export const MARCA_IMAGEN: Record<string, string> = {
+  anua: `${STORAGE}/marcas/anua.jpg`,
+  "beauty-of-joseon": `${STORAGE}/marcas/beauty-of-joseon.jpg`,
+  biodance: `${STORAGE}/marcas/biodance.jpg`,
+  celimax: `${STORAGE}/marcas/celimax.jpg`,
+  cosrx: `${STORAGE}/marcas/cosrx.jpg`,
+  "dr-althea": `${STORAGE}/marcas/dr-althea.jpg`,
+  "round-lab": `${STORAGE}/marcas/round-lab.jpg`,
+  skin1004: `${STORAGE}/marcas/skin1004.jpg`,
+};
+
+/** Imagen de la marca, o null si todavía no tiene packshots. */
+export function imagenMarca(marcaSlug: string | null | undefined): string | null {
+  if (!marcaSlug) return null;
+  return MARCA_IMAGEN[marcaSlug] ?? null;
+}
+
 export function swatchFor(marcaSlug: string | null | undefined): string {
   if (!marcaSlug) return "#F5EFE7";
   return MARCA_SWATCH[marcaSlug] ?? "#F5EFE7";

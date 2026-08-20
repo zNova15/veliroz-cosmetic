@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -157,6 +158,16 @@ export default async function BlogPostPage(
           className="w-full aspect-[16/7] rounded-lg overflow-hidden relative"
           style={{ background: frontmatter.hero_gradient }}
         >
+          {frontmatter.hero_imagen && (
+            <Image
+              src={frontmatter.hero_imagen}
+              alt=""
+              fill
+              priority
+              sizes="(min-width: 1280px) 1152px, 100vw"
+              className="object-cover"
+            />
+          )}
           <div className="absolute inset-0 flex items-center justify-center">
             <span
               aria-hidden
@@ -246,6 +257,15 @@ export default async function BlogPostPage(
                   className="aspect-[4/3] rounded-md overflow-hidden relative"
                   style={{ background: r.frontmatter.hero_gradient }}
                 >
+                  {r.frontmatter.hero_imagen && (
+                    <Image
+                      src={r.frontmatter.hero_imagen}
+                      alt=""
+                      fill
+                      sizes="(min-width: 640px) 30vw, 92vw"
+                      className="object-cover"
+                    />
+                  )}
                   <span className="absolute top-3 left-3 font-mono text-[9px] tracking-[0.22em] uppercase text-ink bg-cream/90 backdrop-blur px-2 py-1 rounded-sm">
                     {r.frontmatter.categoria}
                   </span>

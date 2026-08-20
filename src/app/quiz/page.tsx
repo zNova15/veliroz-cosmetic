@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import {
@@ -22,8 +23,8 @@ import { swatchFor } from "@/lib/marcas";
 import { useCartStore, makeSnapshot } from "@/lib/store";
 import { Toast } from "@/components/Toast";
 import { DiagnosticoPanel } from "@/components/DiagnosticoPanel";
-import { diagnosticar } from "@/lib/diagnostico";
-import { getRutina } from "@/lib/rutinas";
+import { diagnosticar, rutinasAlternativas } from "@/lib/diagnostico";
+import { getRutina, RUTINAS } from "@/lib/rutinas";
 
 /* ============================================================
    Veliroz Cosmetic — /quiz
@@ -432,6 +433,16 @@ function ResultadoPantalla({
   /* La rutina curada equivalente, si existe (ver bundleSlug en quiz-logic). */
   const bundle = rutina.bundleSlug ? getRutina(rutina.bundleSlug) : null;
 
+  const diag = useMemo(() => diagnosticar(perfil), [perfil]);
+
+  /* Otras rutinas que encajan con el perfil. Ofrecer UNA sola respuesta deja
+     sin salida a quien no se siente identificado, y esa persona se va en vez
+     de mirar otra cosa. */
+  const alternativas = useMemo(
+    () => rutinasAlternativas(RUTINAS, perfil, bundle?.slug ?? null, diag, 2),
+    [perfil, bundle, diag],
+  );
+
   /* Fetch client-side de los productos por slug (anon key). */
   useEffect(() => {
     let cancelado = false;
@@ -609,7 +620,7 @@ function ResultadoPantalla({
           dónde sale, después se recomienda. Al revés se lee como una venta
           con la justificación pegada atrás. */}
       <div className="mt-10">
-        <DiagnosticoPanel diag={diagnosticar(perfil)} />
+        <DiagnosticoPanel diag={diag} />
       </div>
 
       <div className="divider-champagne mt-12 mb-10" />
@@ -683,6 +694,79 @@ function ResultadoPantalla({
               <ProductoResultadoCard key={p.slug} p={p} paso={i + 1} />
             ))}
           </div>
+        </div>
+      )}
+
+      {/* ───── Alternativas ─────
+          Cada una dice POR QUÉ aparece. Un "también te puede gustar" sin
+          motivo se lee como relleno y no lo mira nadie. Si ninguna rutina
+          puntúa contra el perfil, no se muestra la sección: mejor nada que
+          rellenar con lo que sea. */}
+      {alternativas.length > 0 && (
+        <div className="mt-14">
+          <div className="divider-champagne mb-8" />
+          <p className="font-mono text-[10px] tracking-[0.24em] uppercase text-taupe mb-5">
+            Otras que podrían servirte
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {alternativas.map(({ rutina: r, motivo }) => (
+              <Link
+                key={r.slug}
+                href={`/rutinas/${r.slug}`}
+                className="group rounded-lg overflow-hidden border border-[--border] flex flex-col
+                           transition-colors duration-200 hover:border-ink"
+                style={{ background: r.accent }}
+              >
+                <div className="relative aspect-[3/2] w-full">
+                  <Image
+                    src={r.imagen}
+                    alt={`Productos de la rutina ${r.nombre}`}
+                    fill
+                    sizes="(min-width: 640px) 46vw, 90vw"
+                    className="object-cover"
+                  />
+                </div>
+
+                <div className="p-6 flex flex-col gap-2 flex-1">
+                  {motivo && (
+                    <span className="font-mono text-[9px] tracking-[0.2em] uppercase text-taupe">
+                      {motivo}
+                    </span>
+                  )}
+                  <p className="font-serif text-xl text-ink italic leading-tight">
+                    {r.nombre}
+                  </p>
+                  <p className="text-[13px] text-clay text-pretty line-clamp-2">
+                    {r.descripcion}
+                  </p>
+
+                  <div className="mt-auto pt-4 flex items-end justify-between gap-3">
+                    <div>
+                      <p className="font-mono text-[10px] text-stone line-through">
+                        S/. {r.precioLista.toFixed(2)}
+                      </p>
+                      <p className="font-mono text-base text-ink">
+                        S/. {r.precioBundle.toFixed(2)}
+                      </p>
+                    </div>
+                    <span className="text-xs text-ink underline underline-offset-4 group-hover:text-rose-deep shrink-0">
+                      Ver rutina →
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <p className="mt-5 text-center">
+            <Link
+              href="/rutinas"
+              className="text-sm text-clay hover:text-ink underline underline-offset-4"
+            >
+              Ver las 5 rutinas curadas →
+            </Link>
+          </p>
         </div>
       )}
 

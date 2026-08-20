@@ -308,3 +308,93 @@ export const FOCO_A_PREOCUPACION: Record<string, Preocupacion> = {
   firmeza: "antiedad",
   habito: "mantener",
 };
+
+/* ============================================================
+   Rutinas alternativas
+   ------------------------------------------------------------
+   Después del resultado, el quiz ofrecía UNA sola respuesta. Eso deja
+   sin salida a quien no se siente identificado — y esa persona se va,
+   no mira otra cosa.
+
+   PRIMER INTENTO, DESCARTADO: puntuar por solapamiento entre los tags
+   `para` de la rutina y el perfil. Con sólo 5 rutinas de temáticas
+   deliberadamente distintas, casi nunca se solapan: en la prueba con
+   piel mixta + manchas, las cuatro alternativas puntuaron 0 y la
+   sección no se mostraba nunca.
+
+   LO QUE SE USA: las 6 dimensiones que el diagnóstico YA calculó. Cada
+   rutina declara qué dimensiones trabaja, y puntúa según cuánto le
+   falta al usuario en esas — una rutina es relevante en la medida en
+   que ataca algo que está flojo. Siempre da resultado y el motivo sale
+   de datos reales, no de una etiqueta.
+   ============================================================ */
+
+/** Qué dimensiones del diagnóstico trabaja cada rutina curada. */
+const RUTINA_TRABAJA: Record<string, string[]> = {
+  "primera-vez": ["proteccion", "barrera", "habito"],
+  "manchas-tono-desparejo": ["tono", "proteccion"],
+  "antiedad-honesta": ["firmeza", "proteccion"],
+  "piel-reactiva": ["barrera"],
+  "glow-evento": ["textura", "barrera"],
+};
+
+export interface RutinaPuntuada<T> {
+  rutina: T;
+  puntos: number;
+  /** Por qué aparece, en palabras del diagnóstico. */
+  motivo: string;
+}
+
+/**
+ * Ordena rutinas por cuánto atacan lo que el perfil tiene más flojo,
+ * excluyendo la ya recomendada. Genérico sobre la forma de la rutina
+ * para no acoplar este módulo a `rutinas.ts`: sólo necesita `slug`.
+ */
+export function rutinasAlternativas<T extends { slug: string }>(
+  todas: T[],
+  perfil: QuizPerfil,
+  excluirSlug: string | null,
+  diag: Diagnostico,
+  max = 2,
+): Array<RutinaPuntuada<T>> {
+  void perfil;
+  const porKey = new Map(diag.dimensiones.map((d) => [d.key, d]));
+
+  return todas
+    .filter((r) => r.slug !== excluirSlug)
+    .map((r) => {
+      const keys = RUTINA_TRABAJA[r.slug] ?? [];
+      const dims = keys
+        .map((k) => porKey.get(k))
+        .filter((d): d is Dimension => Boolean(d));
+
+      /* Cuanto más bajo el score de lo que la rutina trabaja, más puntos.
+         Una rutina que ataca algo que ya está en 90 no aporta nada. */
+      const puntos = dims.reduce((a, d) => a + (100 - d.score), 0);
+
+      /* Las dimensiones que trabaja, de peor a mejor. El motivo se elige
+         más abajo para no repetir el mismo texto en dos tarjetas. */
+      const ordenadas = [...dims].sort((a, b) => a.score - b.score);
+
+      return { rutina: r, puntos, dims: ordenadas };
+    })
+    .filter((x) => x.dims.length > 0)
+    .sort((a, b) => b.puntos - a.puntos)
+    .slice(0, max)
+    /* Dos tarjetas con "Trabaja tu protección solar" se leen como plantilla
+       aunque las dos sean ciertas. La segunda nombra su siguiente dimensión
+       más floja; si no tiene otra, se queda con la suya. */
+    .reduce<Array<RutinaPuntuada<T>>>((acc, x) => {
+      const usados = new Set(acc.map((a) => a.motivo));
+      const elegida =
+        x.dims.find((d) => !usados.has(frase(d))) ?? x.dims[0];
+      acc.push({ rutina: x.rutina, puntos: x.puntos, motivo: frase(elegida) });
+      return acc;
+    }, []);
+}
+
+function frase(d: Dimension): string {
+  return d.score < 60
+    ? `Trabaja tu ${d.label.toLowerCase()}`
+    : `Refuerza tu ${d.label.toLowerCase()}`;
+}

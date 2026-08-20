@@ -76,11 +76,11 @@ export interface QuizOpcion<V extends string> {
 }
 
 /* Todas las preguntas están tipadas en su clave y su union de opciones,
-   para que un cambio en la union rompa acá en compile-time. */
+   para que un cambio en la union rompa aquí en compile-time. */
 export const QUIZ_PREGUNTAS = [
   {
     key: "tipo_piel",
-    hero: "¿Cómo se siente tu piel al mediodía si no te ponés nada?",
+    hero: "¿Cómo se siente tu piel al mediodía si no te pones nada?",
     subtitulo:
       "Sin cremas, sin maquillaje, sin retoques. Solo tu piel a mitad del día.",
     opciones: [
@@ -94,8 +94,8 @@ export const QUIZ_PREGUNTAS = [
   },
   {
     key: "preocupacion",
-    hero: "¿Qué es lo primero que querés mejorar?",
-    subtitulo: "Elegí lo que más te molesta al mirarte al espejo.",
+    hero: "¿Qué es lo primero que quieres mejorar?",
+    subtitulo: "Elige lo que más te molesta al mirarte al espejo.",
     opciones: [
       { value: "poros", label: "Poros dilatados", hint: "Textura visible" },
       { value: "acne", label: "Acné o granitos", hint: "Brotes recurrentes" },
@@ -118,7 +118,7 @@ export const QUIZ_PREGUNTAS = [
   },
   {
     key: "edad",
-    hero: "¿Cuántos años tenés?",
+    hero: "¿Cuántos años tienes?",
     subtitulo: "La edad nos dice qué prevenir y qué corregir.",
     opciones: [
       { value: "menos-20", label: "Menos de 20", hint: "Prevención y limpieza" },
@@ -143,8 +143,8 @@ export const QUIZ_PREGUNTAS = [
   },
   {
     key: "tiempo",
-    hero: "¿Cuánto tiempo le podés dedicar a tu rutina?",
-    subtitulo: "Sé sincera — la rutina que hacés le gana a la rutina ideal.",
+    hero: "¿Cuánto tiempo le puedes dedicar a tu rutina?",
+    subtitulo: "Sé sincera — la rutina que haces le gana a la rutina ideal.",
     opciones: [
       { value: "2min", label: "2 minutos", hint: "Lo esencial, sin vueltas" },
       { value: "5min", label: "5 minutos", hint: "Rutina de 3-4 pasos" },
@@ -153,17 +153,17 @@ export const QUIZ_PREGUNTAS = [
   },
   {
     key: "spf_diario",
-    hero: "¿Usás protector solar todos los días?",
+    hero: "¿Usas protector solar todos los días?",
     subtitulo: "El SPF diario es el paso no negociable — hasta bajo techo.",
     opciones: [
       { value: "nunca", label: "Nunca", hint: "Nos ponemos al día" },
       { value: "a-veces", label: "A veces, cuando salgo", hint: "Vamos por más" },
-      { value: "siempre", label: "Sí, todos los días", hint: "Ya tenés el hábito" },
+      { value: "siempre", label: "Sí, todos los días", hint: "Ya tienes el hábito" },
     ] as QuizOpcion<SPFDiario>[],
   },
   {
     key: "budget",
-    hero: "¿Cuánto invertís al mes en skincare?",
+    hero: "¿Cuánto inviertes al mes en skincare?",
     subtitulo:
       "Sin juicio. Nos ayuda a armarte una rutina realista, no una wishlist.",
     opciones: [
@@ -293,12 +293,12 @@ export function recomendarRutina(perfil: QuizPerfil): Rutina {
   /* 0) GATE DE SEGURIDAD — va primero que todo, incluso antes de sensibilidad.
      Los retinoides (el retinal de CELIMAX incluido) están contraindicados en
      embarazo y lactancia, así que la rutina antiedad no puede recomendarse
-     acá por ninguna vía: ni pedida explícitamente, ni por la regla de 40+,
+     aquí por ninguna vía: ni pedida explícitamente, ni por la regla de 40+,
      ni por la de 30-39 preventiva.
      Se deriva a `manchas`, que trabaja el mismo objetivo cosmético con
      niacinamida + SPF, ambos seguros en el embarazo.
      Sólo bloquea ante un "sí" explícito: un perfil viejo sin el campo no
-     queda atrapado acá. */
+     queda atrapado aquí. */
   if (perfil.embarazo_lactancia === "si") {
     if (perfil.preocupacion === "sensibilidad") return RUTINAS["sensibilidad"];
     if (perfil.tipo_piel === "seca" || perfil.tipo_piel === "muy-seca") {
@@ -352,7 +352,7 @@ export function recomendarRutina(perfil: QuizPerfil): Rutina {
     return RUTINAS["hidratacion"];
   }
 
-  // 9) Cualquier piel grasa que llegó hasta acá → control grasitud.
+  // 9) Cualquier piel grasa que llegó hasta aquí → control grasitud.
   if (perfil.tipo_piel === "grasa" || perfil.tipo_piel === "muy-grasa") {
     return RUTINAS["acne-graso"];
   }

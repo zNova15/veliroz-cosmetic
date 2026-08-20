@@ -21,7 +21,7 @@
       `canonical` de las páginas, en `metadataBase`, en el JSON-LD, en
       los emails y en el bot de WhatsApp — si el helper eligiera otro
       host, el canonical declarado contradiría al del sitemap.
-   3. VERCEL_URL sólo en preview/dev, donde sí querés el deployment.
+   3. VERCEL_URL sólo en preview/dev, donde sí quieres el deployment.
 
    OJO: el apex debe ser el dominio *primary* en Vercel. Si `veliroz.com`
    redirige a `www.veliroz.com`, Google indexa www mientras el canonical

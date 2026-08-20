@@ -189,7 +189,7 @@ body {
    regla: el h1 del hero caía a 16px y todos los `border-[--border]`
    pintaban currentColor (clay) en vez del 8% de ink del design system.
 
-   En vez de reescribir 20 archivos (y pelearnos con los diffs), acá se
+   En vez de reescribir 20 archivos (y pelearnos con los diffs), aquí se
    declaran las clases literales que Tailwind ya no emite. Si algún día
    se migran los class names, este bloque se borra entero.
    ============================================================ */

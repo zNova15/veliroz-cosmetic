@@ -176,7 +176,7 @@ export function AddToCartButton({
             · Pre-venta ·
           </p>
           <p className="text-sm text-clay leading-relaxed text-pretty">
-            Reservá tu unidad. Entrega estimada 5-7 días hábiles.
+            Reserva tu unidad. Entrega estimada 5-7 días hábiles.
           </p>
         </div>
       ) : (
@@ -184,7 +184,7 @@ export function AddToCartButton({
         {agotado ? (
           <span className="inline-flex items-center gap-2 text-[--veliroz-danger]">
             <span className="w-2 h-2 rounded-full bg-[--veliroz-danger]" />
-            Agotado — consultanos por reposición
+            Agotado — consúltanos por reposición
           </span>
         ) : stockLimitado ? (
           <span className="inline-flex items-center gap-2 text-[--veliroz-champagne-dark]">

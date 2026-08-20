@@ -11,7 +11,7 @@ import { Toast } from "./Toast";
    WishlistGrid — el cuerpo cliente de /wishlist.
 
    El server nos pasa el catálogo completo (12 productos activos) ya
-   serializado; acá filtramos por lo que hay en useWishlistStore.
+   serializado; aquí filtramos por lo que hay en useWishlistStore.
 
    HIDRATACIÓN: el store persiste en localStorage, así que en SSR el array
    está vacío pero en el primer render del cliente ya viene rehidratado →
@@ -340,7 +340,7 @@ function EmptyState() {
             Todavía no guardaste nada.
           </h2>
           <p className="text-sm text-clay text-pretty">
-            Tocá el corazón en cualquier producto y lo vas a encontrar acá para
+            Toca el corazón en cualquier producto y lo vas a encontrar aquí para
             decidir con calma.
           </p>
         </div>

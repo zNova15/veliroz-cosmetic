@@ -206,7 +206,7 @@ export async function sendMedia(
 }
 
 /* -------------------- Helper de templates Veliroz -------------------- */
-/* Nombres canónicos — declarados acá para que los callers no
+/* Nombres canónicos — declarados aquí para que los callers no
    tengan que memorizar strings sueltos. */
 
 export const WA_TEMPLATES = {

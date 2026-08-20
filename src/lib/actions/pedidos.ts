@@ -63,7 +63,7 @@ export interface CheckoutPayload {
 
   /* Código de referido. Va SEPARADO de `cupon` aunque la UI use un solo
      campo: son tablas distintas y el RPC los aplica por caminos distintos.
-     El monto del descuento NO viaja acá — lo recalcula el server. */
+     El monto del descuento NO viaja aquí — lo recalcula el server. */
   codigoReferido?: string;
 
   /* auditoría cliente (informativo — el server manda) */
@@ -294,11 +294,11 @@ export async function validarCuponAction(
    más común y no necesita email) y si no existe, probamos referido.
 
    El referido necesita el email porque sus reglas dependen de quién
-   compra: no podés usar tu propio código ni el de una segunda compra.
+   compra: no puedes usar tu propio código ni el de una segunda compra.
    Si el checkout todavía no tiene email, se informa en vez de fallar
    en silencio.
 
-   El monto NUNCA se confía: acá se valida para MOSTRAR, y
+   El monto NUNCA se confía: aquí se valida para MOSTRAR, y
    crear_pedido_con_referido lo recalcula server-side al cobrar.
    ============================================================ */
 export async function validarCodigoAction(

@@ -57,7 +57,7 @@ const PROCESO = [
     orden: 1,
     titulo: "Confirmamos tu pedido",
     detalle:
-      "Ni bien pagás, recibís correo con el número de pedido y comprobante electrónico (boleta o factura).",
+      "Ni bien pagas, recibes correo con el número de pedido y comprobante electrónico (boleta o factura).",
   },
   {
     orden: 2,
@@ -69,13 +69,13 @@ const PROCESO = [
     orden: 3,
     titulo: "Despachamos y trackeamos",
     detalle:
-      "Te pasamos guía Shalom o coordinamos hora de entrega en Lima. Podés seguir el pedido por WhatsApp.",
+      "Te pasamos guía Shalom o coordinamos hora de entrega en Lima. Puedes seguir el pedido por WhatsApp.",
   },
   {
     orden: 4,
-    titulo: "Llega y probás",
+    titulo: "Llega y pruebas",
     detalle:
-      "Tenés 7 días desde la entrega para cambios por defecto de fábrica o pedido incorrecto. Devoluciones detalladas más abajo.",
+      "Tienes 7 días desde la entrega para cambios por defecto de fábrica o pedido incorrecto. Devoluciones detalladas más abajo.",
   },
 ];
 
@@ -207,7 +207,7 @@ export default function EnviosPage() {
             </p>
             <p>
               <strong className="text-ink">Cómo empezamos el cambio:</strong>{" "}
-              escribinos por{" "}
+              escríbenos por{" "}
               <Link
                 href="https://wa.me/51967456364"
                 className="text-ink underline underline-offset-4"
@@ -230,7 +230,7 @@ export default function EnviosPage() {
       {/* ────────────────── CTA ────────────────── */}
       <section className="max-w-4xl mx-auto px-6 md:px-10 pb-24 flex flex-col md:flex-row items-center justify-between gap-4 border-t border-[--border] pt-10">
         <p className="text-clay text-sm text-pretty">
-          ¿Tenés una duda puntual sobre tu zona o pedido? Consultanos por
+          ¿Tienes una duda puntual sobre tu zona o pedido? Consúltanos por
           WhatsApp — respondemos en el día.
         </p>
         <Link href="/contacto" className="btn-outline text-sm">

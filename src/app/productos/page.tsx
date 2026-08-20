@@ -22,7 +22,7 @@ import {
 export const metadata: Metadata = {
   title: "Catálogo de skincare",
   description:
-    "Todos los productos Veliroz Cosmetic — Beauty of Joseon, Anua, Round Lab, COSRX, SKIN1004 y más. Filtrá por tipo de piel, preocupación e ingrediente activo.",
+    "Todos los productos Veliroz Cosmetic — Beauty of Joseon, Anua, Round Lab, COSRX, SKIN1004 y más. Filtra por tipo de piel, preocupación e ingrediente activo.",
   alternates: { canonical: "/productos" },
 };
 
@@ -445,7 +445,7 @@ export default async function ProductosPage({
             <h1 className="font-serif text-[--text-display] text-ink leading-[0.98] text-balance">
               Catálogo.{" "}
               <span className="font-italic-serif text-rose-deep">
-                Encontrá lo que le hace bien a tu piel.
+                Encuentra lo que le hace bien a tu piel.
               </span>
             </h1>
             <p className="text-sm text-clay text-pretty">
@@ -739,7 +739,7 @@ function EmptyState() {
         No encontramos productos con esos filtros.
       </h3>
       <p className="text-sm text-clay max-w-md mx-auto text-pretty">
-        Probá quitar algún filtro o volvé al catálogo completo — todo el
+        Prueba quitar algún filtro o vuelve al catálogo completo — todo el
         curado de Veliroz esperándote.
       </p>
       <div className="pt-2">

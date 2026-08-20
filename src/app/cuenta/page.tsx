@@ -15,7 +15,7 @@ import { AbrirCarritoButton } from "@/components/AbrirCarritoButton";
 export const metadata: Metadata = {
   title: "Mi cuenta",
   description:
-    "Iniciá sesión para ver tus pedidos, comprobantes y direcciones. Auth se cablea en el próximo release.",
+    "Inicia sesión para ver tus pedidos, comprobantes y direcciones. Auth se cablea en el próximo release.",
   alternates: { canonical: "/cuenta" },
   robots: { index: false, follow: true },
 };
@@ -41,7 +41,7 @@ export default function CuentaPage() {
             · Mi cuenta ·
           </span>
           <h1 className="font-serif text-[--text-display] text-ink leading-[0.98] text-balance">
-            Iniciá sesión.
+            Inicia sesión.
           </h1>
           <p className="text-clay text-pretty leading-relaxed">
             Guardamos tus pedidos, comprobantes electrónicos y direcciones
@@ -71,7 +71,7 @@ export default function CuentaPage() {
               Auth cableada en el próximo release.
             </p>
             <p className="text-clay text-pretty">
-              Mientras tanto, comprá como <strong>invitado</strong> desde el{" "}
+              Mientras tanto, compra como <strong>invitado</strong> desde el{" "}
               <AbrirCarritoButton className="text-ink underline underline-offset-4 hover:text-rose-deep cursor-pointer">
                 carrito
               </AbrirCarritoButton>{" "}
@@ -94,7 +94,7 @@ export default function CuentaPage() {
           >
             <div>
               <h2 className="font-serif text-2xl text-ink italic">
-                Ya tenés cuenta
+                Ya tienes cuenta
               </h2>
               <p className="text-xs text-clay mt-1">
                 Formulario visual — sesión aún no habilitada.
@@ -136,7 +136,7 @@ export default function CuentaPage() {
             </button>
 
             <p className="text-xs text-clay text-center">
-              ¿No tenés cuenta?{" "}
+              ¿No tienes cuenta?{" "}
               <span className="text-taupe italic">Se habilita pronto</span>.
             </p>
           </form>
@@ -148,7 +148,7 @@ export default function CuentaPage() {
                 Mis pedidos
               </h2>
               <p className="text-xs text-clay mt-1">
-                Historial y comprobantes electrónicos aparecerán acá.
+                Historial y comprobantes electrónicos aparecerán aquí.
               </p>
             </div>
 
@@ -176,7 +176,7 @@ export default function CuentaPage() {
                 Alternativa mientras tanto
               </p>
               <p className="text-pretty">
-                Escribinos por WhatsApp{" "}
+                Escríbenos por WhatsApp{" "}
                 <Link
                   href="https://wa.me/51967456364"
                   className="text-ink underline underline-offset-4"

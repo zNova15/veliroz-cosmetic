@@ -10,9 +10,9 @@ import { LegalDoc, LegalSection, LegalList } from "@/components/LegalDoc";
    legal del paso 3 del checkout (components/checkout/StepPago.tsx).
 
    Fuente de verdad de las condiciones comerciales que se repiten
-   acá: /envios (tarifas y plazos), /libro-reclamaciones (datos del
+   aquí: /envios (tarifas y plazos), /libro-reclamaciones (datos del
    proveedor) y la PreventaBar (5-7 días de despacho). Si cambia
-   una tarifa, cambiala en los tres lados.
+   una tarifa, cámbiala en los tres lados.
 
    PENDIENTE HUMANO: razón social + RUC reales cuando salga la
    ficha SUNAT (hoy placeholder, igual que en /libro-reclamaciones).
@@ -55,8 +55,8 @@ export default function TerminosPage() {
       tituloItalic="Sin letra chica."
       resumen={
         <>
-          Esto es lo que acordamos cuando comprás en veliroz.com. Lo
-          escribimos como hablamos: si algo no te queda claro, escribinos y te
+          Esto es lo que acordamos cuando compras en veliroz.com. Lo
+          escribimos como hablamos: si algo no te queda claro, escríbenos y te
           lo explicamos antes de que pagues.
         </>
       }
@@ -71,7 +71,7 @@ export default function TerminosPage() {
         </p>
         <p>
           Razón social y RUC: <strong>en trámite de inscripción</strong>. Apenas
-          esté emitida la ficha, los datos van a figurar acá, en el{" "}
+          esté emitida la ficha, los datos van a figurar aquí, en el{" "}
           <Link href="/libro-reclamaciones">Libro de Reclamaciones</Link> y en
           cada comprobante electrónico que emitamos.
         </p>
@@ -116,13 +116,13 @@ export default function TerminosPage() {
         <p>
           La información de rutinas, tipos de piel e ingredientes que publicamos
           en el sitio, el quiz y el diario es{" "}
-          <strong>orientativa, no un diagnóstico médico</strong>. Si tenés una
-          condición dermatológica, estás embarazada o en tratamiento, consultá a
+          <strong>orientativa, no un diagnóstico médico</strong>. Si tienes una
+          condición dermatológica, estás embarazada o en tratamiento, consulta a
           tu dermatólogo antes de sumar un activo nuevo. Nada de lo que decimos
           reemplaza esa consulta.
         </p>
         <p>
-          Para comprar tenés que ser mayor de edad y tener capacidad legal para
+          Para comprar tienes que ser mayor de edad y tener capacidad legal para
           contratar.
         </p>
       </LegalSection>
@@ -131,14 +131,14 @@ export default function TerminosPage() {
         <p>
           Hoy <strong>todo el catálogo está en pre-venta</strong>. Eso significa
           que el producto todavía no está físicamente en nuestro almacén cuando
-          lo reservás: juntamos los pedidos, cerramos el lote con el importador
+          lo reservas: juntamos los pedidos, cerramos el lote con el importador
           y despachamos.
         </p>
         <p>El flujo completo, paso por paso:</p>
         <LegalList>
           <li>
-            Elegís los productos, completás tus datos en el checkout y elegís
-            cómo pagás.
+            Eliges los productos, completas tus datos en el checkout y eliges
+            cómo pagas.
           </li>
           <li>
             Al confirmar, generamos tu pedido con un{" "}
@@ -159,13 +159,13 @@ export default function TerminosPage() {
           <strong>El pedido queda cerrado cuando lo confirmamos nosotros</strong>
           , no en el momento del click. Si un producto se agota en el lote o el
           precio del proveedor cambia de forma significativa antes de
-          confirmarte, te avisamos y elegís: esperar el siguiente lote, cambiar
+          confirmarte, te avisamos y eliges: esperar el siguiente lote, cambiar
           por otro producto o que te devolvamos el 100% de lo pagado. Sin
           vueltas ni descuentos por “gastos administrativos”.
         </p>
         <p>
-          Podés cancelar tu pre-venta sin costo{" "}
-          <strong>mientras el pedido no haya sido despachado</strong>. Escribinos
+          Puedes cancelar tu pre-venta sin costo{" "}
+          <strong>mientras el pedido no haya sido despachado</strong>. Escríbenos
           por WhatsApp con tu código y te devolvemos lo pagado por el mismo
           medio.
         </p>
@@ -174,7 +174,7 @@ export default function TerminosPage() {
       <LegalSection id="precios" n="04" titulo="Precios y comprobantes">
         <p>
           Todos los precios están en <strong>soles (S/) e incluyen IGV</strong>.
-          Lo que ves en la ficha del producto es lo que pagás por ese producto;
+          Lo que ves en la ficha del producto es lo que pagas por ese producto;
           el costo de envío se calcula aparte en el checkout y se muestra antes
           de que confirmes.
         </p>
@@ -190,7 +190,7 @@ export default function TerminosPage() {
           siempre correctos, pero pueden colarse errores de tipeo o de carga. Si
           un precio publicado es evidentemente equivocado (por ejemplo, un
           sérum de S/89 listado en S/8,90), no estamos obligados a vender a ese
-          precio: te avisamos antes de cobrar y decidís si querés continuar al
+          precio: te avisamos antes de cobrar y decides si quieres continuar al
           precio real o cancelar sin costo.
         </p>
         <p>
@@ -209,7 +209,7 @@ export default function TerminosPage() {
           </li>
           <li>
             <strong>Yape y Plin</strong> al +51 967 456 364. Después de pagar,
-            mandanos el voucher por WhatsApp para confirmar tu pedido el mismo
+            mándanos el voucher por WhatsApp para confirmar tu pedido el mismo
             día.
           </li>
           <li>
@@ -257,13 +257,13 @@ export default function TerminosPage() {
           Los plazos se cuentan en <strong>días hábiles desde el despacho</strong>
           , no desde la compra, y suman los 5-7 días de cierre de lote de la
           pre-venta. Los tiempos de la agencia dependen de Shalom: hacemos el
-          seguimiento con vos, pero no controlamos su operación ni respondemos
+          seguimiento con tú, pero no controlamos su operación ni respondemos
           por demoras, paros o cierres de carretera ajenos a nosotros.
         </p>
         <p>
           Es tu responsabilidad darnos una dirección y un contacto correctos. Si
           el envío se pierde o vuelve por datos mal cargados, el reenvío corre
-          por tu cuenta. Revisá el detalle completo de zonas y proceso en{" "}
+          por tu cuenta. Revisa el detalle completo de zonas y proceso en{" "}
           <Link href="/envios">envíos y devoluciones</Link>.
         </p>
       </LegalSection>
@@ -274,10 +274,10 @@ export default function TerminosPage() {
         titulo="Devoluciones, cambios y derecho de retracto"
       >
         <p>
-          Tenés <strong>7 días calendario desde que recibís el pedido</strong>{" "}
+          Tienes <strong>7 días calendario desde que recibes el pedido</strong>{" "}
           para pedir la devolución de un producto{" "}
           <strong>sin abrir, con el sello y el empaque original intactos</strong>
-          . Escribinos por WhatsApp con tu código de pedido y una foto del
+          . Escríbenos por WhatsApp con tu código de pedido y una foto del
           producto y coordinamos el retorno.
         </p>
         <p>
@@ -294,7 +294,7 @@ export default function TerminosPage() {
           <li>Productos con defecto de fábrica.</li>
           <li>Productos equivocados respecto de lo que pediste.</li>
           <li>
-            Productos dañados en el transporte — guardá la caja de envío, es la
+            Productos dañados en el transporte — guarda la caja de envío, es la
             evidencia.
           </li>
           <li>Productos vencidos o con fecha de vencimiento inminente.</li>
@@ -309,7 +309,7 @@ export default function TerminosPage() {
           Los reembolsos se hacen por el mismo medio de pago original y demoran{" "}
           <strong>5 a 10 días hábiles</strong> según el banco o la pasarela.
           También podemos emitir nota de crédito para tu próxima compra, si lo
-          preferís.
+          prefieres.
         </p>
       </LegalSection>
 
@@ -321,8 +321,8 @@ export default function TerminosPage() {
           del importador ante DIGEMID.
         </p>
         <p>
-          Si alguna vez recibís un producto y dudás de su autenticidad,
-          escribinos: te pedimos el lote, lo rastreamos con el importador y, si
+          Si alguna vez recibes un producto y dudas de su autenticidad,
+          escríbenos: te pedimos el lote, lo rastreamos con el importador y, si
           hay algo raro, te devolvemos el dinero completo. Sin discusión.
         </p>
         <p>
@@ -339,7 +339,7 @@ export default function TerminosPage() {
           resolvemos el mismo día.
         </p>
         <p>
-          Si preferís el camino formal, tenemos{" "}
+          Si prefieres el camino formal, tenemos{" "}
           <Link href="/libro-reclamaciones">Libro de Reclamaciones virtual</Link>
           , conforme al Código de Protección y Defensa del Consumidor (Ley
           29571) y su reglamento. Toda queja o reclamo registrado ahí se
@@ -377,8 +377,8 @@ export default function TerminosPage() {
       <LegalSection id="sitio" n="11" titulo="Uso del sitio y contenidos">
         <p>
           Los textos, fotos de producto, guías de rutina y diseño de veliroz.com
-          son nuestros o los usamos con autorización. Podés compartirlos citando
-          la fuente; no podés copiarlos para revender ni para armar una tienda
+          son nuestros o los usamos con autorización. Puedes compartirlos citando
+          la fuente; no puedes copiarlos para revender ni para armar una tienda
           con nuestro contenido.
         </p>
         <p>
@@ -398,7 +398,7 @@ export default function TerminosPage() {
         <p>
           Podemos actualizar estos términos cuando cambie algo de la operación
           (tarifas, medios de pago, plazos). La versión vigente es siempre la que
-          está publicada acá, con su fecha de actualización arriba.
+          está publicada aquí, con su fecha de actualización arriba.
         </p>
         <p>
           <strong>
@@ -418,7 +418,7 @@ export default function TerminosPage() {
         </p>
         <p>
           Ante cualquier controversia, primero intentamos resolverla
-          directamente con vos. Si no llegamos a un acuerdo, podés recurrir a
+          directamente con tú. Si no llegamos a un acuerdo, puedes recurrir a
           INDECOPI o a los juzgados de la ciudad de Cajamarca.
         </p>
       </LegalSection>

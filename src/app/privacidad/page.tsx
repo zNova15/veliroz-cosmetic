@@ -14,7 +14,7 @@ import { LegalDoc, LegalSection, LegalList } from "@/components/LegalDoc";
    Supabase (BD), Vercel (hosting), Resend (correo), Culqi y
    MercadoPago (pagos), Nubefact (comprobantes), Meta/WhatsApp
    Business (atención), GA4 + Meta Pixel (analítica).
-   Si se agrega o quita un proveedor en el código, actualizar acá.
+   Si se agrega o quita un proveedor en el código, actualizar aquí.
 
    PENDIENTE HUMANO: confirmar el número del reglamento vigente de
    la Ley 29733 y la razón social/RUC del titular del banco de datos.
@@ -58,7 +58,7 @@ export default function PrivacidadPage() {
       resumen={
         <>
           Te pedimos datos para mandarte un pedido, no para armar una base y
-          venderla. Acá está exactamente qué guardamos, por cuánto tiempo,
+          venderla. Aquí está exactamente qué guardamos, por cuánto tiempo,
           quién más lo ve y cómo pedirnos que lo borremos.
         </>
       }
@@ -70,12 +70,12 @@ export default function PrivacidadPage() {
           El titular del banco de datos es <strong>Veliroz Cosmetic</strong>,
           línea de skincare de Veliroz, con operación en{" "}
           <strong>Cajamarca, Perú</strong>. La razón social y el RUC están en
-          trámite de inscripción y se publicarán acá y en el{" "}
+          trámite de inscripción y se publicarán aquí y en el{" "}
           <Link href="/libro-reclamaciones">Libro de Reclamaciones</Link> apenas
           se emitan.
         </p>
         <p>
-          Para cualquier tema de datos personales escribinos a{" "}
+          Para cualquier tema de datos personales escríbenos a{" "}
           <a href={`mailto:${EMAIL}`}>{EMAIL}</a> con el asunto{" "}
           <strong>“Datos personales”</strong>, o por WhatsApp al{" "}
           <a
@@ -106,7 +106,7 @@ export default function PrivacidadPage() {
 
       <LegalSection id="datos" n="03" titulo="Qué datos recogemos">
         <p>
-          <strong>Cuando comprás</strong> — porque sin esto no hay pedido:
+          <strong>Cuando compras</strong> — porque sin esto no hay pedido:
         </p>
         <LegalList>
           <li>Nombres y apellidos.</li>
@@ -124,12 +124,12 @@ export default function PrivacidadPage() {
           </li>
         </LegalList>
         <p>
-          <strong>Cuando navegás</strong> — de forma automática: dirección IP,
+          <strong>Cuando navegas</strong> — de forma automática: dirección IP,
           tipo de dispositivo y navegador, páginas vistas y de dónde llegaste.
           Sirve para saber qué funciona del sitio y qué no.
         </p>
         <p>
-          <strong>Cuando nos escribís</strong>: el contenido de la conversación
+          <strong>Cuando nos escribes</strong>: el contenido de la conversación
           por WhatsApp, correo o formulario, para poder darle seguimiento.
         </p>
         <p>
@@ -137,7 +137,7 @@ export default function PrivacidadPage() {
           número, la fecha y el CVV viajan cifrados directo a la pasarela de
           pago (Culqi o MercadoPago) y nunca pasan por nuestros servidores.
           Nosotros solo vemos si el pago se aprobó o no. Tampoco recogemos datos
-          sensibles: no te pedimos información de salud, y si nos contás algo
+          sensibles: no te pedimos información de salud, y si nos cuentas algo
           sobre tu piel en una consulta, no lo usamos para otra cosa que
           responderte.
         </p>
@@ -154,7 +154,7 @@ export default function PrivacidadPage() {
             factura) y cumplir con nuestras obligaciones tributarias.
           </li>
           <li>
-            <strong>Coordinar la entrega</strong> con el courier o con vos
+            <strong>Coordinar la entrega</strong> con el courier o con tú
             directamente.
           </li>
           <li>
@@ -168,7 +168,7 @@ export default function PrivacidadPage() {
           </li>
           <li>
             <strong>Novedades y promociones</strong>, solo si aceptaste
-            recibirlas. Podés darte de baja desde cualquier correo o pidiéndolo
+            recibirlas. Puedes darte de baja desde cualquier correo o pidiéndolo
             por WhatsApp, y no pasa nada más.
           </li>
           <li>
@@ -208,7 +208,7 @@ export default function PrivacidadPage() {
           </li>
           <li>
             <strong>WhatsApp Business (Meta)</strong>: el canal por el que te
-            escribimos y nos escribís.
+            escribimos y nos escribes.
           </li>
           <li>
             <strong>Infraestructura (Supabase, Vercel)</strong>: base de datos y
@@ -228,7 +228,7 @@ export default function PrivacidadPage() {
       <LegalSection id="transferencia" n="06" titulo="Servidores fuera del Perú">
         <p>
           Varios de esos proveedores tienen servidores fuera del país (Estados
-          Unidos y la Unión Europea, principalmente). Al comprar aceptás ese{" "}
+          Unidos y la Unión Europea, principalmente). Al comprar aceptas ese{" "}
           <strong>flujo transfronterizo de datos</strong>, que se hace sobre
           plataformas con estándares de seguridad y cláusulas contractuales de
           protección equivalentes a las que exige la Ley 29733.
@@ -243,7 +243,7 @@ export default function PrivacidadPage() {
           </li>
           <li>
             <strong>Conversaciones de atención</strong>: hasta 2 años desde el
-            último contacto, para poder retomar tu historial si volvés a
+            último contacto, para poder retomar tu historial si vuelves a
             escribir.
           </li>
           <li>
@@ -257,12 +257,12 @@ export default function PrivacidadPage() {
         </LegalList>
         <p>
           Cumplido el plazo, los eliminamos o los anonimizamos de forma que ya
-          no puedan asociarse a vos.
+          no puedan asociarse a tú.
         </p>
       </LegalSection>
 
       <LegalSection id="derechos" n="08" titulo="Tus derechos (los ARCO)">
-        <p>La ley te da cuatro derechos sobre tus datos, y podés usarlos gratis:</p>
+        <p>La ley te da cuatro derechos sobre tus datos, y puedes usarlos gratis:</p>
         <LegalList>
           <li>
             <strong>Acceso</strong>: pedirnos qué datos tuyos tenemos y qué
@@ -283,10 +283,10 @@ export default function PrivacidadPage() {
           </li>
         </LegalList>
         <p>
-          <strong>Cómo se ejercen:</strong> mandanos un correo a{" "}
+          <strong>Cómo se ejercen:</strong> mándanos un correo a{" "}
           <a href={`mailto:${EMAIL}`}>{EMAIL}</a> con el asunto “Datos
-          personales”, indicando qué derecho querés ejercer y adjuntando una
-          copia de tu documento de identidad (solo para confirmar que sos vos y
+          personales”, indicando qué derecho quieres ejercer y adjuntando una
+          copia de tu documento de identidad (solo para confirmar que eres tú y
           no un tercero pidiendo tus datos).
         </p>
         <p>
@@ -296,7 +296,7 @@ export default function PrivacidadPage() {
           oposición.
         </p>
         <p>
-          Si considerás que no te atendimos bien, podés reclamar ante la{" "}
+          Si consideras que no te atendimos bien, puedes reclamar ante la{" "}
           <strong>Autoridad Nacional de Protección de Datos Personales</strong>{" "}
           del Ministerio de Justicia y Derechos Humanos.
         </p>
@@ -307,7 +307,7 @@ export default function PrivacidadPage() {
         <LegalList>
           <li>
             <strong>Necesarias</strong>: mantienen tu carrito y los datos del
-            checkout mientras comprás. Sin ellas el sitio no funciona; se
+            checkout mientras compras. Sin ellas el sitio no funciona; se
             guardan en tu propio navegador.
           </li>
           <li>
@@ -322,9 +322,9 @@ export default function PrivacidadPage() {
           </li>
         </LegalList>
         <p>
-          Podés bloquear o borrar cookies desde la configuración de tu navegador,
+          Puedes bloquear o borrar cookies desde la configuración de tu navegador,
           o desactivar la publicidad personalizada desde tu cuenta de Meta o de
-          Google. Si bloqueás las necesarias, el carrito y el checkout van a
+          Google. Si bloqueas las necesarias, el carrito y el checkout van a
           dejar de funcionar bien.
         </p>
       </LegalSection>
@@ -346,8 +346,8 @@ export default function PrivacidadPage() {
       <LegalSection id="menores" n="11" titulo="Menores de edad">
         <p>
           El sitio no está dirigido a menores de 14 años y no recogemos sus
-          datos a sabiendas. Si sos madre, padre o tutor y creés que un menor
-          nos dejó sus datos, escribinos y los eliminamos de inmediato.
+          datos a sabiendas. Si eres madre, padre o tutor y crees que un menor
+          nos dejó sus datos, escríbenos y los eliminamos de inmediato.
         </p>
       </LegalSection>
 

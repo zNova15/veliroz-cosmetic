@@ -111,7 +111,7 @@ export function ProductTabs({
                     .map((par, i) => <p key={i}>{par}</p>)
                 ) : (
                   <p className="text-stone italic">
-                    Descripción larga próximamente. Escribinos por WhatsApp si querés que te la contemos.
+                    Descripción larga próximamente. Escríbenos por WhatsApp si quieres que te la contemos.
                   </p>
                 )}
               </div>

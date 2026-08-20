@@ -53,11 +53,11 @@ export function ConsultaPedido() {
 
   const errorCodigo =
     state && !state.ok && state.motivo === "codigo_invalido"
-      ? "Revisá el código — es el que te llegó por correo, tipo PED-20260816-A1B2C3."
+      ? "Revisa el código — es el que te llegó por correo, tipo PED-20260816-A1B2C3."
       : null;
   const errorEmail =
     state && !state.ok && state.motivo === "email_invalido"
-      ? "Escribí el correo con el que hiciste la compra."
+      ? "Escribe el correo con el que hiciste la compra."
       : null;
 
   return (
@@ -194,7 +194,7 @@ function ResultadoPedido({
                     {e.label}
                     {i === actual && (
                       <span className="ml-2 font-mono text-[10px] uppercase tracking-[0.18em] text-rose-deep">
-                        acá estás
+                        aquí estás
                       </span>
                     )}
                   </p>
@@ -252,7 +252,7 @@ function SinAcceso({ waHref, codigo }: { waHref: string; codigo: string }) {
           Todavía no desde la web
         </p>
         <h3 className="font-serif text-xl md:text-2xl text-ink italic">
-          No podemos mostrarte el estado por acá.
+          No podemos mostrarte el estado por aquí.
         </h3>
         <p className="text-sm text-clay text-pretty leading-relaxed">
           Te lo decimos derecho: la consulta de pedidos sin iniciar sesión
@@ -279,7 +279,7 @@ function SinAcceso({ waHref, codigo }: { waHref: string; codigo: string }) {
       </a>
 
       <p className="text-[11px] text-clay">
-        El mensaje se abre con tu código ya escrito — solo tenés que enviarlo.
+        El mensaje se abre con tu código ya escrito — solo tienes que enviarlo.
       </p>
     </div>
   );

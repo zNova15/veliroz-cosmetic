@@ -11,7 +11,7 @@ import { RUTINAS_ACTIVAS, DIFICULTAD_LABEL } from "@/lib/rutinas";
 
 export const metadata: Metadata = {
   title: "Rutinas curadas · según tu piel",
-  description: `No compres productos, comprá rutinas. ${RUTINAS_ACTIVAS.length} secuencias curadas por objetivo — ${RUTINAS_ACTIVAS.map(
+  description: `No compres productos, compra rutinas. ${RUTINAS_ACTIVAS.length} secuencias curadas por objetivo — ${RUTINAS_ACTIVAS.map(
     (r) => r.nombre.toLowerCase()
   ).join(", ")}. 2-3 pasos, evidencia real, cero humo.`,
   alternates: { canonical: "/rutinas" },
@@ -35,7 +35,7 @@ export default function RutinasPage() {
 
         <div className="max-w-3xl space-y-4">
           <span className="font-mono text-[10px] tracking-[0.24em] uppercase text-taupe">
-            · No compres productos. Comprá rutinas ·
+            · No compres productos. Compra rutinas ·
           </span>
           <h1 className="font-serif text-[--text-display] text-ink leading-[0.98] text-balance">
             Rutinas curadas.{" "}
@@ -45,8 +45,8 @@ export default function RutinasPage() {
           </h1>
           <p className="text-clay text-pretty max-w-2xl leading-relaxed">
             Cada rutina es una secuencia corta — limpieza, activo y protección —
-            pensada para un problema puntual. Empezá con la que corresponda a tu
-            piel hoy; si no sabés cuál, hacé el{" "}
+            pensada para un problema puntual. Empieza con la que corresponda a tu
+            piel hoy; si no sabes cuál, haz el{" "}
             <Link
               href="/quiz"
               className="text-ink underline underline-offset-4 hover:text-rose-deep"
@@ -102,7 +102,7 @@ export default function RutinasPage() {
                     S/. {r.precioBundle.toFixed(2)}
                   </p>
                   <p className="font-mono text-[9px] tracking-[0.16em] uppercase text-champagne-dark">
-                    Ahorrás S/{r.ahorro}
+                    Ahorras S/{r.ahorro}
                   </p>
                 </div>
                 <Link
@@ -117,7 +117,7 @@ export default function RutinasPage() {
         </div>
 
         <p className="mt-8 text-[11px] text-stone text-center text-pretty max-w-xl mx-auto">
-          Todo el catálogo está en pre-venta: reservás hoy y despachamos en 5-7
+          Todo el catálogo está en pre-venta: reservas hoy y despachamos en 5-7
           días. El precio de rutina se aplica al confirmar tu reserva por
           WhatsApp; el carrito suma los precios sueltos.
         </p>
@@ -127,10 +127,10 @@ export default function RutinasPage() {
       <section className="max-w-5xl mx-auto px-6 md:px-10 pb-24">
         <div className="bg-surface rounded-lg border border-[--border] p-8 md:p-12 text-center space-y-4">
           <span className="font-mono text-[10px] tracking-[0.24em] uppercase text-taupe">
-            ¿No sabés por dónde empezar?
+            ¿No sabes por dónde empezar?
           </span>
           <h3 className="font-serif text-3xl text-ink italic leading-tight">
-            Contanos qué le pasa a tu piel — te armamos la rutina.
+            Cuéntanos qué le pasa a tu piel — te armamos la rutina.
           </h3>
           <p className="text-clay text-sm max-w-lg mx-auto text-pretty">
             5 preguntas, 2 minutos, respuesta con productos concretos y en qué

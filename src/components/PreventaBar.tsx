@@ -24,11 +24,11 @@ export function PreventaBar() {
     >
       <p className="max-w-7xl mx-auto px-6 md:px-10 py-2 text-center text-ink text-[10px] sm:text-xs leading-relaxed tracking-[0.06em]">
         <span className="hidden sm:inline">
-          · Pre-venta · Reservá hoy y recibí en 5-7 días · Envío Shalom S/12 a
+          · Pre-venta · Reserva hoy y recibe en 5-7 días · Envío Shalom S/12 a
           todo el Perú ·
         </span>
         <span className="sm:hidden">
-          · Pre-venta · Recibí en 5-7 días · Envío S/12 ·
+          · Pre-venta · Recibe en 5-7 días · Envío S/12 ·
         </span>
       </p>
     </div>

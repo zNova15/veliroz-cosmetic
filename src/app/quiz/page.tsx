@@ -236,14 +236,14 @@ function IntroPantalla({
       <h1 className="font-serif text-[--text-display] text-ink text-balance leading-[1.05]">
         {/* Dinámico a propósito: al sumar la pregunta de embarazo el título
             se quedó diciendo "7 preguntas" mientras el contador marcaba 8. */}
-        Encontrá tu rutina en{" "}
+        Encuentra tu rutina en{" "}
         <span className="font-italic-serif text-rose-deep">
           {QUIZ_TOTAL_PREGUNTAS} preguntas
         </span>
         .
       </h1>
       <p className="mt-6 text-clay text-lg max-w-xl mx-auto text-pretty">
-        Respondé como si estuvieras hablándonos por WhatsApp. Al final te
+        Responde como si estuvieras hablándonos por WhatsApp. Al final te
         devolvemos 3 o 4 productos elegidos entre Beauty of Joseon, Anua, Round Lab, COSRX y SKIN1004 — con el
         motivo de cada uno, sin vueltas.
       </p>
@@ -298,7 +298,7 @@ function IntroPantalla({
             03
           </p>
           <p className="text-sm text-ink">
-            Podés agregar la rutina al carrito con un click.
+            Puedes agregar la rutina al carrito con un click.
           </p>
         </li>
       </ul>
@@ -629,7 +629,7 @@ function ResultadoPantalla({
 
       {!cargando && errorMsg && (
         <div className="border border-[--border-2] rounded-[--radius-md] p-6 bg-mist text-sm text-clay">
-          {errorMsg}. Revisá tu conexión y volvé a intentar.
+          {errorMsg}. Revisa tu conexión y vuelve a intentar.
         </div>
       )}
 
@@ -642,13 +642,13 @@ function ResultadoPantalla({
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-5">
             <div className="min-w-0">
               <p className="font-mono text-[10px] tracking-[0.24em] uppercase text-taupe">
-                Llevala completa
+                Llévala completa
               </p>
               <p className="mt-2 font-serif text-2xl text-ink italic leading-tight">
                 {bundle.nombre}
               </p>
               <p className="mt-1.5 text-sm text-clay">
-                {bundle.pasos.length} pasos · comprando el set ahorrás S/
+                {bundle.pasos.length} pasos · comprando el set ahorras S/
                 {bundle.ahorro}
               </p>
             </div>
@@ -675,13 +675,13 @@ function ResultadoPantalla({
 
       {!cargando && !errorMsg && productos && (
         <div className="mt-10">
-          {/* El total va acá y no arriba: es la suma de los productos SUELTOS.
+          {/* El total va aquí y no arriba: es la suma de los productos SUELTOS.
               Arriba quedaba enfrentado al precio del bundle —"Total S/249"
               contra "S/229"— y se leían como dos precios en conflicto para lo
-              mismo. Acá queda claro que es el costo de armarla por separado. */}
+              mismo. Aquí queda claro que es el costo de armarla por separado. */}
           <div className="flex items-baseline justify-between gap-4 mb-4">
             <p className="font-mono text-[10px] tracking-[0.24em] uppercase text-taupe">
-              {bundle ? "O armala vos, producto por producto" : "Tu rutina, paso a paso"}
+              {bundle ? "O armala tú, producto por producto" : "Tu rutina, paso a paso"}
             </p>
             {productos && productos.length > 0 && (
               <p className="font-mono text-xs text-clay shrink-0" suppressHydrationWarning>
@@ -782,7 +782,7 @@ function ResultadoPantalla({
           <span aria-hidden="true">→</span>
         </button>
         <Link href={rutina.filtro_url} className="btn-outline justify-center">
-          Ver más productos para vos
+          Ver más productos para tú
         </Link>
         <a
           href={waHref}
@@ -895,7 +895,7 @@ function ProductoResultadoCard({
         </div>
         {agotado && precio != null && (
           <p className="mt-2 text-xs text-[--veliroz-danger]">
-            Agotado — consultá por reposición
+            Agotado — consulta por reposición
           </p>
         )}
       </div>

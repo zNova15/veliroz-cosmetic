@@ -352,7 +352,7 @@ export default async function RutinaDetallePage(
                     )}
                     {sinStock && producto && (
                       <p className="text-[11px] text-[--veliroz-danger]">
-                        Sin stock ahora — consultanos por reposición.
+                        Sin stock ahora — consúltanos por reposición.
                       </p>
                     )}
                     {!producto && (
@@ -390,7 +390,7 @@ export default async function RutinaDetallePage(
               Todo en un click
             </span>
             <h3 className="font-serif text-2xl md:text-3xl text-ink italic leading-tight">
-              Llevate la rutina {rutina.nombre.toLowerCase()} completa.
+              Llévate la rutina {rutina.nombre.toLowerCase()} completa.
             </h3>
           </div>
           <AddRutinaToCartButton
@@ -407,14 +407,14 @@ export default async function RutinaDetallePage(
       <section className="max-w-5xl mx-auto px-6 md:px-10 pb-24">
         <div className="border-t border-[--border] pt-10 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-clay text-sm text-pretty">
-            ¿Otra rutina te suena más? Explorá las{" "}
+            ¿Otra rutina te suena más? Explora las{" "}
             <Link
               href="/rutinas"
               className="text-ink underline underline-offset-4"
             >
               {RUTINAS_ACTIVAS.length} rutinas curadas
             </Link>{" "}
-            o hacé el{" "}
+            o haz el{" "}
             <Link
               href="/quiz"
               className="text-ink underline underline-offset-4"

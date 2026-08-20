@@ -211,7 +211,7 @@ export async function validarCuponAction(
 ): Promise<ValidarCuponResult> {
   const clean = (code || "").trim().toUpperCase();
   if (!clean) {
-    return { ok: false, razon: "Ingresá un código de cupón." };
+    return { ok: false, razon: "Ingresa un código de cupón." };
   }
   if (!Number.isFinite(subtotal) || subtotal <= 0) {
     return { ok: false, razon: "Subtotal inválido." };

@@ -88,7 +88,7 @@ function calcProteccion(p: QuizPerfil): Dimension {
   else if (p.spf_diario === "a-veces") s = 55;
   else s = 22;
 
-  /* La edad no cambia cuánto te protegés, pero sí cuánto pesa no hacerlo. */
+  /* La edad no cambia cuánto te proteges, pero sí cuánto pesa no hacerlo. */
   if (p.spf_diario !== "siempre" && (p.edad === "30-39" || p.edad === "40-mas")) {
     s -= 8;
   }
@@ -100,10 +100,10 @@ function calcProteccion(p: QuizPerfil): Dimension {
     banda: banda(score),
     nota:
       p.spf_diario === "siempre"
-        ? "Usás protector todos los días. Es lo que más cuida tu piel a largo plazo."
+        ? "Usas protector todos los días. Es lo que más cuida tu piel a largo plazo."
         : p.spf_diario === "a-veces"
-          ? "Lo usás salteado. Es el cambio que más rinde de toda la rutina."
-          : "Todavía no es un hábito. Por acá empezaría cualquier rutina.",
+          ? "Lo usas salteado. Es el cambio que más rinde de toda la rutina."
+          : "Todavía no es un hábito. Por aquí empezaría cualquier rutina.",
   };
 }
 
@@ -151,7 +151,7 @@ function calcTextura(p: QuizPerfil): Dimension {
     nota:
       score >= 70
         ? "Textura pareja según lo que nos contaste."
-        : "Un exfoliante suave y constante mueve mucho la aguja acá.",
+        : "Un exfoliante suave y constante mueve mucho la aguja aquí.",
   };
 }
 
@@ -210,7 +210,7 @@ function calcHabito(p: QuizPerfil): Dimension {
     banda: banda(score),
     nota:
       score >= 70
-        ? "Ya tenés el hábito. Eso vale más que cualquier producto caro."
+        ? "Ya tienes el hábito. Eso vale más que cualquier producto caro."
         : "Una rutina corta que cumplas gana a una larga que abandones.",
   };
 }
@@ -226,7 +226,7 @@ const ETIQUETAS: Array<{ min: number; etiqueta: string; resumen: string }> = [
   {
     min: 62,
     etiqueta: "Buena base",
-    resumen: "Tenés lo importante resuelto. Con dos ajustes concretos se nota la diferencia.",
+    resumen: "Tienes lo importante resuelto. Con dos ajustes concretos se nota la diferencia.",
   },
   {
     min: 45,

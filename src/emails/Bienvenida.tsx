@@ -31,7 +31,7 @@ export default function Bienvenida(props: BienvenidaProps) {
       <Text style={styles.h1}>Bienvenida a Veliroz, {primerNombre}</Text>
 
       <Text style={styles.p}>
-        Nos alegra tenerte por acá. Curamos cada producto pensando en pieles
+        Nos alegra tenerte por aquí. Curamos cada producto pensando en pieles
         reales, ingredientes que sí funcionan y marcas con las que estamos de
         acuerdo.
       </Text>

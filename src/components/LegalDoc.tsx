@@ -122,8 +122,8 @@ export function LegalDoc({
       {/* ────────────────── CTA ────────────────── */}
       <section className="max-w-[68ch] mx-auto px-6 md:px-10 pb-24 border-t border-[--border] pt-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <p className="text-sm text-clay text-pretty max-w-md">
-          ¿Algo de esto no se entiende o querés que te lo expliquemos en
-          criollo? Escribinos — preferimos una conversación a una letra chica.
+          ¿Algo de esto no se entiende o quieres que te lo expliquemos en
+          criollo? Escríbenos — preferimos una conversación a una letra chica.
         </p>
         <div className="flex gap-3 shrink-0">
           <Link href="/" className="btn-outline text-sm">

@@ -121,7 +121,7 @@ export function DiagnosticoPanel({ diag }: { diag: Diagnostico }) {
       <div className="grid grid-cols-1 md:grid-cols-2 border-t border-[--border]">
         <div className="px-6 md:px-10 py-7 md:border-r border-[--border]">
           <p className="font-mono text-[10px] tracking-[0.24em] uppercase text-taupe">
-            {diag.focoPrincipal ? "Empezá por acá" : "Todo en orden"}
+            {diag.focoPrincipal ? "Empieza por aquí" : "Todo en orden"}
           </p>
 
           {diag.focoPrincipal ? (
@@ -153,7 +153,7 @@ export function DiagnosticoPanel({ diag }: { diag: Diagnostico }) {
 
         <div className="px-6 md:px-10 py-7 border-t md:border-t-0 border-[--border]">
           <p className="font-mono text-[10px] tracking-[0.24em] uppercase text-taupe">
-            Lo que ya hacés bien
+            Lo que ya haces bien
           </p>
           <ul className="mt-3 space-y-2.5">
             {diag.fortalezas.map((f) => (
@@ -179,8 +179,8 @@ export function DiagnosticoPanel({ diag }: { diag: Diagnostico }) {
           además decirlo de frente hace que el resto se lea más creíble. */}
       <p className="px-6 md:px-10 py-5 border-t border-[--border] text-[11px] text-stone text-pretty">
         Esto es una orientación cosmética armada con tus respuestas, no un
-        diagnóstico médico ni un tratamiento. Si tenés una condición de piel
-        —acné severo, rosácea, dermatitis— consultá con un dermatólogo.
+        diagnóstico médico ni un tratamiento. Si tienes una condición de piel
+        —acné severo, rosácea, dermatitis— consulta con un dermatólogo.
       </p>
     </section>
   );

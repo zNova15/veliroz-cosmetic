@@ -93,7 +93,7 @@ export default async function MarcasPage() {
         {marcas.length === 0 ? (
           <div className="bg-surface border border-[--border] rounded-lg p-12 text-center">
             <p className="text-clay">
-              No hay marcas activas todavía. Volvé pronto.
+              No hay marcas activas todavía. Vuelve pronto.
             </p>
           </div>
         ) : (

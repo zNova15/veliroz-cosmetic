@@ -271,7 +271,7 @@ export default function LibroReclamacionesPage() {
                 name="detalle"
                 required
                 rows={5}
-                placeholder="Describí lo ocurrido con la mayor cantidad de detalles posible."
+                placeholder="Describe lo ocurrido con la mayor cantidad de detalles posible."
                 className="w-full px-4 py-3 rounded-md border border-[--border-2] bg-cream text-ink text-sm focus:outline-none focus:border-ink resize-y"
               />
             </label>
@@ -284,7 +284,7 @@ export default function LibroReclamacionesPage() {
                 name="pedido"
                 required
                 rows={3}
-                placeholder="Qué solución esperás — cambio, devolución, disculpas formales, etc."
+                placeholder="Qué solución esperas — cambio, devolución, disculpas formales, etc."
                 className="w-full px-4 py-3 rounded-md border border-[--border-2] bg-cream text-ink text-sm focus:outline-none focus:border-ink resize-y"
               />
             </label>
@@ -308,7 +308,7 @@ export default function LibroReclamacionesPage() {
 
             <p className="text-[11px] text-clay text-center text-pretty">
               Al enviar se abre tu app de correo con la reclamación redactada.
-              Si preferís, escribinos directo a{" "}
+              Si prefieres, escríbenos directo a{" "}
               <a
                 href={`mailto:${EMAIL_RECLAMOS}`}
                 className="text-ink underline underline-offset-4"
@@ -341,7 +341,7 @@ export default function LibroReclamacionesPage() {
             Consumidor, el proveedor debe atender el reclamo o queja en un
             plazo no mayor a <strong>30 días calendario</strong>, contados
             desde el día siguiente de su presentación. Si tu reclamo no fue
-            atendido satisfactoriamente, podés presentar tu caso ante{" "}
+            atendido satisfactoriamente, puedes presentar tu caso ante{" "}
             <a
               href="https://www.consumidor.gob.pe/"
               target="_blank"

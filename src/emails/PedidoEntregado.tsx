@@ -32,7 +32,7 @@ export default function PedidoEntregado(props: PedidoEntregadoProps) {
   const reviewHref =
     reviewUrl ??
     `https://wa.me/51967456364?text=${encodeURIComponent(
-      `Hola Veliroz Cosmetic! Recibí mi pedido ${pedidoCodigo} y les quiero contar qué me pareció: `,
+      `Hola Veliroz Cosmetic! Recibe mi pedido ${pedidoCodigo} y les quiero contar qué me pareció: `,
     )}`;
   const igUrl = `https://instagram.com/${instagramHandle}`;
 

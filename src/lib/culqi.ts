@@ -45,7 +45,7 @@ export interface CulqiInstance {
       billetera?: boolean;
       bancaMovil?: boolean;
       agente?: boolean;
-      cuotealo?: boolean;
+      cuotéalo?: boolean;
     };
     style?: {
       logo?: string;
@@ -70,7 +70,7 @@ declare global {
     Culqi?: CulqiInstance;
     /**
      * Callback global que Culqi invoca al obtener token / order / error.
-     * Definilo antes de `Culqi.open()` — se sobreescribe entre checkouts.
+     * Defínelo antes de `Culqi.open()` — se sobreescribe entre checkouts.
      */
     culqi?: () => void;
   }
@@ -173,13 +173,13 @@ export interface CreatePaymentResult {
 /**
  * Llama al endpoint backend `/api/pagos/culqi/charge` (a implementar en
  * paralelo — es el que finalmente hace POST a api.culqi.com/v2/charges
- * con la SECRET key). Aislamos ese round-trip acá para que la UI del
+ * con la SECRET key). Aislamos ese round-trip aquí para que la UI del
  * checkout no dependa del shape exacto del request.
  *
  * NOTA: el endpoint `/api/pagos/culqi/charge` NO existe todavía en este
  * agente — este helper lo prepara para cuando se cablee en el sprint de
  * pagos. Mientras tanto, si el endpoint devuelve 404, el checkout puede
- * mostrar "activá Culqi en Producción" sin romperse.
+ * mostrar "activa Culqi en Producción" sin romperse.
  */
 export async function createPayment(
   args: CreatePaymentArgs

@@ -22,7 +22,7 @@
 
    `precioLista` es la suma de los PVP de la rutina; `precioBundle` es lo
    que se cobra llevándola completa y `ahorro` la diferencia. Si los precios
-   cambian en la BD, actualizar estos tres campos acá (son copy, no cálculo:
+   cambian en la BD, actualizar estos tres campos aquí (son copy, no cálculo:
    la fuente de verdad de cobro sigue siendo variantes_producto.precio).
 
    La página /rutinas/[slug] resuelve los productos por slug con
@@ -59,7 +59,7 @@ export interface Rutina {
      `glow-evento` porque su composición era mascarilla + gua sha, y el
      gua sha salió del catálogo (migración 026): un bundle de un solo
      producto no es un bundle, es el producto a precio de set.
-     Al volver el gua sha hay que reactivar ambos, acá y en la BD. */
+     Al volver el gua sha hay que reactivar ambos, aquí y en la BD. */
   activa: boolean;
   /** SKUs reales de la rutina, en orden de uso. */
   skus: string[];
@@ -165,7 +165,7 @@ export const RUTINAS: Rutina[] = [
       },
     ],
     advertencia:
-      "No usar niacinamida en la misma capa que vitamina C pura (L-AA): separá AM y PM.",
+      "No usar niacinamida en la misma capa que vitamina C pura (L-AA): separa AM y PM.",
   },
   {
     slug: "antiedad-honesta",
@@ -230,7 +230,7 @@ export const RUTINAS: Rutina[] = [
     ],
     bundleSku: "RUTINA-PIEL-REACTIVA",
     /* 322 = 79 + 75 + 89 + 79. Antes eran 243 sin protector solar: la
-       advertencia mandaba a "sumá tu protector habitual", o sea que a la
+       advertencia mandaba a "suma tu protector habitual", o sea que a la
        única rutina de piel con barrera comprometida —la MÁS fotosensible de
        todas— se le pedía conseguir por fuera justo el producto que más le
        importa, y que vendemos nosotros. Además la home promete

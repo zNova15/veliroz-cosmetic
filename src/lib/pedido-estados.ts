@@ -47,7 +47,7 @@ export const ESTADOS_PEDIDO: EstadoPedido[] = [
     key: "entregado",
     label: "Entregado",
     detalle:
-      "Llegó. Tenés 7 días para escribirnos si algo vino mal o defectuoso.",
+      "Llegó. Tienes 7 días para escribirnos si algo vino mal o defectuoso.",
   },
 ];
 

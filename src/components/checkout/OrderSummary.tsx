@@ -54,12 +54,12 @@ export function OrderSummary({
   const handleAplicarCupon = async () => {
     const code = cuponInput.trim();
     if (!code) {
-      limpiarCupon("Escribí un código antes de aplicarlo.");
+      limpiarCupon("Escribe un código antes de aplicarlo.");
       return;
     }
     setValidando(true);
     /* El email va porque las reglas del referido dependen de quién compra
-       (no podés usar tu propio código, ni en una segunda compra). */
+       (no puedes usar tu propio código, ni en una segunda compra). */
     const res = await validarCodigoAction(
       code,
       subtotal,
@@ -74,13 +74,13 @@ export function OrderSummary({
         agotado: "El cupón ya no tiene usos disponibles.",
         min_subtotal:
           res.min != null
-            ? `Necesitás llegar a S/${Number(res.min).toFixed(2)} de subtotal.`
-            : "No llegás al mínimo del cupón.",
-        db_error: "Error del servidor. Intentá de nuevo.",
+            ? `Necesitas llegar a S/${Number(res.min).toFixed(2)} de subtotal.`
+            : "No llegas al mínimo del cupón.",
+        db_error: "Error del servidor. Intenta de nuevo.",
         /* referidos */
         referido_sin_email:
-          "Completá tu email en el paso 1 y volvé a aplicar el código.",
-        codigo_propio: "No podés usar tu propio código de referido.",
+          "Completa tu email en el paso 1 y vuelve a aplicar el código.",
+        codigo_propio: "No puedes usar tu propio código de referido.",
         ya_referido: "Ya usaste un código de referido antes.",
         no_es_primera_compra:
           "Los códigos de referido son solo para la primera compra.",
@@ -140,7 +140,7 @@ export function OrderSummary({
         })),
         /* Un solo campo en la UI, dos caminos en el backend: el wrapper
            crear_pedido_con_referido revalida el código y recalcula el
-           descuento, así que acá sólo se manda cuál es cuál. */
+           descuento, así que aquí sólo se manda cuál es cuál. */
         cupon: s.cupon && !s.cuponEsReferido ? s.cupon : undefined,
         codigoReferido: s.cupon && s.cuponEsReferido ? s.cupon : undefined,
         subtotalCliente: c.total(),
@@ -340,12 +340,12 @@ function traducirError(code?: string): string | undefined {
     email_requerido: "El email es obligatorio.",
     metodo_entrega_invalido: "Método de envío no reconocido.",
     metodo_pago_invalido: "Método de pago no reconocido.",
-    items_requeridos: "Necesitás al menos un producto.",
+    items_requeridos: "Necesitas al menos un producto.",
     costo_envio_invalido: "El costo de envío no es válido.",
     cantidad_invalida: "Alguna cantidad es inválida.",
     mixto_choco_bienestar_incompatible:
       "No se puede mezclar esas líneas en un mismo pedido.",
-    rpc_sin_respuesta: "El servidor no respondió. Intentá de nuevo.",
+    rpc_sin_respuesta: "El servidor no respondió. Intenta de nuevo.",
   };
   return map[code] ?? `Error: ${code}`;
 }

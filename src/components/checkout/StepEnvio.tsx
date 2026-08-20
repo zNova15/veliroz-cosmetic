@@ -36,7 +36,7 @@ export function StepEnvio({ errors, subtotalPostDescuento }: Props) {
           ¿Cómo llegamos?
         </h2>
         <p className="text-sm text-clay">
-          Elegí Shalom para envío a nivel nacional o entrega a domicilio en Lima.
+          Elige Shalom para envío a nivel nacional o entrega a domicilio en Lima.
         </p>
       </header>
 
@@ -234,7 +234,7 @@ export const validateStepEnvio: StepValidator = (s) => {
   const errors: Record<string, string> = {};
   if (s.metodoEnvio === "shalom") {
     if (!s.agenciaShalom.trim())
-      errors.agenciaShalom = "Indicá la agencia de destino";
+      errors.agenciaShalom = "Indica la agencia de destino";
     if (!/^\d{8}$/.test(s.dniReceptor))
       errors.dniReceptor = "DNI del receptor debe tener 8 dígitos";
   } else {

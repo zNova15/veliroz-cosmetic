@@ -253,7 +253,7 @@ function EmptyState({ onClose }: { onClose: () => void }) {
           Tu carrito está vacío
         </p>
         <p className="text-sm text-clay">
-          Empezá por acá — 7 productos curados esperándote.
+          Empieza por aquí — 7 productos curados esperándote.
         </p>
       </div>
       <Link href="/productos" onClick={onClose} className="btn-outline">

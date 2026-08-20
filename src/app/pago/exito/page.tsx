@@ -21,7 +21,7 @@ import { getSupabase } from "@/lib/supabase";
         lib/mercadopago.ts en cada back_url — sirve cuando MP manda
         `status=null`, que pasa en varios flujos).
      3. Default `aprobado` — el checkout propio (Yape/Plin/transferencia)
-        sólo llega acá cuando la RPC creó el pedido con éxito.
+        sólo llega aquí cuando la RPC creó el pedido con éxito.
 
    Datos del pedido: se intenta enriquecer con Supabase (best-effort: la
    RLS anon puede bloquear), y si falla se cae a los params del URL
@@ -59,7 +59,7 @@ function readSingle(sp: SearchParams, k: string): string | undefined {
 }
 
 /* ── Mapa de estados de MercadoPago → nuestros 3 estados ──
-   `authorized` = plata retenida sin capturar → todavía no es una venta,
+   `authorized` = dinero retenida sin capturar → todavía no es una venta,
    lo tratamos como pendiente. */
 const MP_ESTADO: Record<string, Estado> = {
   approved: "aprobado",
@@ -175,7 +175,7 @@ export default async function ExitoPage({
         : `Hola! Confirmo mi pedido ${refTxt} · Total ${totalTxt}. Te envío el voucher.`;
   const waHref = `https://wa.me/${WA_NUM}?text=${encodeURIComponent(waMsg)}`;
 
-  /* Sin código no hay nada que mostrar… salvo que MP nos haya mandado acá
+  /* Sin código no hay nada que mostrar… salvo que MP nos haya mandado aquí
      con un rechazo: ahí sí queremos dar la salida de reintento. */
   if (!codigo && estado !== "fallido") {
     return (
@@ -185,7 +185,7 @@ export default async function ExitoPage({
             No encontramos el pedido
           </h1>
           <p className="text-sm text-clay">
-            Este link no lleva a ningún pedido válido. Volvé al catálogo para
+            Este link no lleva a ningún pedido válido. Vuelve al catálogo para
             empezar de nuevo.
           </p>
           <Link href="/productos" className="btn-primary">
@@ -270,7 +270,7 @@ export default async function ExitoPage({
                 No se cobró nada de tu tarjeta.
               </p>
               <p className="text-sm text-clay text-pretty">
-                Podés reintentar el pago con otro medio, o pagarnos por
+                Puedes reintentar el pago con otro medio, o pagarnos por
                 Yape/Plin y mandarnos el voucher — despachamos igual de rápido.
               </p>
             </div>
@@ -301,8 +301,8 @@ export default async function ExitoPage({
             <p className="font-serif text-base mb-1">Qué sigue</p>
             <p className="text-clay text-pretty">
               No hace falta que hagas nada. Apenas el pago se acredite lo
-              confirmamos y preparamos el despacho. Si en 24 h no tenés
-              novedades, escribinos por WhatsApp con tu código de pedido.
+              confirmamos y preparamos el despacho. Si en 24 h no tienes
+              novedades, escríbenos por WhatsApp con tu código de pedido.
             </p>
           </div>
         )}
@@ -378,7 +378,7 @@ export default async function ExitoPage({
           <div className="mt-6 bg-champagne/15 border border-champagne/40 rounded-lg p-5 text-sm text-ink">
             <p className="font-serif text-base mb-1">Un último paso</p>
             <p className="text-clay">
-              Enviá el voucher de {pago === "yape" ? "Yape" : "Plin"} por
+              Envía el voucher de {pago === "yape" ? "Yape" : "Plin"} por
               WhatsApp para confirmar el despacho hoy mismo.
             </p>
           </div>

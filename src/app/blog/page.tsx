@@ -123,10 +123,10 @@ export default function BlogIndexPage() {
       <section className="max-w-4xl mx-auto px-6 md:px-10 pb-32 text-center space-y-6">
         <div className="divider-champagne" />
         <span className="font-mono text-[10px] tracking-[0.24em] uppercase text-taupe">
-          · Aún no sabés por dónde empezar ·
+          · Aún no sabes por dónde empezar ·
         </span>
         <h2 className="font-serif text-3xl md:text-4xl text-ink italic leading-tight text-balance">
-          Hacé el quiz — 6 preguntas, una rutina hecha a tu piel.
+          Haz el quiz — 6 preguntas, una rutina hecha a tu piel.
         </h2>
         <div className="pt-2">
           <Link href="/quiz" className="btn-primary">
@@ -216,7 +216,7 @@ function EmptyState() {
         Aún no publicamos artículos.
       </h3>
       <p className="text-sm text-clay max-w-md mx-auto text-pretty">
-        Estamos preparando la primera tanda. Mientras tanto, hacé el quiz para
+        Estamos preparando la primera tanda. Mientras tanto, haz el quiz para
         recibir tu rutina personalizada.
       </p>
       <div className="pt-2">

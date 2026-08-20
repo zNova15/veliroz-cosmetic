@@ -25,7 +25,7 @@ import { ESTADOS_PEDIDO } from "@/lib/pedido-estados";
 export const metadata: Metadata = {
   title: "Mis pedidos",
   description:
-    "Consultá el estado de tu pedido Veliroz Cosmetic con tu código y tu correo, o escribinos por WhatsApp y te lo contamos al toque.",
+    "Consulta el estado de tu pedido Veliroz Cosmetic con tu código y tu correo, o escríbenos por WhatsApp y te lo contamos al toque.",
   alternates: { canonical: "/mis-pedidos" },
   robots: { index: false, follow: true },
 };
@@ -57,8 +57,8 @@ export default function MisPedidosPage() {
             <span className="font-italic-serif text-rose-deep">mi pedido?</span>
           </h1>
           <p className="text-clay text-pretty leading-relaxed">
-            Pegá el código que te llegó por correo y el correo con el que
-            compraste. Si no logramos mostrarte el estado acá, te pasamos
+            Pega el código que te llegó por correo y el correo con el que
+            compraste. Si no logramos mostrarte el estado aquí, te pasamos
             directo a WhatsApp — que es donde de verdad te respondemos.
           </p>
         </div>
@@ -113,7 +113,7 @@ export default function MisPedidosPage() {
         <p className="text-xs text-clay text-pretty mt-6 pt-6 border-t border-[--border]">
           Un pedido también puede quedar{" "}
           <strong className="text-ink">cancelado</strong> — porque lo pediste
-          vos, porque el pago nunca se acreditó o porque el lote no llegó. En
+          tú, porque el pago nunca se acreditó o porque el lote no llegó. En
           los tres casos te escribimos antes, y si ya habías pagado te
           devolvemos el 100%.
         </p>
@@ -133,24 +133,24 @@ export default function MisPedidosPage() {
 
           <div className="space-y-4 text-sm text-clay text-pretty">
             <p>
-              <strong className="text-ink">Perdí el código.</strong> Buscá en tu
-              correo “Veliroz” o revisá spam. Si no aparece, escribinos por
+              <strong className="text-ink">Perdí el código.</strong> Busca en tu
+              correo “Veliroz” o revisa spam. Si no aparece, escríbenos por
               WhatsApp con tu nombre y la fecha de compra y lo encontramos
               nosotros.
             </p>
             <p>
               <strong className="text-ink">Pagué con Yape o Plin.</strong> El
               pedido queda en <em>Recibido</em> hasta que validamos el voucher.
-              Mandalo por WhatsApp y pasa a <em>Pagado</em> el mismo día.
+              Mándalo por WhatsApp y pasa a <em>Pagado</em> el mismo día.
             </p>
             <p>
               <strong className="text-ink">Quiero cambiar la dirección.</strong>{" "}
               Se puede mientras el pedido no esté <em>En reparto</em>.
-              Escribinos cuanto antes.
+              Escríbenos cuanto antes.
             </p>
             <p>
               <strong className="text-ink">¿Y mi cuenta?</strong> El historial
-              con sesión iniciada llega en el próximo release — mirá{" "}
+              con sesión iniciada llega en el próximo release — mira{" "}
               <Link
                 href="/cuenta"
                 className="text-ink underline underline-offset-4"
@@ -161,14 +161,14 @@ export default function MisPedidosPage() {
             </p>
             <p>
               <strong className="text-ink">Llegó mal o incompleto.</strong>{" "}
-              Tenés 7 días desde la entrega: mirá{" "}
+              Tienes 7 días desde la entrega: mira{" "}
               <Link
                 href="/envios"
                 className="text-ink underline underline-offset-4"
               >
                 envíos y devoluciones
               </Link>{" "}
-              o presentá tu caso en el{" "}
+              o presenta tu caso en el{" "}
               <Link
                 href="/libro-reclamaciones"
                 className="text-ink underline underline-offset-4"

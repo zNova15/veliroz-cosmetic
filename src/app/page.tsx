@@ -24,7 +24,7 @@ import {
    editorial y ya referencian los slugs/SKUs reales.
 
    El chrome (CosmeticHeader + PreventaBar + CartDrawer) lo monta el
-   RootLayout en src/app/layout.tsx — NO montarlo acá o se duplica.
+   RootLayout en src/app/layout.tsx — NO montarlo aquí o se duplica.
    ============================================================ */
 
 export const revalidate = 300;
@@ -232,7 +232,7 @@ export default async function CosmeticLanding() {
                   armamos rutinas concretas para tu piel.
                 </>
               )}{" "}
-              Reservá en pre-venta y recibí en 5-7 días · Shalom a todo el Perú.
+              Reserva en pre-venta y recibe en 5-7 días · Shalom a todo el Perú.
             </p>
             <div className="flex flex-wrap gap-3 pt-2">
               <Link href="/productos" className="btn-primary">
@@ -374,7 +374,7 @@ export default async function CosmeticLanding() {
               Cómo funciona la pre-venta
             </span>
             <p className="text-sm text-clay flex-1 text-pretty">
-              Reservás hoy, cerramos el lote y despachamos en{" "}
+              Reservas hoy, cerramos el lote y despachamos en{" "}
               <strong className="text-ink">5 a 7 días</strong>. Preparamos tu
               pedido en Cajamarca y enviamos por{" "}
               <strong className="text-ink">Shalom-agencia (S/12)</strong> a todo
@@ -392,7 +392,7 @@ export default async function CosmeticLanding() {
                 Nuestra selección · {totalProductos} productos
               </span>
               <h2 className="font-serif text-[--text-display] text-ink leading-tight">
-                Empezá acá.
+                Empieza aquí.
               </h2>
             </div>
             <Link
@@ -412,7 +412,7 @@ export default async function CosmeticLanding() {
                 Estamos cargando la selección.
               </p>
               <p className="text-sm text-clay">
-                Escribinos por WhatsApp y te contamos qué entra en el próximo
+                Escríbenos por WhatsApp y te contamos qué entra en el próximo
                 lote.
               </p>
             </div>
@@ -454,10 +454,10 @@ export default async function CosmeticLanding() {
         <section className="max-w-7xl mx-auto px-6 md:px-10 py-20">
           <div className="text-center mb-14 space-y-3">
             <span className="font-mono text-[10px] tracking-[0.24em] uppercase text-taupe">
-              No compres productos. Comprá rutinas.
+              No compres productos. Compra rutinas.
             </span>
             <h2 className="font-serif text-[--text-display] text-ink">
-              Empezá por acá según tu piel.
+              Empieza por aquí según tu piel.
             </h2>
             <p className="text-clay max-w-2xl mx-auto text-pretty">
               Cada rutina es una selección corta — limpieza, activo y protección
@@ -535,7 +535,7 @@ export default async function CosmeticLanding() {
                         S/. {r.precioBundle.toFixed(2)}
                       </p>
                       <p className="font-mono text-[9px] tracking-[0.16em] uppercase text-champagne-dark">
-                        Ahorrás S/{r.ahorro}
+                        Ahorras S/{r.ahorro}
                       </p>
                     </div>
                     <Link

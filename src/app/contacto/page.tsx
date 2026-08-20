@@ -12,7 +12,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 export const metadata: Metadata = {
   title: "Contacto",
   description:
-    "Escribinos por WhatsApp, correo o el formulario — respondemos en horario Lima (L-V 9-18h). Consultas de producto, seguimiento de pedidos, mayoristas.",
+    "Escríbenos por WhatsApp, correo o el formulario — respondemos en horario Lima (L-V 9-18h). Consultas de producto, seguimiento de pedidos, mayoristas.",
   alternates: { canonical: "/contacto" },
 };
 
@@ -49,7 +49,7 @@ export default function ContactoPage() {
 
         <div className="max-w-2xl space-y-3">
           <span className="font-mono text-[10px] tracking-[0.24em] uppercase text-taupe">
-            · Escribinos ·
+            · Escríbenos ·
           </span>
           <h1 className="font-serif text-[--text-display] text-ink leading-[0.98] text-balance">
             Hablemos.{" "}
@@ -59,8 +59,8 @@ export default function ContactoPage() {
           </h1>
           <p className="text-clay text-pretty leading-relaxed">
             La forma más rápida es WhatsApp — tenemos un equipo pequeño y
-            respondemos en el día. También podés escribirnos por correo o dejar
-            un mensaje acá abajo.
+            respondemos en el día. También puedes escribirnos por correo o dejar
+            un mensaje aquí abajo.
           </p>
         </div>
       </section>
@@ -214,7 +214,7 @@ export default function ContactoPage() {
                 name="mensaje"
                 required
                 rows={5}
-                placeholder="Contanos qué necesitás — cuanto más contexto, mejor."
+                placeholder="Cuéntanos qué necesitas — cuanto más contexto, mejor."
                 className="w-full px-4 py-3 rounded-md border border-[--border-2] bg-cream text-ink text-sm focus:outline-none focus:border-ink resize-y"
               />
             </label>

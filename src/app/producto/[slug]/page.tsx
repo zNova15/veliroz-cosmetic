@@ -552,7 +552,7 @@ export default async function ProductoPage(
                 Podría interesarte
               </span>
               <h2 className="font-serif text-3xl md:text-4xl text-ink leading-tight">
-                Seguí explorando.
+                Sigue explorando.
               </h2>
             </div>
             <Link

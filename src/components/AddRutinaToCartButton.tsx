@@ -151,7 +151,7 @@ export function AddRutinaToCartButton({
 
       {hayAjuste && (
         <p className="text-[11px] text-clay text-center text-pretty">
-          Ahorrás S/{ahorro ?? Math.round(totalRutina - precioMostrado!)} llevando
+          Ahorras S/{ahorro ?? Math.round(totalRutina - precioMostrado!)} llevando
           la rutina completa
           {bundle
             ? " — es el precio que va al carrito."

@@ -29,7 +29,7 @@ export const MARCA_SWATCH: Record<string, string> = {
    encima: al lado de las de producto se veían vacías. La tabla `marcas`
    tiene `logo_url`, pero eso es para el logotipo de la marca —que no
    tenemos y que además es material de terceros— así que la foto de
-   producto vive acá, junto al swatch con el que se compuso.
+   producto vive aquí, junto al swatch con el que se compuso.
 
    Sin entrada = la card cae al color plano de antes, que sigue siendo
    un fallback válido. Mixsoon y Veliroz no tienen packshot todavía.
@@ -130,7 +130,7 @@ export const INGREDIENTES_INFO: Record<string, IngredienteInfo> = {
   ceramidas: {
     slug: "ceramidas",
     nombre: "Ceramidas",
-    claim: "Repone la barrera cutánea que perdés con el día.",
+    claim: "Repone la barrera cutánea que pierdes con el día.",
     detalle:
       "Lípidos que ya están en tu piel — reponerlos evita deshidratación transepidérmica. Combinación 3:1:1 (ceramida NP/AP/EOP) es la fórmula CeraVe.",
   },

@@ -17,9 +17,9 @@ import { getSupabase } from "@/lib/supabase";
 export const revalidate = 600;
 
 export const metadata: Metadata = {
-  title: "Recomendá Veliroz y ganá crédito",
+  title: "Recomienda Veliroz y gana crédito",
   description:
-    "Compartí tu código: tu amiga se lleva 10% de descuento en su primera compra y vos ganás S/20 de crédito cuando ella recibe su pedido.",
+    "Comparte tu código: tu amiga se lleva 10% de descuento en su primera compra y tú ganas S/20 de crédito cuando ella recibe su pedido.",
   alternates: { canonical: "/referidos" },
 };
 
@@ -62,20 +62,20 @@ export default async function ReferidosPage() {
   const pasos = [
     {
       n: "01",
-      titulo: "Buscá tu código",
+      titulo: "Busca tu código",
       texto:
-        "Poné el email con el que compraste. Tu código se activa con tu primera compra.",
+        "Pon el email con el que compraste. Tu código se activa con tu primera compra.",
     },
     {
       n: "02",
-      titulo: "Compartilo",
+      titulo: "Compártelo",
       texto:
-        "Mandalo por WhatsApp a quien le venga bien. No hay límite de personas.",
+        "Mándalo por WhatsApp a quien le venga bien. No hay límite de personas.",
     },
     {
       n: "03",
-      titulo: "Ella ahorra, vos ganás",
-      texto: `Tu amiga se lleva ${cfg.descuento_pct}% off y vos S/${cfg.credito_por_referido} de crédito cuando ella paga.`,
+      titulo: "Ella ahorra, tú ganas",
+      texto: `Tu amiga se lleva ${cfg.descuento_pct}% off y tú S/${cfg.credito_por_referido} de crédito cuando ella paga.`,
     },
   ];
 
@@ -104,9 +104,9 @@ export default async function ReferidosPage() {
                 La mejor recomendación es la de alguien que ya lo usa.
               </h1>
               <p className="text-clay text-lg leading-relaxed text-pretty">
-                Compartí tu código: tu amiga se lleva{" "}
+                Comparte tu código: tu amiga se lleva{" "}
                 <strong className="text-ink">{cfg.descuento_pct}% off</strong> en
-                su primera compra y vos ganás{" "}
+                su primera compra y tú ganas{" "}
                 <strong className="text-ink">
                   S/{cfg.credito_por_referido} de crédito
                 </strong>{" "}
@@ -152,10 +152,10 @@ export default async function ReferidosPage() {
               {[
                 `El descuento es ${cfg.descuento_pct}% con un tope de S/${cfg.descuento_tope}, sobre pedidos de S/${cfg.min_subtotal} o más.`,
                 "Solo aplica en la primera compra de la persona que usa el código.",
-                "No podés usar tu propio código.",
+                "No puedes usar tu propio código.",
                 `Tu crédito de S/${cfg.credito_por_referido} se acredita cuando el pedido de tu amiga queda pagado. Si se cancela, no se acredita.`,
                 "No hay límite de personas que pueden usar tu código.",
-                "Para usar tu crédito, avisanos por WhatsApp al hacer tu pedido y lo descontamos del total.",
+                "Para usar tu crédito, avísanos por WhatsApp al hacer tu pedido y lo descontamos del total.",
               ].map((regla, i) => (
                 <li key={i} className="flex items-start gap-2.5">
                   <span className="text-champagne-dark mt-1.5 shrink-0">◦</span>

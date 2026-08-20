@@ -101,7 +101,7 @@ export function detectTipoPiel(t: string): TipoPiel | undefined {
 /* -------------------- Copys -------------------- */
 
 const MENU = [
-  "¿En qué te ayudo hoy? Elegí una opción escribiendo la palabra:",
+  "¿En qué te ayudo hoy? Elige una opción escribiendo la palabra:",
   "",
   "• *catálogo* — ver productos",
   "• *mi pedido VLZ-XXXX* — estado de tu pedido",
@@ -122,19 +122,19 @@ const BIENVENIDA = [
 const INFO_ENVIO = [
   "*Envíos Veliroz Cosmetic* 📦",
   "",
-  "• *Cajamarca ciudad*: contra-entrega mismo día si pedís antes de las 2 pm (S/ 5).",
+  "• *Cajamarca ciudad*: contra-entrega mismo día si pides antes de las 2 pm (S/ 5).",
   "• *Puylucana / Baños del Inca*: mismo día (S/ 3).",
   "• *Lima y provincias*: Shalom en 24–48 h (desde S/ 12). Retiras en agencia.",
   "• *Envío GRATIS* desde S/ 120.",
   "",
-  "Escribí *mi pedido VLZ-XXXX* para ver el estado del tuyo.",
+  "Escribe *mi pedido VLZ-XXXX* para ver el estado del tuyo.",
 ].join("\n");
 
 const CONTACTO_HUMANO = [
   "Te derivo con una asesora humana 👋",
   "En breve te responde desde este mismo chat (lunes a sábado 9 am – 7 pm).",
   "",
-  "Si es urgente, escribinos a *hola@veliroz.com*.",
+  "Si es urgente, escríbenos a *hola@veliroz.com*.",
 ].join("\n");
 
 const RUTINAS: Record<TipoPiel, string[]> = {
@@ -159,7 +159,7 @@ const RUTINAS: Record<TipoPiel, string[]> = {
     "2. Serum de *panthenol + Centella*",
     "3. Crema barrera con *ceramidas*",
     "4. *SPF mineral* (óxido de zinc)",
-    "Evitá exfoliantes fuertes las primeras 2 semanas.",
+    "Evita exfoliantes fuertes las primeras 2 semanas.",
   ],
   mixta: [
     "Rutina *piel mixta* recomendada:",
@@ -213,7 +213,7 @@ export async function routeMensaje(input: FlowInput): Promise<FlowResult> {
     default:
       return {
         reply:
-          "No entendí bien 😅 Escribí *menú* para ver las opciones, o *hola* para empezar de cero.",
+          "No entendí bien 😅 Escribe *menú* para ver las opciones, o *hola* para empezar de cero.",
       };
   }
 }
@@ -225,7 +225,7 @@ export function flowCatalogo(): FlowResult {
       "Nuestro catálogo completo 🛍️",
       "https://veliroz.com/productos",
       "",
-      "Filtrá por tipo de piel, marca o preocupación. Cualquier duda, escribinos *contacto*.",
+      "Filtra por tipo de piel, marca o preocupación. Cualquier duda, escríbenos *contacto*.",
     ].join("\n"),
   };
 }
@@ -238,7 +238,7 @@ export async function flowMiPedido(args: {
   if (!args.pedido_codigo) {
     return {
       reply:
-        "Pasame el código de tu pedido — arranca con *VLZ-* (lo tenés en el correo/whatsapp de confirmación). Ejemplo: *mi pedido VLZ-1A2B3C*",
+        "Pasame el código de tu pedido — arranca con *VLZ-* (lo tienes en el correo/whatsapp de confirmación). Ejemplo: *mi pedido VLZ-1A2B3C*",
     };
   }
 
@@ -257,12 +257,12 @@ export async function flowMiPedido(args: {
       console.error("[bot:mi_pedido] supabase error", error);
       return {
         reply:
-          "No pude leer el pedido ahora mismo. Reintentá en un minuto o escribí *contacto*.",
+          "No pude leer el pedido ahora mismo. Reintenta en un minuto o escribe *contacto*.",
       };
     }
     if (!data) {
       return {
-        reply: `No encontramos el pedido *${args.pedido_codigo}*. Revisá que el código esté completo (empieza con VLZ-).`,
+        reply: `No encontramos el pedido *${args.pedido_codigo}*. Revisa que el código esté completo (empieza con VLZ-).`,
       };
     }
 
@@ -275,7 +275,7 @@ export async function flowMiPedido(args: {
 
     if (!misma) {
       return {
-        reply: `Pedido *${data.pedido_codigo}* — estado: *${data.estado}*. Para más detalles, escribinos desde el mismo número con el que hiciste la compra 🙏.`,
+        reply: `Pedido *${data.pedido_codigo}* — estado: *${data.estado}*. Para más detalles, escríbenos desde el mismo número con el que hiciste la compra 🙏.`,
       };
     }
 
@@ -292,7 +292,7 @@ export async function flowMiPedido(args: {
     console.error("[bot:mi_pedido] throw", e);
     return {
       reply:
-        "No pude consultar el pedido en este momento. Reintentá o escribí *contacto*.",
+        "No pude consultar el pedido en este momento. Reintenta o escribe *contacto*.",
     };
   }
 }
@@ -303,7 +303,7 @@ export async function flowPrecio(termino: string): Promise<FlowResult> {
   if (!q || q.length < 2) {
     return {
       reply:
-        "Decime qué producto buscás. Ejemplo: *precio niacinamida* o *precio protector solar*.",
+        "Decime qué producto buscas. Ejemplo: *precio niacinamida* o *precio protector solar*.",
     };
   }
   try {
@@ -322,12 +322,12 @@ export async function flowPrecio(termino: string): Promise<FlowResult> {
       // eslint-disable-next-line no-console
       console.error("[bot:precio] supabase error", error);
       return {
-        reply: "No pude buscar ahora. Probá desde el catálogo: https://veliroz.com/productos",
+        reply: "No pude buscar ahora. Prueba desde el catálogo: https://veliroz.com/productos",
       };
     }
     if (!data || data.length === 0) {
       return {
-        reply: `No encontré nada con "*${q}*". Probá con otra palabra o mirá el catálogo: https://veliroz.com/productos`,
+        reply: `No encontré nada con "*${q}*". Prueba con otra palabra o mira el catálogo: https://veliroz.com/productos`,
       };
     }
 
@@ -348,7 +348,7 @@ export async function flowPrecio(termino: string): Promise<FlowResult> {
     // eslint-disable-next-line no-console
     console.error("[bot:precio] throw", e);
     return {
-      reply: "Tuve un problema buscando. Probá el catálogo: https://veliroz.com/productos",
+      reply: "Tuve un problema buscando. Prueba el catálogo: https://veliroz.com/productos",
     };
   }
 }
@@ -363,7 +363,7 @@ export function flowRecomendacion(args: {
     return {
       reply: [
         "¡Con gusto te armo una rutina 💧!",
-        "Contame tu *tipo de piel*: escribí *grasa*, *seca*, *sensible*, *mixta* o *normal*.",
+        "Cuéntame tu *tipo de piel*: escribe *grasa*, *seca*, *sensible*, *mixta* o *normal*.",
       ].join("\n"),
     };
   }
@@ -372,7 +372,7 @@ export function flowRecomendacion(args: {
     reply: [
       ...rutina,
       "",
-      "Encontrás todo esto en: https://veliroz.com/productos",
+      "Encuentras todo esto en: https://veliroz.com/productos",
     ].join("\n"),
   };
 }

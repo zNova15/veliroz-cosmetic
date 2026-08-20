@@ -30,10 +30,10 @@ export function StepPago({ totalMostrado }: Props) {
           · Paso 3 de 3 ·
         </span>
         <h2 className="font-serif text-2xl md:text-3xl text-ink">
-          ¿Cómo pagás?
+          ¿Cómo pagas?
         </h2>
         <p className="text-sm text-clay">
-          Elegí el método que más te convenga — todo el proceso está encriptado.
+          Elige el método que más te convenga — todo el proceso está encriptado.
         </p>
       </header>
 
@@ -57,14 +57,14 @@ export function StepPago({ totalMostrado }: Props) {
           active={s.metodoPago === "yape"}
           onClick={() => s.patch({ metodoPago: "yape" })}
           title="Yape"
-          sub="Escaneá el QR desde la app"
+          sub="Escanea el QR desde la app"
           icon={<IconYape />}
         />
         <Tab
           active={s.metodoPago === "plin"}
           onClick={() => s.patch({ metodoPago: "plin" })}
           title="Plin"
-          sub="Escaneá el QR desde tu banca"
+          sub="Escanea el QR desde tu banca"
           icon={<IconPlin />}
         />
         <Tab
@@ -86,7 +86,7 @@ export function StepPago({ totalMostrado }: Props) {
       </div>
 
       <p className="text-[11px] text-clay leading-relaxed">
-        Al confirmar aceptás nuestros{" "}
+        Al confirmar aceptas nuestros{" "}
         <a href="/terminos" className="underline underline-offset-2">Términos</a>{" "}
         y la{" "}
         <a href="/privacidad" className="underline underline-offset-2">
@@ -102,7 +102,7 @@ export function StepPago({ totalMostrado }: Props) {
    no está montado). El validador solo confirma que hay método pago. */
 export const validateStepPago: StepValidator = (s) => {
   const errors: Record<string, string> = {};
-  if (!s.metodoPago) errors.metodoPago = "Elegí un método";
+  if (!s.metodoPago) errors.metodoPago = "Elige un método";
   return errors;
 };
 
@@ -178,7 +178,7 @@ function BloqueQr({ marca, total, numero }: { marca: string; total: number; nume
         <div>
           <p className="font-serif text-lg text-ink">Pagar con {marca}</p>
           <p className="text-sm text-clay">
-            Escaneá el código o transfiere al número
+            Escanea el código o transfiere al número
           </p>
         </div>
         <div className="bg-mist rounded-md px-4 py-3 flex items-baseline gap-3">
@@ -199,7 +199,7 @@ function BloqueQr({ marca, total, numero }: { marca: string; total: number; nume
               rel="noopener noreferrer"
               className="underline underline-offset-2 font-medium"
             >
-              enviá el voucher por WhatsApp
+              envía el voucher por WhatsApp
             </a>{" "}
             para confirmar tu pedido en el día.
           </span>

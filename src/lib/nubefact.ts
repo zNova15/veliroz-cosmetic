@@ -134,7 +134,7 @@ export function nubefactDisponible(): boolean {
 /**
  * Post genérico contra la URL de Nubefact asociada al RUC del emisor.
  * `operacion` se agrega al body — Nubefact soporta varias operaciones
- * pero acá exponemos únicamente `generar_comprobante`.
+ * pero aquí exponemos únicamente `generar_comprobante`.
  */
 async function nubefactPost(body: Record<string, unknown>): Promise<NubefactResult> {
   const url = process.env.NUBEFACT_URL;

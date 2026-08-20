@@ -42,7 +42,7 @@ export const metadata: Metadata = {
   /* OJO: esta descripción nombra marcas, así que tiene que coincidir con el
      catálogo REAL. Antes prometía The Ordinary y CeraVe — desactivadas en la
      migración 015 por no tener ni un producto — y Google la mostraba tal cual.
-     Si se agrega o quita una marca, actualizar acá y en `keywords`. */
+     Si se agrega o quita una marca, actualizar aquí y en `keywords`. */
   description:
     "Beauty of Joseon, Anua, Round Lab, COSRX, SKIN1004 y más — K-beauty curada por rutina según tu piel. Envío nacional Shalom, entrega en Lima y Cajamarca.",
   metadataBase: new URL("https://veliroz.com"),
@@ -91,7 +91,7 @@ export const metadata: Metadata = {
 /* ============================================================
    RootLayout — chrome global de veliroz.com (Veliroz Cosmetic).
    Desde el refactor de rutas (Cosmetic pasó del segmento cosmetic a la
-   raíz) este layout absorbió al viejo layout del segmento; acá vive
+   raíz) este layout absorbió al viejo layout del segmento; aquí vive
    TODO el chrome compartido:
    - <html>/<body> + variables de fuente.
    - CosmeticHeader: header sticky reutilizable (badges carrito/wishlist).

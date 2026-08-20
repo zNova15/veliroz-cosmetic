@@ -233,7 +233,7 @@ export default async function BlogPostPage(
           <div className="flex items-end justify-between mb-8">
             <div className="space-y-2">
               <span className="font-mono text-[10px] tracking-[0.24em] uppercase text-taupe">
-                · Seguí leyendo ·
+                · Sigue leyendo ·
               </span>
               <h2 className="font-serif text-3xl text-ink italic">
                 También te puede gustar

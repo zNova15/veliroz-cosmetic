@@ -13,7 +13,7 @@ import { Toast } from "./Toast";
    por qué no se genera código para cualquier email.
 
    Los parámetros del programa (%, tope, crédito) NO están hardcodeados
-   acá: vienen en la respuesta del RPC, que los lee de
+   aquí: vienen en la respuesta del RPC, que los lee de
    `referidos_config`. Así Gabriel los cambia sin tocar el front y la
    página nunca promete un número distinto al que se cobra.
    ============================================================ */
@@ -32,11 +32,11 @@ interface Datos {
 const MOTIVOS: Record<string, string> = {
   sin_pedidos:
     "Todavía no encontramos un pedido con ese email. Tu código se activa con tu primera compra — así nos aseguramos de que recomiendes algo que ya probaste.",
-  email_requerido: "Escribí tu email para buscar tu código.",
+  email_requerido: "Escribe tu email para buscar tu código.",
   programa_inactivo:
-    "El programa de referidos está en pausa por ahora. Escribinos por WhatsApp y te contamos cuándo vuelve.",
+    "El programa de referidos está en pausa por ahora. Escríbenos por WhatsApp y te contamos cuándo vuelve.",
   cliente_no_resuelto:
-    "Encontramos tu pedido pero no pudimos armar tu ficha. Escribinos por WhatsApp y lo resolvemos a mano.",
+    "Encontramos tu pedido pero no pudimos armar tu ficha. Escríbenos por WhatsApp y lo resolvemos a mano.",
 };
 
 export function ReferidoPanel() {
@@ -66,14 +66,14 @@ export function ReferidoPanel() {
       if (!r?.ok) {
         setError(
           MOTIVOS[r?.motivo ?? ""] ??
-            "No pudimos traer tu código. Probá de nuevo en un momento.",
+            "No pudimos traer tu código. Prueba de nuevo en un momento.",
         );
         return;
       }
       setDatos(r);
     } catch {
       setError(
-        "No pudimos conectarnos. Revisá tu internet y probá de nuevo.",
+        "No pudimos conectarnos. Revisa tu internet y prueba de nuevo.",
       );
     } finally {
       setCargando(false);
@@ -93,7 +93,7 @@ export function ReferidoPanel() {
   };
 
   const mensajeWhatsApp = datos
-    ? `Hola! Te paso mi código de Veliroz Cosmetic: ${datos.codigo}\n\nCon ese código tenés ${datos.descuento_pct}% de descuento en tu primera compra (hasta S/${datos.descuento_tope}). El catálogo está en https://veliroz.com`
+    ? `Hola! Te paso mi código de Veliroz Cosmetic: ${datos.codigo}\n\nCon ese código tienes ${datos.descuento_pct}% de descuento en tu primera compra (hasta S/${datos.descuento_tope}). El catálogo está en https://veliroz.com`
     : "";
 
   return (
@@ -212,11 +212,11 @@ export function ReferidoPanel() {
 
           {Number(datos.credito_disponible) > 0 && (
             <p className="text-sm text-clay bg-surface border border-[--border] rounded-lg px-5 py-4 text-pretty">
-              Tenés{" "}
+              Tienes{" "}
               <strong className="text-ink font-mono">
                 S/{Number(datos.credito_disponible).toFixed(2)}
               </strong>{" "}
-              a favor. Escribinos por WhatsApp al hacer tu próximo pedido y lo
+              a favor. Escríbenos por WhatsApp al hacer tu próximo pedido y lo
               descontamos del total.
             </p>
           )}

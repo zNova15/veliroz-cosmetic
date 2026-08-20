@@ -97,9 +97,22 @@ export function CosmeticHeader({ current }: Props = {}) {
             className="flex items-center gap-2.5 shrink-0"
             onClick={closeMobileMenu}
           >
-            <span className="w-8 h-8 rounded-full bg-ink text-cream flex items-center justify-center font-serif italic text-lg font-bold">
-              V
-            </span>
+            {/* Mismo monograma que el favicon (src/app/icon.svg): si el
+                header y la pestaña muestran letras distintas, la marca se
+                lee como dos. Va inline y no como <img> para que no
+                parpadee en la primera carga. */}
+            <svg
+              className="w-8 h-8 shrink-0"
+              viewBox="0 0 100 100"
+              role="img"
+              aria-label="Veliroz"
+            >
+              <rect width="100" height="100" rx="22" fill="var(--veliroz-ink, #1A1613)" />
+              <path
+                d="M14 25 H40 V30 H34.5 L50 68 L64 30 H58.5 V25 H84 V30 H78 L57 82 H45 L22 30 H14 Z"
+                fill="var(--veliroz-champagne, #D4B896)"
+              />
+            </svg>
             <div className="hidden sm:flex flex-col leading-none">
               <span className="font-serif text-ink text-base font-semibold tracking-tight">
                 Veliroz

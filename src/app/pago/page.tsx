@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useCartStore } from "@/lib/store";
 import {
   useCheckoutStore,
@@ -13,6 +13,7 @@ import { StepDatos, validateStepDatos } from "@/components/checkout/StepDatos";
 import { StepEnvio, validateStepEnvio } from "@/components/checkout/StepEnvio";
 import { StepPago, validateStepPago } from "@/components/checkout/StepPago";
 import { OrderSummary } from "@/components/checkout/OrderSummary";
+import { trackInitiateCheckout } from "@/lib/track";
 
 /* ============================================================
    /pago — Checkout multi-step (Client Component).
@@ -41,6 +42,30 @@ export default function PagoPage() {
   /* Guard: montado en cliente para evitar hydration mismatch con zustand-persist. */
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => setHydrated(true), []);
+
+  /* InitiateCheckout — se dispara UNA vez, cuando la persona llega al pago
+     con carrito. El evento existía en lib/track.ts desde el principio pero
+     no lo llamaba nadie: Meta no puede optimizar hacia un evento que nunca
+     recibe.
+     El ref evita re-disparos cuando el carrito cambia dentro del checkout
+     (quitar una unidad, aplicar un cupón): sería el mismo checkout contado
+     varias veces y ensuciaría el embudo. */
+  const checkoutTrackeado = useRef(false);
+  useEffect(() => {
+    if (!hydrated || checkoutTrackeado.current || items.length === 0) return;
+    checkoutTrackeado.current = true;
+    trackInitiateCheckout({
+      total: subtotal,
+      items_count: items.reduce((n, i) => n + i.cantidad, 0),
+      items: items.map((i) => ({
+        sku: i.sku,
+        precio: i.snapshot.precio,
+        cantidad: i.cantidad,
+        marca: i.snapshot.marcaNombre,
+        productoNombre: i.snapshot.productoNombre,
+      })),
+    });
+  }, [hydrated, items, subtotal]);
 
   /* Errors por step. */
   const [errors, setErrors] = useState<Record<string, string>>({});

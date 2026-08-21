@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getSupabase } from "@/lib/supabase";
 import { SelloConfirmacion } from "@/components/SelloConfirmacion";
+import { TrackPurchase } from "@/components/TrackPurchase";
 
 /* ============================================================
    /pago/exito — Server Component. Página de retorno del checkout.
@@ -100,6 +101,36 @@ function resolverEstado(sp: SearchParams): Estado {
   return "aprobado";
 }
 
+interface LineaPedido {
+  producto_id: string | null;
+  nombre: string | null;
+  precio_unit: number | null;
+  cantidad: number | null;
+}
+
+/* Las líneas del pedido, sólo para el evento Purchase. Si falla, el evento
+   igual se dispara con el total: perder el detalle de productos degrada la
+   atribución, perder el evento entero rompe la optimización de campañas. */
+async function fetchLineas(codigo: string): Promise<LineaPedido[]> {
+  try {
+    const sb = getSupabase();
+    const { data: ped } = await sb
+      .from("pedidos")
+      .select("id")
+      .eq("pedido_codigo", codigo)
+      .maybeSingle();
+    const id = (ped as { id?: string } | null)?.id;
+    if (!id) return [];
+    const { data } = await sb
+      .from("lineas_pedido")
+      .select("producto_id, nombre, precio_unit, cantidad")
+      .eq("pedido_id", id);
+    return (data as LineaPedido[] | null) ?? [];
+  } catch {
+    return [];
+  }
+}
+
 async function fetchPedido(codigo: string): Promise<PedidoDetalle | null> {
   try {
     const { data, error } = await getSupabase()
@@ -160,6 +191,7 @@ export default async function ExitoPage({
   const preferenceId = readSingle(sp, "preference_id");
 
   const pedido = codigo ? await fetchPedido(codigo) : null;
+  const lineas = codigo ? await fetchLineas(codigo) : [];
 
   const email = pedido?.cliente_email ?? emailUrl ?? "";
   const total = pedido?.total ?? (totalUrl ? Number(totalUrl) : null);

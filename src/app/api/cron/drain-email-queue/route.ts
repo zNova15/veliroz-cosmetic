@@ -330,6 +330,26 @@ async function drain(req: NextRequest) {
 
   const { client: sb, usingServiceRole } = getAdminClient();
 
+  /* Sin service_role no hay nada que hacer, y hay que DECIRLO.
+     `email_queue` tiene RLS activo y cero policies (migración 029), a
+     propósito: guarda nombre y correo de clientes. Con la clave anon,
+     un SELECT ahí no devuelve error — devuelve cero filas. El drainer
+     respondería { ok: true, procesados: 0 } indefinidamente y todo
+     parecería sano mientras ningún cliente recibe su confirmación.
+     Fallar fuerte es lo único que hace visible esa configuración. */
+  if (!usingServiceRole) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error: "sin_service_role",
+        hint:
+          "email_queue tiene RLS y ninguna policy: la clave anon lee 0 filas " +
+          "sin error. Configurar SUPABASE_SERVICE_ROLE_KEY en Vercel.",
+      },
+      { status: 500 }
+    );
+  }
+
   const nowIso = new Date().toISOString();
   const { data: rows, error } = await sb
     .from("email_queue")

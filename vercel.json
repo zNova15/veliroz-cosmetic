@@ -1,7 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
-    { "source": "/:path*", "destination": "/:path*" }
+    {
+      "source": "/:path*",
+      "destination": "/:path*"
+    }
   ],
   "headers": [
     {
@@ -12,6 +15,12 @@
           "value": "index, follow"
         }
       ]
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/drain-email-queue",
+      "schedule": "*/10 * * * *"
     }
   ]
 }

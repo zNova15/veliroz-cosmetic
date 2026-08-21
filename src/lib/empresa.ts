@@ -18,16 +18,12 @@ export const EMPRESA = {
   /** RUC 20 — persona jurídica. */
   ruc: "20616401280",
 
-  /* ⚠️ COMPLETAR con la razón social EXACTA de la ficha RUC de SUNAT,
-     con la forma societaria incluida (S.A.C., S.A.C.S., E.I.R.L.).
-     Tiene que coincidir carácter por carácter con SUNAT: en el Libro de
-     Reclamaciones y en los Términos, una razón social aproximada vale lo
-     mismo que ninguna.
-
-     No se dejó un valor inventado a propósito. Mientras esté vacío, las
-     páginas muestran sólo el RUC —que sí es real— en vez de afirmar una
-     denominación que podría no ser la registrada. */
-  razonSocial: "",
+  /* Denominación EXACTA de la partida registral 16289559 (SUNARP,
+     inscrita 21-ago-2026), con los puntos incluidos. La completa es
+     "NOVVX SOCIEDAD POR ACCIONES CERRADA SIMPLIFICADA"; no se registró
+     abreviatura. En el Libro de Reclamaciones y en los Términos, una
+     razón social aproximada vale lo mismo que ninguna. */
+  razonSocial: "NOVVX S.A.C.S.",
 
   /** Nombre comercial, el que la clienta reconoce. */
   nombreComercial: "Veliroz Cosmetic",

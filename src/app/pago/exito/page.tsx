@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getSupabase } from "@/lib/supabase";
+import { SelloConfirmacion } from "@/components/SelloConfirmacion";
 
 /* ============================================================
    /pago/exito — Server Component. Página de retorno del checkout.
@@ -205,25 +206,12 @@ export default async function ExitoPage({
           traslucido y se le veían los links fantasma. */}
       <section className="max-w-3xl mx-auto px-6 md:px-10 py-12 md:py-20">
         <div className="text-center space-y-4 mb-10">
-          <div
-            className="inline-flex items-center justify-center w-16 h-16 rounded-full"
-            style={{ background: copy.halo }}
-          >
-            <svg
-              className={`w-8 h-8 ${copy.tinta}`}
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.2"
-              aria-hidden
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d={copy.icono}
-              />
-            </svg>
-          </div>
+          <SelloConfirmacion
+            d={copy.icono}
+            halo={copy.halo}
+            tinta={copy.tinta}
+            celebrar={estado === "aprobado"}
+          />
           <span className="font-mono text-[10px] tracking-[0.24em] uppercase text-taupe block">
             · {copy.eyebrow} ·
           </span>

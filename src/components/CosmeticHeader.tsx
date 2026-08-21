@@ -317,15 +317,34 @@ export function CosmeticHeader({ current }: Props = {}) {
   );
 }
 
-/* Badge circular con el count. Máx 99+. */
+/* Badge circular con el count. Máx 99+.
+
+   PROPÓSITO DE LA ANIMACIÓN: feedback. Al agregar algo al carrito, el badge
+   aparecía de golpe y el número saltaba sin aviso. Ahora entra con un pulso
+   corto — es la confirmación de que el producto entró, en el mismo lugar
+   donde el usuario va a buscarlo después.
+
+   El `key={count}` es lo que hace que Motion re-monte el badge en cada
+   cambio: sin eso el número cambiaría en silencio dentro del mismo nodo.
+
+   Entra desde scale(0.6), no desde 0: nada en el mundo real aparece de la
+   nada. El bounce va bajo (0.35) — es un acuse de recibo, no una
+   celebración; se ve decenas de veces por sesión de compra. */
 function Badge({ count }: { count: number }) {
   const text = count > 99 ? "99+" : String(count);
   return (
-    <span
-      className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-deep text-cream text-[10px] font-mono font-medium flex items-center justify-center leading-none"
-      aria-hidden
-    >
-      {text}
-    </span>
+    <AnimatePresence mode="popLayout" initial={false}>
+      <motion.span
+        key={count}
+        initial={{ transform: "scale(0.6)", opacity: 0 }}
+        animate={{ transform: "scale(1)", opacity: 1 }}
+        exit={{ transform: "scale(0.8)", opacity: 0 }}
+        transition={{ type: "spring", duration: 0.32, bounce: 0.35 }}
+        className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-deep text-cream text-[10px] font-mono font-medium flex items-center justify-center leading-none"
+        aria-hidden
+      >
+        {text}
+      </motion.span>
+    </AnimatePresence>
   );
 }

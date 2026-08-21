@@ -82,23 +82,31 @@ Resend (esos viven en `send.veliroz.com`).
 
 ### 3. Las variables en Vercel
 
-Resend → **API Keys** → **Create** → permiso *Sending access*.
-
-En Vercel → veliroz-cosmetic → Settings → Environment Variables, las
-tres en **Production**:
+`CRON_SECRET` ya está configurada. Faltan dos, y las dos en
+**Production**:
 
 | Variable | De dónde sale |
 |---|---|
-| `RESEND_API_KEY` | la key recién creada, empieza con `re_` |
+| `RESEND_API_KEY` | Resend → API Keys → Create, permiso *Sending access*. Empieza con `re_` |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Settings → API → `service_role` |
-| `CRON_SECRET` | inventada: `openssl rand -hex 32` |
+
+Desde la terminal es más rápido que el panel:
+
+```bash
+cd veliroz-cosmetic
+npx vercel env add RESEND_API_KEY production --project veliroz-cosmetic
+npx vercel env add SUPABASE_SERVICE_ROLE_KEY production --project veliroz-cosmetic
+npx vercel --prod --project veliroz-cosmetic   # las vars sólo aplican al redesplegar
+```
 
 `SUPABASE_SERVICE_ROLE_KEY` no es opcional. `email_queue` tiene RLS
 activo y ninguna policy a propósito, porque guarda nombre y correo de
 clientas — dato personal bajo la Ley 29733. La clave anon viaja en el
 bundle del navegador y no debe poder leer esa tabla ni por accidente.
 
-Esa clave da acceso total a la base y **nunca va al repositorio**.
+Esa clave da acceso total a la base, ignora todo el RLS y **nunca va al
+repositorio**. Si alguna vez se pegó en un chat o en un archivo, rotarla
+en Supabase antes de usarla acá.
 
 ### 4. La migración
 

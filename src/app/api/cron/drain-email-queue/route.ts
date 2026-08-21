@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { sendEmail, type SendEmailResult } from "@/lib/resend";
+import { sendEmail, isResendConfigured, type SendEmailResult } from "@/lib/resend";
 import PedidoCreado, {
   type PedidoCreadoProps,
 } from "@/emails/PedidoCreado";
@@ -345,6 +345,28 @@ async function drain(req: NextRequest) {
         hint:
           "email_queue tiene RLS y ninguna policy: la clave anon lee 0 filas " +
           "sin error. Configurar SUPABASE_SERVICE_ROLE_KEY en Vercel.",
+      },
+      { status: 500 }
+    );
+  }
+
+  /* Sin credencial de Resend, drenar la cola la DESTRUYE.
+     sendEmail() devuelve { skipped: true } cuando falta RESEND_API_KEY,
+     y el drainer traduce eso a estado 'omitido', que es terminal: la
+     fila deja de estar 'pendiente' y nunca se reintenta. En desarrollo
+     eso es lo que se busca. En producción significaría que la
+     confirmación de una compra real se descarta para siempre, en
+     silencio, por una variable de entorno que falta.
+     Es preferible que la cola se acumule y el cron proteste. */
+  if (!isResendConfigured() && process.env.VERCEL_ENV === "production") {
+    return NextResponse.json(
+      {
+        ok: false,
+        error: "sin_resend_api_key",
+        hint:
+          "La cola queda intacta a propósito: drenarla sin credencial " +
+          "marcaría los correos como 'omitido' de forma terminal. " +
+          "Configurar RESEND_API_KEY en Vercel.",
       },
       { status: 500 }
     );

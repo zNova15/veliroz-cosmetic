@@ -409,6 +409,12 @@ type ProductoLite = {
   marca_slug: string | null;
   marca_nombre: string | null;
   categoria: string;
+  /* Stock 0 se lee como reserva, no como agotado — igual que en la
+     ficha de producto y en /rutinas/[slug]. */
+  preventa: boolean;
+  /* Sin Notificación Sanitaria del proveedor no se vende, tenga el
+     stock que tenga. */
+  nsoPendiente: boolean;
   variante: {
     id: string;
     sku: string;
@@ -486,6 +492,8 @@ function ResultadoPantalla({
             marca_slug: r.marca?.slug ?? null,
             marca_nombre: r.marca?.nombre ?? null,
             categoria: r.categoria,
+            preventa: r.meta?.preventa === true,
+            nsoPendiente: r.meta?.nso_pendiente === true,
             variante: barata
               ? {
                   id: barata.id,
@@ -527,7 +535,17 @@ function ResultadoPantalla({
     if (!productos || productos.length === 0) return;
     let agregados = 0;
     for (const p of productos) {
-      if (!p.variante || p.variante.stock <= 0) continue;
+      if (!p.variante) continue;
+      /* Mismo criterio que AddToCartButton y /rutinas/[slug]: en
+         pre-venta el stock 0 es una reserva, no un impedimento.
+         Este bucle antes cortaba con `stock <= 0` a secas, y como todo
+         el catálogo está en pre-venta con stock 0 a la espera del
+         primer lote, el botón "Agregar rutina al carrito" no agregaba
+         NADA y respondía "No hay stock disponible". Es el botón al que
+         llega el tráfico del quiz, que es el link de la bio. */
+      const sinStock = p.variante.stock <= 0;
+      if (p.nsoPendiente) continue;
+      if (sinStock && !p.preventa) continue;
       add({
         sku: p.variante.sku,
         cantidad: 1,

@@ -1,17 +1,34 @@
 "use client";
 
+import { useEffect } from "react";
 import { useCheckoutStore } from "@/lib/checkout-store";
 import { Tab } from "./FormField";
 import type { StepValidator } from "./validators";
 
 /* ============================================================
    Step 3 · Método de pago
-   Tabs: Culqi · Yape · Plin · MercadoPago · PagoEfectivo
-   - Culqi/MP: placeholder de Payment Brick (env vars pendientes).
-   - Yape/Plin: QR placeholder + número + banner WhatsApp.
-   - PagoEfectivo: placeholder con instrucciones.
-   La confirmación real la dispara el sidebar OrderSummary.
+
+   UN MÉTODO SE MUESTRA SÓLO SI PUEDE COBRAR DE VERDAD.
+
+   Antes se mostraban los cinco siempre. Quien elegía "Tarjeta" leía
+   literalmente "Culqi Payment Brick — pendiente configurar
+   CULQI_PUBLIC_KEY en Vercel", y quien elegía PagoEfectivo leía que le
+   íbamos a generar un CIP que nadie genera. En los dos casos el pedido
+   se creaba igual, sin vía de pago y sin instrucciones: una venta
+   perdida y una clienta con la plata comprometida y ninguna forma de
+   entregarla.
+
+   Se gatea por configuración en vez de borrar el código: el día que
+   entren las credenciales en Vercel, el método reaparece solo. Las
+   NEXT_PUBLIC_* se resuelven al compilar, así que esto es una constante
+   en el bundle, no una consulta en tiempo de ejecución.
    ============================================================ */
+
+const CULQI_LISTO = Boolean(process.env.NEXT_PUBLIC_CULQI_PUBLIC_KEY);
+const MP_LISTO = Boolean(process.env.NEXT_PUBLIC_MP_PUBLIC_KEY);
+/* PagoEfectivo no tiene integración: ni ruta, ni cliente, ni webhook.
+   No es una env var que falta, es código que no existe. */
+const EFECTIVO_LISTO = false;
 
 const YAPE_NUM = "967 456 364";
 const WA_NUM = "51967456364";
@@ -22,6 +39,22 @@ interface Props {
 
 export function StepPago({ totalMostrado }: Props) {
   const s = useCheckoutStore();
+
+  /* El checkout se persiste en el navegador. Una clienta que dejó
+     "culqi" elegido hace dos semanas vuelve con esa preferencia
+     guardada y ya no existe la pestaña: vería un panel vacío y un
+     botón de confirmar que crea un pedido sin forma de pagarlo. */
+  const metodo = s.metodoPago;
+  useEffect(() => {
+    const disponible =
+      metodo === "yape" ||
+      metodo === "plin" ||
+      (metodo === "culqi" && CULQI_LISTO) ||
+      (metodo === "mercadopago" && MP_LISTO) ||
+      (metodo === "pagoefectivo" && EFECTIVO_LISTO);
+    if (!disponible) s.patch({ metodoPago: "yape" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [metodo]);
 
   return (
     <div className="space-y-8">
@@ -37,22 +70,8 @@ export function StepPago({ totalMostrado }: Props) {
         </p>
       </header>
 
-      {/* Tabs métodos */}
+      {/* Tabs métodos — sólo los que pueden cobrar hoy */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <Tab
-          active={s.metodoPago === "culqi"}
-          onClick={() => s.patch({ metodoPago: "culqi" })}
-          title="Tarjeta · Culqi"
-          sub="Visa · Mastercard · Amex"
-          icon={<IconCard />}
-        />
-        <Tab
-          active={s.metodoPago === "mercadopago"}
-          onClick={() => s.patch({ metodoPago: "mercadopago" })}
-          title="MercadoPago"
-          sub="Tarjeta · cuotas · saldo MP"
-          icon={<IconMp />}
-        />
         <Tab
           active={s.metodoPago === "yape"}
           onClick={() => s.patch({ metodoPago: "yape" })}
@@ -67,13 +86,33 @@ export function StepPago({ totalMostrado }: Props) {
           sub="Escanea el QR desde tu banca"
           icon={<IconPlin />}
         />
-        <Tab
-          active={s.metodoPago === "pagoefectivo"}
-          onClick={() => s.patch({ metodoPago: "pagoefectivo" })}
-          title="PagoEfectivo"
-          sub="BCP · Interbank · agentes"
-          icon={<IconEfectivo />}
-        />
+        {CULQI_LISTO && (
+          <Tab
+            active={s.metodoPago === "culqi"}
+            onClick={() => s.patch({ metodoPago: "culqi" })}
+            title="Tarjeta · Culqi"
+            sub="Visa · Mastercard · Amex"
+            icon={<IconCard />}
+          />
+        )}
+        {MP_LISTO && (
+          <Tab
+            active={s.metodoPago === "mercadopago"}
+            onClick={() => s.patch({ metodoPago: "mercadopago" })}
+            title="MercadoPago"
+            sub="Tarjeta · cuotas · saldo MP"
+            icon={<IconMp />}
+          />
+        )}
+        {EFECTIVO_LISTO && (
+          <Tab
+            active={s.metodoPago === "pagoefectivo"}
+            onClick={() => s.patch({ metodoPago: "pagoefectivo" })}
+            title="PagoEfectivo"
+            sub="BCP · Interbank · agentes"
+            icon={<IconEfectivo />}
+          />
+        )}
       </div>
 
       {/* Detalle según método */}

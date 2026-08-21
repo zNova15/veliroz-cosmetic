@@ -101,7 +101,7 @@ export function ProductTabs({
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.22, ease: [0.23, 1, 0.32, 1] }}
           >
             {active === "desc" && (
               <div className="prose max-w-3xl text-clay leading-relaxed text-pretty space-y-4">

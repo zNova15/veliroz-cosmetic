@@ -21,7 +21,7 @@ export function Toast({ open, mensaje, subMensaje }: Props) {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 12 }}
-          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
           className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] bg-ink text-cream px-5 py-3 rounded-full shadow-lg flex items-center gap-3 max-w-[92vw]"
           role="status"
           aria-live="polite"

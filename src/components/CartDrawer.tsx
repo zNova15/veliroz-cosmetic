@@ -66,7 +66,10 @@ export function CartDrawer() {
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
-            transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+            /* Curva de drawer (la de iOS), no la de entrada genérica: un panel
+                que recorre toda la pantalla necesita frenar más largo al
+                final o parece que choca contra el borde. */
+            transition={{ duration: 0.32, ease: [0.32, 0.72, 0, 1] }}
             className="fixed top-0 right-0 bottom-0 z-[95] w-full sm:w-[420px] max-w-full bg-cream shadow-2xl flex flex-col border-l border-[--border]"
           >
             {/* Header */}

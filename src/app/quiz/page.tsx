@@ -128,11 +128,15 @@ export default function QuizPage() {
           className="fixed top-0 left-0 right-0 h-1 bg-mist z-40"
           aria-hidden="true"
         >
+          {/* scaleX y no width: animar `width` obliga al navegador a
+              recalcular el layout en CADA frame. Con scaleX la animación
+              vive en el compositor y no toca el layout. `origin-left` para
+              que crezca desde la izquierda y no desde el centro. */}
           <motion.div
-            className="h-full bg-ink"
+            className="h-full w-full bg-ink origin-left"
             initial={false}
-            animate={{ width: `${progreso}%` }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            animate={{ transform: `scaleX(${progreso / 100})` }}
+            transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
           />
         </div>
       )}
@@ -172,7 +176,7 @@ export default function QuizPage() {
               initial={{ opacity: 0, x: 48 * dir }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -48 * dir }}
-              transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.32, ease: [0.23, 1, 0.32, 1] }}
             >
               <PreguntaBloque
                 heroTitulo={pregunta.hero}
@@ -342,7 +346,7 @@ function PreguntaBloque({
               onClick={() => onElegir(op.value)}
               aria-pressed={activa}
               className={[
-                "group relative text-left rounded-[--radius-md] border p-5 transition-all",
+                "group relative text-left rounded-[--radius-md] border p-5 transition-colors",
                 "bg-surface hover:border-ink hover:shadow-[0_16px_40px_-20px_rgba(26,22,19,0.18)]",
                 activa
                   ? "border-ink shadow-[0_16px_40px_-20px_rgba(26,22,19,0.25)] ring-1 ring-ink"
@@ -361,7 +365,7 @@ function PreguntaBloque({
                 <span
                   aria-hidden="true"
                   className={[
-                    "shrink-0 w-6 h-6 rounded-full border flex items-center justify-center transition-all",
+                    "shrink-0 w-6 h-6 rounded-full border flex items-center justify-center transition-colors",
                     activa
                       ? "bg-ink border-ink"
                       : "bg-transparent border-[--border-2] group-hover:border-ink",

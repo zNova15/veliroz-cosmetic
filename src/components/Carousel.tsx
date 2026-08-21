@@ -120,7 +120,7 @@ export function Carousel({ children, ariaLabel, showDots = true }: Props) {
                     className="relative h-11 w-4 grid place-items-center cursor-pointer group"
                   >
                     <span
-                      className={`block rounded-full transition-all duration-200 ${
+                      className={`block rounded-full transition-[width,background-color] duration-200 ${
                         i === selected
                           ? "w-6 h-[3px] bg-ink"
                           : "w-2 h-[3px] bg-stone group-hover:bg-taupe"

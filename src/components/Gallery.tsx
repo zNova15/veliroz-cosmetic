@@ -77,7 +77,7 @@ export function Gallery({
         key={conFoto ? "foto" : activo}
         initial={{ opacity: 0.6 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
         className="group relative aspect-square rounded-lg border border-[--border] overflow-hidden"
         style={{ background: bg }}
       >
@@ -157,7 +157,7 @@ export function Gallery({
                 aria-label={`Vista ${i + 1}`}
                 aria-current={on}
                 className={[
-                  "aspect-square rounded-md border transition-all overflow-hidden relative",
+                  "aspect-square rounded-md border transition-colors overflow-hidden relative",
                   on ? "border-ink" : "border-[--border] hover:border-[--border-2]",
                 ].join(" ")}
                 style={{ background: t }}

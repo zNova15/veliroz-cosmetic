@@ -33,7 +33,7 @@ export function WishlistButton({ productoId, className = "", size = "md" }: Prop
       onClick={() => toggle(productoId)}
       aria-pressed={active}
       aria-label={active ? "Quitar de favoritos" : "Agregar a favoritos"}
-      className={`${dim} rounded-full bg-cream/90 backdrop-blur-sm border border-[--border] flex items-center justify-center transition-all duration-200 hover:scale-110 hover:border-rose-deep ${className}`}
+      className={`${dim} rounded-full bg-cream/90 backdrop-blur-sm border border-[--border] flex items-center justify-center transition-[transform,border-color,background-color] duration-200 hover:scale-110 hover:border-rose-deep active:scale-95 ${className}`}
     >
       <svg
         className={`${svg} transition-colors ${active ? "text-rose-deep" : "text-ink"}`}

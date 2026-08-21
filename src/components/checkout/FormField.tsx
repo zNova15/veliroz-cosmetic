@@ -85,7 +85,7 @@ export function Tab({ active, onClick, icon, title, sub, badge, disabled }: TabP
       disabled={disabled}
       aria-pressed={active}
       className={[
-        "text-left flex items-start gap-3 p-4 rounded-lg border transition-all w-full",
+        "text-left flex items-start gap-3 p-4 rounded-lg border transition-colors w-full",
         active
           ? "border-ink bg-mist/60 shadow-sm"
           : "border-[--border-2] bg-surface hover:border-ink/40",

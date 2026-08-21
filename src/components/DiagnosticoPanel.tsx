@@ -106,7 +106,7 @@ export function DiagnosticoPanel({ diag }: { diag: Diagnostico }) {
                     background: COLOR_BANDA[d.banda],
                     transition: reducido
                       ? "none"
-                      : `width 900ms cubic-bezier(.16,1,.3,1) ${i * 80}ms`,
+                      : `width 900ms cubic-bezier(0.23, 1, 0.32, 1) ${i * 80}ms`,
                   }}
                 />
               </div>

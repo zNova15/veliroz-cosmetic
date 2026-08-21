@@ -259,7 +259,7 @@ export function CosmeticHeader({ current }: Props = {}) {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.22, ease: [0.23, 1, 0.32, 1] }}
               className="md:hidden border-t border-[--border] bg-cream overflow-hidden"
             >
               <nav

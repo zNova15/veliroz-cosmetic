@@ -135,7 +135,7 @@ export function AddToCartButton({
                   type="button"
                   onClick={() => setVarianteId(v.id)}
                   className={[
-                    "px-4 py-2 rounded-full text-sm border transition-all",
+                    "px-4 py-2 rounded-full text-sm border transition-colors",
                     activa
                       ? "bg-ink text-cream border-ink"
                       : "bg-transparent text-ink border-[--border-2] hover:border-ink",

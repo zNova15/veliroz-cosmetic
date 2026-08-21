@@ -234,7 +234,7 @@ function Card({
           onClick={onQuitar}
           aria-label={`Quitar ${p.nombre} de favoritos`}
           title="Quitar de favoritos"
-          className="absolute top-3 right-3 z-20 w-9 h-9 rounded-full bg-cream/90 backdrop-blur-sm border border-[--border] flex items-center justify-center text-rose-deep transition-all duration-200 hover:scale-110 hover:border-rose-deep"
+          className="absolute top-3 right-3 z-20 w-9 h-9 rounded-full bg-cream/90 backdrop-blur-sm border border-[--border] flex items-center justify-center text-rose-deep transition-[transform,border-color,background-color] duration-200 hover:scale-110 hover:border-rose-deep active:scale-95"
         >
           <svg
             className="w-4 h-4"

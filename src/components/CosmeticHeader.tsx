@@ -109,9 +109,11 @@ export function CosmeticHeader({ current }: Props = {}) {
             <Image
               src="/logo.png"
               alt="Veliroz"
-              width={32}
-              height={32}
-              className="w-8 h-8 shrink-0"
+              width={40}
+              height={40}
+              /* Sin la caja oscura detrás, la gota pesa menos: va un punto
+                 más grande para equilibrar con el wordmark. */
+              className="w-9 h-9 shrink-0 -ml-0.5"
               priority
             />
             <div className="hidden sm:flex flex-col leading-none">

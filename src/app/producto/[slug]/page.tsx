@@ -293,6 +293,10 @@ export default async function ProductoPage(
     0
   );
   const enPreventa = preventaFlag && stockTotal <= 0;
+  /* meta.nso_pendiente: el producto se exhibe para medir interés, pero no se
+     puede comprar hasta que el proveedor exhiba la Notificación Sanitaria.
+     Ver AddToCartButton por el razonamiento completo. */
+  const nsoPendiente = producto.meta?.nso_pendiente === true;
 
   /* Social proof externo (StyleKorean / Jolse / Amazon / Hwahae). */
   const ratingExt = metaNum(meta, "rating_ext");
@@ -497,6 +501,7 @@ export default async function ProductoPage(
               imagenSwatch={swatch}
               variantes={producto.variantes}
               preventa={enPreventa}
+              nsoPendiente={nsoPendiente}
             />
           </div>
 

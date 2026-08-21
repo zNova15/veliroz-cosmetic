@@ -40,7 +40,7 @@ Importador K-beauty peruano con NSO vigente. **10 de los 12 SKUs salen de acá.*
 | Dato | Valor |
 |---|---|
 | **RUC** | 20611866616 |
-| **Email mayorista** | atencionalcliente@newseoulalmayor.com |
+| **Email mayorista** | atencionalcliente@newseoul.pe |
 | **WhatsApp retail** | 914 333 337 |
 | **Web mayorista** | https://newseoulalmayor.pe/ |
 | **Web retail** | https://newseoul.com.pe/ |

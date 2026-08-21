@@ -30,6 +30,15 @@ interface Props {
   variantes: Variante[];
   /** meta.preventa del producto — stock 0 se lee como reserva, no agotado. */
   preventa?: boolean;
+  /** meta.nso_pendiente — el producto se muestra pero NO se puede comprar.
+
+     POR QUÉ EXISTE: la regla dura del negocio es no vender cosmético sin
+     Notificación Sanitaria Obligatoria vigente del importador. Un producto
+     cargado con el NSO sin confirmar puede exhibirse —sirve para medir
+     interés— pero no puede entrar al carrito: si alguien lo compra y el NSO
+     no aparece, hay que devolver la plata y el producto es decomisable.
+     Se convierte en lista de espera hasta que el proveedor lo exhiba. */
+  nsoPendiente?: boolean;
   waNumero?: string;
 }
 
@@ -44,6 +53,7 @@ export function AddToCartButton({
   imagenSwatch,
   variantes,
   preventa = false,
+  nsoPendiente = false,
   waNumero = WA_DEFAULT,
 }: Props) {
   // Ya llegan ordenadas del server (order('orden')). Solo filtramos activas.
@@ -75,8 +85,11 @@ export function AddToCartButton({
   }
 
   const stock = Number(variante.stock ?? 0);
-  const enPreventa = preventa && stock <= 0;
-  const agotado = stock <= 0 && !enPreventa;
+  const enPreventa = preventa && stock <= 0 && !nsoPendiente;
+  /* nsoPendiente bloquea la compra igual que "agotado", pero por un motivo
+     distinto y con otro mensaje: no es que no haya, es que todavía no
+     podemos venderlo. */
+  const agotado = (stock <= 0 && !enPreventa) || nsoPendiente;
   const stockLimitado = stock > 0 && stock <= 5;
   const maxCantidad = enPreventa
     ? MAX_PREVENTA
@@ -170,7 +183,22 @@ export function AddToCartButton({
       </div>
 
       {/* Stock — o bloque de pre-venta si todavía no hay unidades compradas */}
-      {enPreventa ? (
+      {nsoPendiente ? (
+        /* NSO sin confirmar: se muestra el producto pero no se vende. El copy
+           es deliberadamente concreto — "estamos verificando el registro
+           sanitario" explica el motivo real sin sonar a excusa, y deja claro
+           que la demora es nuestra decisión, no un problema de stock. */
+        <div className="rounded-lg border border-[--border-2] bg-mist/60 px-4 py-3.5 space-y-1.5">
+          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-taupe">
+            · Próximamente ·
+          </p>
+          <p className="text-sm text-clay leading-relaxed text-pretty">
+            Todavía no lo vendemos: estamos verificando el registro sanitario
+            con el importador antes de ofrecerlo. Escríbenos y te avisamos
+            apenas esté disponible.
+          </p>
+        </div>
+      ) : enPreventa ? (
         <div className="rounded-lg border border-champagne/60 bg-champagne/15 px-4 py-3.5 space-y-1.5">
           <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-champagne-dark">
             · Pre-venta ·

@@ -592,8 +592,13 @@ function ProductoCard({ producto }: { producto: Producto }) {
   /* Pre-venta = sin stock a propósito (Gabriel compra al confirmar el pedido).
      Solo mostramos "Agotado" cuando NO es pre-venta: de lo contrario todo el
      catálogo se leería como agotado. */
-  const preventa = sinStock && metaFlag(producto.meta, "preventa");
-  const agotado = sinStock && !preventa;
+  /* nso_pendiente: exhibido para medir interés, pero NO comprable hasta que
+     el proveedor exhiba la Notificación Sanitaria. Gana sobre "pre-venta"
+     porque prometer una reserva de algo que no podemos vender es peor que no
+     mostrarlo. */
+  const nsoPendiente = metaFlag(producto.meta, "nso_pendiente");
+  const preventa = sinStock && !nsoPendiente && metaFlag(producto.meta, "preventa");
+  const agotado = sinStock && !preventa && !nsoPendiente;
 
   const rating = metaNumber(producto.meta, "rating_ext");
   const reviews = metaNumber(producto.meta, "reviews_ext");
@@ -615,6 +620,11 @@ function ProductoCard({ producto }: { producto: Producto }) {
           />
         )}
 
+        {nsoPendiente && (
+          <span className="absolute top-4 left-4 z-10 font-mono text-[9px] tracking-[0.18em] uppercase text-ink bg-mist px-2 py-1 rounded-sm">
+            Próximamente
+          </span>
+        )}
         {preventa && (
           <span className="absolute top-4 left-4 z-10 font-mono text-[9px] tracking-wider uppercase text-ink bg-champagne px-2 py-1 rounded-sm">
             · Pre-venta ·

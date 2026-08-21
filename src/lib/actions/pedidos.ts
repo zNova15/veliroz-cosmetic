@@ -134,20 +134,33 @@ export async function crearPedidoAction(
 
     const sb = getSupabase();
 
-    /* Resolver SKU → producto_id (uuid) contra variantes_producto.
-       El RPC iterára items[] y hará su propio price-lookup contra
-       catalogo — nosotros sólo aportamos el producto_id. */
+    /* El `producto_id` que espera el RPC es la CLAVE DE `catalogo`, que en
+       esta base es el SKU en texto (BOJ-SUN-50ML, lirio-10,
+       bienestar-mantequilla-mani-250) — no el uuid de `productos`.
+
+       Este bloque antes resolvía SKU → `variantes_producto.producto_id`, que
+       es el uuid del producto padre, y se lo mandaba al RPC. El RPC hacía
+       `select … from catalogo where producto_id = <uuid>`, no encontraba
+       nada, y abortaba con "Uno de los productos no está en catálogo".
+       Resultado: NINGÚN pedido de cosmética se podía completar. Se detectó
+       al probar el checkout punta a punta por primera vez.
+
+       Se sigue consultando `variantes_producto` para VALIDAR que el SKU
+       existe y está activo antes de llamar al RPC: así un carrito viejo con
+       un SKU dado de baja da un error claro acá en vez de un fallo opaco
+       adentro de la transacción. */
     const skus = payload.items.map((i) => i.sku);
     const { data: varRows, error: vErr } = await sb
       .from("variantes_producto")
-      .select("sku, producto_id")
+      .select("sku, activo")
       .in("sku", skus);
     if (vErr) return { ok: false, error: `db_error: ${vErr.message}` };
 
-    const bySku = new Map<string, string>();
-    for (const r of (varRows ?? []) as Array<{ sku: string; producto_id: string }>) {
-      bySku.set(r.sku, r.producto_id);
-    }
+    const activos = new Set(
+      ((varRows ?? []) as Array<{ sku: string; activo: boolean }>)
+        .filter((r) => r.activo)
+        .map((r) => r.sku),
+    );
 
     const items: Array<{
       producto_id: string;
@@ -155,12 +168,12 @@ export async function crearPedidoAction(
       imagen: string | null;
     }> = [];
     for (const it of payload.items) {
-      const producto_id = bySku.get(it.sku);
-      if (!producto_id) {
+      if (!activos.has(it.sku)) {
         return { ok: false, error: `sku_no_encontrado:${it.sku}` };
       }
       const c = Math.max(1, Math.min(99, Math.floor(Number(it.cantidad) || 0)));
-      items.push({ producto_id, cantidad: c, imagen: it.imagen ?? null });
+      /* El SKU tal cual: es la clave con la que catalogo lo indexa. */
+      items.push({ producto_id: it.sku, cantidad: c, imagen: it.imagen ?? null });
     }
 
     /* Metadata de envío (fuera del enum tradicional). */
@@ -205,7 +218,12 @@ export async function crearPedidoAction(
       email: payload.email.trim().toLowerCase(),
       telefono: payload.telefono,
       session_id: `cosmetic-web-${Date.now()}`,
-      canal: "web-cosmetic",
+      /* 'web' y no 'web-cosmetic': el CHECK `pedidos_canal_check` sólo
+         acepta web | whatsapp | presencial, así que el valor anterior hacía
+         fallar TODO pedido con 23514. La línea de negocio no se distingue
+         acá — la resuelve el propio RPC a partir de las categorías del
+         catálogo, y además viaja en envio_meta.linea. */
+      canal: "web",
       metodo_entrega: "envio", // shalom y domicilio-lima → 'envio' + envio_meta
       metodo_pago: mapearMetodoPago(payload.metodoPago),
       tipo_comprobante: payload.tipoComprobante,

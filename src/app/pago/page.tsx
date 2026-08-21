@@ -77,12 +77,23 @@ export default function PagoPage() {
   );
   const total = subtotalPostDesc + costoEnvio;
 
-  /* Empty-cart gate — solo cuando ya hidratamos. */
+  /* El pedido ya se confirmó y estamos navegando a la pantalla de éxito.
+
+     SIN ESTO EL CLIENTE PIERDE SU COMPROBANTE: handleSuccess vacía el
+     carrito y después navega, pero vaciarlo dispara el gate de abajo, que
+     hace router.replace("/productos") y pisa el push a /pago/exito. La
+     persona pagaba y terminaba en el catálogo, sin código de pedido y sin
+     saber si la compra entró. Verificado en una compra real de punta a
+     punta: el pedido se creaba en la base y la pantalla terminaba en
+     /productos.
+
+     Es un ref y no un estado porque tiene que valer YA en el mismo tick en
+     que se limpia el carrito, sin esperar un re-render. */
+  const confirmado = useRef(false);
+
+  /* Empty-cart gate — solo cuando ya hidratamos y NO venimos de confirmar. */
   useEffect(() => {
-    if (hydrated && items.length === 0) {
-      /* No hard-redirect si el usuario recién completó (el pago exitoso
-         limpia el carrito antes de router.push). Lo evitamos con un
-         chequeo de storage — pero para simplicidad hoy sí redirigimos. */
+    if (hydrated && items.length === 0 && !confirmado.current) {
       router.replace("/productos");
     }
   }, [hydrated, items.length, router]);
@@ -154,6 +165,8 @@ export default function PagoPage() {
     /* Limpia estado y navega. Enviamos también total y email por URL. */
     const email = useCheckoutStore.getState().email;
     const metodoPago = useCheckoutStore.getState().metodoPago;
+    /* Antes de tocar el carrito: a partir de acá el gate no debe actuar. */
+    confirmado.current = true;
     clearCart();
     resetCheckout();
     setErrors({});

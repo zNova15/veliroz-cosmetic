@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { SiteFooter } from "@/components/SiteFooter";
+import { EMPRESA, rucFormateado } from "@/lib/empresa";
 
 /* ============================================================
    /libro-reclamaciones — cumplimiento INDECOPI.
@@ -19,10 +20,13 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-const RAZON_SOCIAL = "Veliroz Cosmetic SAC (en constitución — placeholder)";
-const RUC = "20-XXXXXXXX-X · pendiente de ficha RUC";
-const EMAIL_RECLAMOS = "hola@veliroz.com";
-const WA_NUMERO = "51967456364";
+/* Los datos legales salen de src/lib/empresa.ts — fuente única. Antes esta
+   página publicaba "20-XXXXXXXX-X · pendiente de ficha RUC", que es
+   observable por INDECOPI y lo primero que mira un comprador desconfiado. */
+const RAZON_SOCIAL = EMPRESA.razonSocial || EMPRESA.nombreComercial;
+const RUC = rucFormateado();
+const EMAIL_RECLAMOS = EMPRESA.email;
+const WA_NUMERO = EMPRESA.whatsapp;
 
 export default function LibroReclamacionesPage() {
   return (

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { LegalDoc, LegalSection, LegalList } from "@/components/LegalDoc";
+import { EMPRESA } from "@/lib/empresa";
 
 /* ============================================================
    /terminos — Términos y Condiciones de venta.
@@ -70,10 +71,19 @@ export default function TerminosPage() {
           sitio (veliroz.com) y por WhatsApp.
         </p>
         <p>
-          Razón social y RUC: <strong>en trámite de inscripción</strong>. Apenas
-          esté emitida la ficha, los datos van a figurar aquí, en el{" "}
+          {EMPRESA.razonSocial ? (
+            <>
+              Razón social: <strong>{EMPRESA.razonSocial}</strong> · RUC{" "}
+              <strong>{EMPRESA.ruc}</strong>.
+            </>
+          ) : (
+            <>
+              RUC: <strong>{EMPRESA.ruc}</strong>.
+            </>
+          )}{" "}
+          Los mismos datos figuran en el{" "}
           <Link href="/libro-reclamaciones">Libro de Reclamaciones</Link> y en
-          cada comprobante electrónico que emitamos.
+          cada comprobante electrónico que emitimos.
         </p>
         <p>
           Nuestros canales oficiales — no tenemos otros, y nunca vas a recibir

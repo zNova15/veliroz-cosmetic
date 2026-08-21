@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { LegalDoc, LegalSection, LegalList } from "@/components/LegalDoc";
+import { EMPRESA } from "@/lib/empresa";
 
 /* ============================================================
    /privacidad — Política de Privacidad (Ley 29733, Perú).
@@ -66,13 +67,22 @@ export default function PrivacidadPage() {
       indice={INDICE}
     >
       <LegalSection id="responsable" n="01" titulo="Quién trata tus datos">
+        {/* La Ley 29733 exige identificar al responsable del tratamiento.
+            Los datos salen de src/lib/empresa.ts, la misma fuente que
+            alimenta Términos y el Libro de Reclamaciones: si los tres
+            dijeran cosas distintas, ninguno serviría. */}
         <p>
-          El titular del banco de datos es <strong>Veliroz Cosmetic</strong>,
-          línea de skincare de Veliroz, con operación en{" "}
-          <strong>Cajamarca, Perú</strong>. La razón social y el RUC están en
-          trámite de inscripción y se publicarán aquí y en el{" "}
-          <Link href="/libro-reclamaciones">Libro de Reclamaciones</Link> apenas
-          se emitan.
+          El titular del banco de datos es{" "}
+          <strong>{EMPRESA.nombreComercial}</strong>
+          {EMPRESA.razonSocial ? (
+            <>
+              , razón social <strong>{EMPRESA.razonSocial}</strong>
+            </>
+          ) : null}
+          , <strong>RUC {EMPRESA.ruc}</strong>, con domicilio en{" "}
+          <strong>{EMPRESA.domicilioFiscal}</strong>. Los mismos datos figuran
+          en el{" "}
+          <Link href="/libro-reclamaciones">Libro de Reclamaciones</Link>.
         </p>
         <p>
           Para cualquier tema de datos personales escríbenos a{" "}

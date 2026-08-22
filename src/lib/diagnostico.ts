@@ -331,6 +331,13 @@ export const FOCO_A_PREOCUPACION: Record<string, Preocupacion> = {
 
 /** Qué dimensiones del diagnóstico trabaja cada rutina curada. */
 const RUTINA_TRABAJA: Record<string, string[]> = {
+  /* Las dos rutinas nuevas están inactivas hasta que existan sus fotos y
+     corra la migración 036 (ver la nota en rutinas.ts), pero van acá desde
+     ya: sin esta entrada `rutinasAlternativas` las filtra por dims vacías y
+     nunca aparecerían en "Otras que podrían servirte" ni después de
+     activarlas. */
+  "piel-grasa-granitos": ["textura", "proteccion"],
+  "hidratacion-profunda": ["barrera", "proteccion"],
   "primera-vez": ["proteccion", "barrera", "habito"],
   "manchas-tono-desparejo": ["tono", "proteccion"],
   "antiedad-honesta": ["firmeza", "proteccion"],

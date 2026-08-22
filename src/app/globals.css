@@ -13,22 +13,63 @@
   --veliroz-ink:        #1A1613;
   --veliroz-ink-soft:   #2C2621;
 
+  /* ── Contraste de texto (WCAG 2.1 AA) ──────────────────────
+     Cinco de estos tokens se usan como COLOR DE TEXTO y no llegaban al
+     mínimo de 4.5:1. Lo peor caía justo sobre la información de precio:
+     el precio tachado y el "Ahorras S/X" se pintan con `stone` a 9-11px,
+     y los avisos de pre-venta con `champagne-dark` al mismo tamaño. O
+     sea, el texto más chico del sitio, con el peor contraste, diciendo
+     cuánto cuesta. Medido sobre cream antes del arreglo:
+     taupe 4.33 · stone 2.57 · rose-deep 2.67 · champagne-dark 2.79 ·
+     success 4.28.
+
+     Se corrigieron en OKLCH bajando SÓLO la luminosidad: el tono y el
+     croma quedan intactos (Δh ≤ 1.1°, ΔC ≤ 0.0003 — eso es el redondeo
+     a hex de 8 bits, no una decisión de diseño). Siguen siendo los
+     mismos colores, más profundos; ninguno se agrisó.
+
+     El piso NO es cream sino `mist` (#F0EAE4), el fondo más oscuro que
+     llega a llevar este texto: `text-taupe` a 10px vive dentro de un
+     bloque `bg-mist` en la ficha de producto, y apuntar sólo a cream
+     dejaba ese caso en 4.04. El ratio anotado al lado de cada token es
+     el de cream (el fondo de página, que es como se midió el problema);
+     entre paréntesis va el de mist, que es el peor caso real.
+
+     `rose`, `champagne` y `leaf` quedaron como estaban a propósito: no
+     se usan como texto sobre fondo claro. Son adorno, ícono y borde.
+     `champagne` sólo es texto dentro del toast, sobre ink, donde da
+     9.50; `leaf` es el ícono de envío gratis y le aplica el mínimo de
+     gráficos (3:1), que cumple. */
+
   /* Accents */
-  --veliroz-rose:       #E8B4B8;
-  --veliroz-rose-deep:  #C48A8F;
-  --veliroz-champagne:  #D4B896;
-  --veliroz-champagne-dark: #A8945F;
+  --veliroz-rose:       #E8B4B8;   /* decorativo — nunca es texto sobre claro */
+  --veliroz-rose-deep:  #915B61;   /* 5.09:1 (mist 4.54) ← #C48A8F era 2.67 */
+  --veliroz-champagne:  #D4B896;   /* decorativo + texto sobre ink (9.50:1) */
+  --veliroz-champagne-dark: #7C6834; /* 5.07:1 (mist 4.53) ← #A8945F era 2.79 */
 
   /* Neutrals */
-  --veliroz-taupe:      #8B6F63;
-  --veliroz-mist:       #F0EAE4;
-  --veliroz-clay:       #5C4D42;
-  --veliroz-stone:      #A89A8E;
+  --veliroz-taupe:      #806459;   /* 5.07:1 (mist 4.53) ← #8B6F63 era 4.33 */
+  --veliroz-mist:       #F0EAE4;   /* superficie, no texto */
+  --veliroz-clay:       #5C4D42;   /* 7.60:1 (mist 6.78) — ya pasaba */
+  /* Un escalón MÁS oscuro que el mínimo que pasa AA, a propósito. A 5.06
+     quedaba con la misma luminancia que taupe (contraste entre ellos:
+     1.002:1) y los dos eran el mismo tono a ojo, aunque cada uno pasara el
+     mínimo por separado. Se usan pegados —en la ficha de producto la marca
+     va en taupe y el país en stone— y ahí la jerarquía desaparecía.
+     A 6.32 la separación sube a 1.25:1 y stone queda entre taupe (5.07) y
+     clay (7.60), que es el orden que la rampa siempre tuvo. */
+  --veliroz-stone:      #645A50;   /* 6.32:1 (mist 5.64) ← #A89A8E era 2.57 */
 
   /* Support */
-  --veliroz-leaf:       #6B8E7F;
-  --veliroz-danger:     #B0453E;
-  --veliroz-success:    #5C7F4F;
+  --veliroz-leaf:       #6B8E7F;   /* ícono/borde — 3.40:1, mínimo gráfico 3:1 */
+  --veliroz-danger:     #B0453E;   /* 5.23:1 — ya pasaba (4.55 sobre su propio /10) */
+  /* success va un punto más oscuro que el resto de la tanda: en
+     ConsultaPedido el estado del pedido se pinta sobre
+     `bg-[--veliroz-success]/15`, o sea un tinte de sí mismo sobre la
+     tarjeta blanca. Contra ESE fondo el mínimo recién se alcanza en
+     #4F7243 (4.50:1); con el valor que bastaba para mist se quedaba
+     en 4.43 y el badge seguía reprobando. */
+  --veliroz-success:    #4F7243;   /* 5.16:1 (mist 4.61) ← #5C7F4F era 4.28 */
 
   /* Tokens semánticos */
   --background: var(--veliroz-cream);
@@ -38,6 +79,9 @@
   --border:     rgba(26, 22, 19, 0.08);
   --border-2:   rgba(26, 22, 19, 0.15);
   --muted:      var(--veliroz-clay);
+  /* El par accent/accent-fg se usa al revés en el badge del carrito
+     (`bg-rose-deep text-cream`). Con el rose-deep viejo ese contador
+     daba 2.67:1; con el nuevo da 5.09:1 sin tocar el componente. */
   --accent:     var(--veliroz-rose-deep);
   --accent-fg:  var(--veliroz-cream);
 }

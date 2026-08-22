@@ -66,7 +66,11 @@ export interface CheckoutPayload {
      El monto del descuento NO viaja aquí — lo recalcula el server. */
   codigoReferido?: string;
 
-  /* auditoría cliente (informativo — el server manda) */
+  /* Auditoría del cliente: los dos son informativos. El subtotal lo
+     recalcula Postgres contra `catalogo` y el envío contra
+     `costo_envio_cosmetic` (migración 035); si lo que llega acá no
+     coincide con lo cobrado, queda registrado en envio_meta y en el log
+     del server, pero no decide el precio. */
   subtotalCliente: number;
   costoEnvio: number;
 }
@@ -224,11 +228,23 @@ export async function crearPedidoAction(
       }
     }
 
-    /* Metadata de envío (fuera del enum tradicional). */
+    /* El envío que mostró el navegador. Se acota igual que siempre
+       porque el RPC rechaza cualquier valor fuera de 0-200 (23514), y se
+       guarda en envio_meta para poder comparar después contra lo que se
+       cobró de verdad. */
+    const costoEnvioCliente = Math.max(
+      0,
+      Math.min(200, Number(payload.costoEnvio) || 0),
+    );
+
+    /* Metadata de envío (fuera del enum tradicional).
+       `transporte` es lo que el RPC usa para elegir la tarifa: shalom
+       S/12, cualquier otra cosa S/18. */
     const envioMeta: Record<string, unknown> = {
       linea: "cosmetic",
       transporte: payload.metodoEnvio,
       pago_gateway: payload.metodoPago,
+      costo_envio_cliente: costoEnvioCliente,
     };
     if (payload.metodoEnvio === "shalom") {
       envioMeta.agencia = payload.agenciaShalom ?? null;
@@ -281,7 +297,19 @@ export async function crearPedidoAction(
       direccion_fiscal: payload.direccionFiscal ?? null,
       direccion,
       envio_meta: envioMeta,
-      costo_envio: Math.max(0, Math.min(200, Number(payload.costoEnvio) || 0)),
+      /* ESTE VALOR YA NO DECIDE EL COBRO. Desde la migración 035 el RPC
+         recalcula el envío de cosmetic contra `costo_envio_cosmetic`
+         (gratis desde S/149, si no S/12 Shalom o S/18 domicilio Lima)
+         usando el subtotal real y `envio_meta.transporte`, e ignora lo
+         que llegue acá. Antes se guardaba tal cual: mandar costoEnvio: 0
+         desde las herramientas del navegador alcanzaba para llevarse el
+         envío gratis.
+         Se sigue enviando por dos razones: es el campo con el que cobran
+         las otras tres líneas del RPC compartido, y si este deploy sale
+         antes de que la migración esté aplicada el pedido se cobra como
+         hasta hoy en vez de salir con envío 0. Cuando la 035 esté en la
+         base se puede dejar de mandar. */
+      costo_envio: costoEnvioCliente,
       cupon: payload.cupon ? payload.cupon.trim().toUpperCase() : null,
       items,
     };
@@ -303,13 +331,28 @@ export async function crearPedidoAction(
       return { ok: false, error: "rpc_sin_respuesta" };
     }
 
+    /* Que difieran NO es motivo para rechazar el pedido: un cupón que el
+       server evalúa distinto (vencido, sin usos, ya usado) mueve el
+       subtotal y con él el envío, y ahí el que tiene razón es el server.
+       Pero conviene verlo en el log: repetido con 0 del lado del
+       navegador es alguien tocando el payload; con montos raros es que
+       las constantes de src/lib/checkout-store.ts se desalinearon de la
+       tarifa que cobra la base. */
+    const costoEnvioCobrado = Number(r.costo_envio ?? 0);
+    if (costoEnvioCobrado !== costoEnvioCliente) {
+      console.warn(
+        `[pedidos] envio recalculado en ${r.pedido_codigo}: ` +
+          `navegador S/${costoEnvioCliente} → cobrado S/${costoEnvioCobrado}`,
+      );
+    }
+
     return {
       ok: true,
       pedidoCodigo: r.pedido_codigo as string,
       pedidoId: (r.pedido_id as string) ?? undefined,
       subtotal: Number(r.subtotal ?? 0),
       descuento: Number(r.descuento ?? 0),
-      costoEnvio: Number(r.costo_envio ?? 0),
+      costoEnvio: costoEnvioCobrado,
       total: Number(r.total ?? 0),
       referidoAplicado:
         r.referido_aplicado === true ? true : r.referido_aplicado === false ? false : undefined,

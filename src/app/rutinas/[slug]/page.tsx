@@ -63,14 +63,26 @@ export async function generateMetadata(
         alt: "Veliroz Cosmetic — skincare coreano curado por rutina",
       };
 
+  /* Esta es la URL CANÓNICA de la rutina. La misma rutina también se
+     puede comprar en /producto/rutina-<slug> (el bundle de la migración
+     017), que muestra el mismo contenido; esa ficha ahora declara este
+     canonical en vez de auto-canonicalizarse, así Google deja de ver dos
+     páginas compitiendo entre ellas. Si algún día se invierte la elección,
+     hay que tocar los tres lugares: acá, el `urlCanonica()` de
+     src/app/producto/[slug]/page.tsx y src/app/sitemap.ts.
+
+     Se arma con absoluteUrl() en vez del apex a mano para que canonical y
+     og:url no puedan separarse del origen que usa el sitemap. */
+  const url = absoluteUrl(`/rutinas/${r.slug}`);
+
   return {
     title: `Rutina · ${r.nombre}`,
     description: r.descripcion,
-    alternates: { canonical: `/rutinas/${r.slug}` },
+    alternates: { canonical: url },
     openGraph: {
       title: `Rutina · ${r.nombre} — Veliroz Cosmetic`,
       description: r.descripcion,
-      url: `https://veliroz.com/rutinas/${r.slug}`,
+      url,
       siteName: "Veliroz Cosmetic",
       locale: "es_PE",
       type: "article",
@@ -183,8 +195,50 @@ export default async function RutinaDetallePage(
         }
       : null;
 
+  /* ────────────────── Datos estructurados ──────────────────
+     Esta página pasó a ser la CANÓNICA de cada rutina: /producto/rutina-*
+     ahora apunta acá con rel=canonical. Google lee el structured data de
+     la URL canónica y descarta el de la duplicada, así que sin este bloque
+     la consolidación habría BORRADO el Product/Offer del bundle de los
+     resultados enriquecidos — precio, disponibilidad y todo.
+
+     El Offer sólo se emite si el bundle existe de verdad en la base y su
+     SKU coincide con el que declara rutinas.ts. Publicar un precio que la
+     página no puede cobrar es peor que no publicar ninguno: Merchant
+     Center lo penaliza y la clienta ve un precio que no existe. */
+  /* La MISMA URL que declara el canonical en generateMetadata. Si el Offer
+     apuntara a otra, el rich result quedaría huérfano. */
+  const url = absoluteUrl(`/rutinas/${rutina.slug}`);
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: rutina.nombre,
+    description: rutina.descripcion,
+    url,
+    ...(rutina.imagen && { image: rutina.imagen }),
+    brand: { "@type": "Brand", name: "Veliroz Cosmetic" },
+    ...(bundle && {
+      sku: bundle.sku,
+      offers: {
+        "@type": "Offer",
+        price: bundle.precio.toFixed(2),
+        priceCurrency: "PEN",
+        availability: bundle.preventa
+          ? "https://schema.org/PreOrder"
+          : "https://schema.org/InStock",
+        url,
+      },
+    }),
+  };
+
   return (
     <main className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       {/* ────────────────── HERO ────────────────── */}
       <section
         className="border-b border-[--border]"

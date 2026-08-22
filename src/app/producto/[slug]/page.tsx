@@ -11,6 +11,7 @@ import {
 import type { ProductoPDP, ReviewRow } from "@/lib/types";
 import { swatchFor } from "@/lib/marcas";
 import { absoluteUrl } from "@/lib/site";
+import { getRutina } from "@/lib/rutinas";
 import { Gallery } from "@/components/Gallery";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { ProductTabs } from "@/components/ProductTabs";
@@ -184,6 +185,48 @@ export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
 // Permitir slugs no incluidos en generateStaticParams (SSR bajo demanda)
 export const dynamicParams = true;
 
+/* ────────────────── URL canónica ──────────────────
+
+   Cada rutina vive en DOS URLs con el mismo contenido: /rutinas/<slug>, que
+   es la que enlaza todo el sitio y la que tiene la secuencia explicada paso
+   por paso, y /producto/rutina-<slug>, el bundle comprable de la migración
+   017. Las dos se auto-canonicalizaban, así que para Google eran dos páginas
+   distintas compitiendo por la misma búsqueda y se repartían la señal.
+
+   Se elige /rutinas/<slug> como canónica. Esta ruta NO se toca: el checkout
+   y los feeds de Google/Meta enlazan al bundle por su slug de producto y
+   tienen que seguir resolviendo. Sólo cambia lo que declara: apunta a la
+   rutina en vez de a sí misma. La misma decisión está escrita en
+   src/app/sitemap.ts, que por eso publica /rutinas/* y no /producto/rutina-*.
+
+   El vínculo sale de `meta.rutina_slug` (lo que escribió la migración 017);
+   el prefijo del slug queda de respaldo para un bundle viejo que no lo
+   traiga. Se valida contra rutinas.ts porque /rutinas/[slug] tiene
+   `dynamicParams = false`: si la rutina está apagada (glow-evento, migración
+   026) su URL devuelve 404, y canonicalizar hacia un 404 es peor que la
+   duplicación — en ese caso la ficha se queda apuntando a sí misma.
+
+   El origen sale de absoluteUrl() y no de un "https://veliroz.com" a mano:
+   en producción devuelve exactamente ese apex, y así el canonical, el
+   og:url, el JSON-LD y el sitemap no pueden quedar apuntando a hosts
+   distintos. Ver src/lib/site.ts. */
+
+const PREFIJO_BUNDLE_RUTINA = "rutina-";
+
+function urlCanonica(producto: ProductoPDP): string {
+  const desdeMeta = producto.meta?.["rutina_slug"];
+  const candidato =
+    typeof desdeMeta === "string" && desdeMeta
+      ? desdeMeta
+      : producto.slug.startsWith(PREFIJO_BUNDLE_RUTINA)
+        ? producto.slug.slice(PREFIJO_BUNDLE_RUTINA.length)
+        : null;
+  const rutina = candidato ? getRutina(candidato) : null;
+  return rutina?.activa
+    ? absoluteUrl(`/rutinas/${rutina.slug}`)
+    : absoluteUrl(`/producto/${producto.slug}`);
+}
+
 /* ────────────────── Metadata ────────────────── */
 
 export async function generateMetadata(
@@ -198,7 +241,11 @@ export async function generateMetadata(
     };
   }
   const marcaNombre = producto.marca?.nombre ?? "Veliroz Cosmetic";
-  const url = `https://veliroz.com/producto/${producto.slug}`;
+  /* Canónica y og:url son la MISMA URL a propósito: declarar un og:url que
+     contradiga al canonical es la forma más rápida de que Facebook y Google
+     elijan páginas distintas. En los bundles de rutina esto apunta a
+     /rutinas/<slug> — ver urlCanonica(). */
+  const url = urlCanonica(producto);
   return {
     title: `${producto.nombre} · ${marcaNombre}`,
     description: producto.descripcion_corta ?? undefined,
@@ -317,6 +364,7 @@ export default async function ProductoPage(
   if (!producto) notFound();
 
   const marca: Marca | null = producto.marca;
+  const canonical = urlCanonica(producto);
   const swatch = swatchFor(marca?.slug);
   const varianteRef: Variante | undefined = producto.variantes[0];
   const relacionados = await fetchRelacionados(producto);
@@ -372,7 +420,11 @@ export default async function ProductoPage(
               : enPreventa
                 ? "https://schema.org/PreOrder"
                 : "https://schema.org/OutOfStock",
-          url: `https://veliroz.com/producto/${producto.slug}`,
+          /* La misma URL que el canonical: si el Offer apunta a una página
+             que Google descarta por duplicada, el rich result queda huérfano.
+             En los bundles de rutina es /rutinas/<slug>, que también tiene el
+             botón de compra. */
+          url: canonical,
         },
       }),
     }),

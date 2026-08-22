@@ -1,6 +1,7 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse, after, type NextRequest } from "next/server";
 import { getSupabaseAdmin, hayServiceRole } from "@/lib/supabase-admin";
 import { getPayment, mpDisponible } from "@/lib/mercadopago";
+import { emitirComprobanteDePedido } from "@/lib/nubefact";
 
 /* ============================================================
    Webhook MercadoPago — POST /api/pagos/mercadopago/webhook
@@ -40,6 +41,30 @@ import { getPayment, mpDisponible } from "@/lib/mercadopago";
       migración 029 encola 'pedido_pagado' en cada cambio a 'pagado').
       Se distingue de "el pedido no existe", que sí es 500: ahí hay
       un pago real sin pedido al que atarlo y alguien tiene que verlo.
+
+   ── LA BOLETA ───────────────────────────────────────────────
+
+   Con el RUC de NOVVX activo en SUNAT, toda venta a consumidor final
+   exige comprobante. Este webhook es el único momento del sistema en el
+   que se sabe, con certeza y del lado del server, que un pago entró: de
+   acá sale la emisión.
+
+   Va en `after()` —se ejecuta DESPUÉS de responderle a MercadoPago— por
+   dos razones, y las dos importan:
+
+     · La emisión no puede tumbar el webhook. Nubefact caído, un timeout
+       de 15s o un importe que no cuadra no pueden hacer que este
+       endpoint conteste 500: MP reintentaría el evento y el pago
+       quedaría dando vueltas por un problema que no es del pago.
+     · Al revés también: si contestáramos 500 por un fallo de emisión, el
+       reintento de MP podría llegar cuando la primera emisión ya salió,
+       y ahí sí se re-emite un correlativo ante SUNAT.
+
+   El fallo no se pierde por responder 200: `emitirComprobanteDePedido`
+   deja el motivo en `comprobantes_electronicos.ultimo_error` con
+   estado_emision='error', y desde ahí se reintenta con
+   POST /api/comprobantes/emitir. El pago, que es lo irreversible, ya
+   quedó registrado antes de que la emisión empiece.
    ============================================================ */
 
 export const runtime = "nodejs";
@@ -58,7 +83,16 @@ interface PedidoRow {
 }
 
 type Resultado =
-  | { ok: true; resultado: "actualizado" | "ya_estaba" | "ignorado_pedido_ya_pagado" }
+  | {
+      ok: true;
+      resultado: "actualizado" | "ya_estaba" | "ignorado_pedido_ya_pagado";
+      /* Viene con id cuando el pedido quedó (o ya estaba) pagado por un
+         pago aprobado: es la señal de "acá toca emitir". Se emite también
+         en el reenvío del mismo evento a propósito — la emisión es
+         idempotente y el reenvío es una segunda oportunidad gratis para
+         el pedido cuya emisión falló la primera vez. */
+      pedidoIdParaEmitir?: string;
+    }
   | { ok: false; error: string };
 
 function parseSignatureHeader(h: string | null): { ts?: string; v1?: string } {
@@ -148,7 +182,11 @@ async function procesarPago(paymentId: string): Promise<Resultado> {
      temprano cuando el estado no cambia), pero no hay razón para tocar
      la fila y sí para que el log diga qué pasó. */
   if (estadoDestino && pedido.estado === estadoDestino) {
-    return { ok: true, resultado: "ya_estaba" };
+    return {
+      ok: true,
+      resultado: "ya_estaba",
+      pedidoIdParaEmitir: estadoDestino === "pagado" ? pedido.id : undefined,
+    };
   }
 
   /* Un pedido YA pagado que recibe un evento sin estado destino (un
@@ -188,7 +226,11 @@ async function procesarPago(paymentId: string): Promise<Resultado> {
     return { ok: false, error: `update_sin_filas:${codigo}` };
   }
 
-  return { ok: true, resultado: "actualizado" };
+  return {
+    ok: true,
+    resultado: "actualizado",
+    pedidoIdParaEmitir: estadoDestino === "pagado" ? pedido.id : undefined,
+  };
 }
 
 /* Camino común de POST y GET: el evento ya se identificó, ahora hay que
@@ -253,10 +295,48 @@ async function atender(
     // 500 → MP reintenta.
     return NextResponse.json({ ok: false, error: res.error }, { status: 500 });
   }
+
+  /* La boleta, ya con el pago registrado y fuera del camino de la
+     respuesta. Nada de lo que pase acá adentro cambia lo que MP recibe. */
+  const pedidoIdParaEmitir = res.pedidoIdParaEmitir;
+  if (pedidoIdParaEmitir) {
+    after(async () => {
+      try {
+        const emision = await emitirComprobanteDePedido(pedidoIdParaEmitir);
+        if (emision.ok) {
+          console.log(
+            "[mp/webhook] comprobante",
+            emision.estado,
+            `${emision.serie ?? "?"}-${emision.correlativo ?? "?"}`,
+            `pedido=${pedidoIdParaEmitir}`,
+            emision.persistido ? "" : "(SUNAT lo tiene, la base no)"
+          );
+        } else {
+          /* Queda además en comprobantes_electronicos.ultimo_error, que es
+             lo que se mira para reintentar. El log es para el minuto
+             siguiente al pago, cuando todavía nadie abrió la base. */
+          console.error(
+            "[mp/webhook] emisión fallida —",
+            `pedido=${pedidoIdParaEmitir}`,
+            `motivo=${emision.motivo}`,
+            emision.error
+          );
+        }
+      } catch (err) {
+        console.error(
+          "[mp/webhook] emisión lanzó excepción —",
+          `pedido=${pedidoIdParaEmitir}`,
+          err instanceof Error ? err.message : err
+        );
+      }
+    });
+  }
+
   return NextResponse.json({
     received: true,
     processed: true,
     resultado: res.resultado,
+    emision_encolada: Boolean(pedidoIdParaEmitir),
     payment_id: paymentId,
   });
 }

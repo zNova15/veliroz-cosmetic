@@ -20,6 +20,11 @@
      veliroz-gua-sha-roller-set                    | VLRZ-GUASHA-SET        |  35
      veliroz-set-brochas-12                        | VLRZ-BROCHAS-12        |  69
 
+   Los PVP de arriba se volvieron a verificar contra `variantes_producto`
+   el 2026-08-21, al armar las rutinas de piel grasa e hidratación: siguen
+   siendo esos. Los dos SKUs propios (VLRZ-*) salieron del catálogo en la
+   migración 026 y por eso `glow-evento` está apagada.
+
    `precioLista` es la suma de los PVP de la rutina; `precioBundle` es lo
    que se cobra llevándola completa y `ahorro` la diferencia. Si los precios
    cambian en la BD, actualizar estos tres campos aquí (son copy, no cálculo:
@@ -123,6 +128,162 @@ export const RUTINAS: Rutina[] = [
         nota: "SPF50+ PA++++ sin residuo blanco. El paso no negociable — reaplicar cada 3-4h con exposición.",
       },
     ],
+  },
+  /* ────────────────────────────────────────────────────────────
+     Las dos rutinas de abajo cierran el hueco más caro del embudo.
+     El quiz tenía dos rutas —acné/piel grasa e hidratación— con
+     `bundleSlug: null`, y son las de los perfiles MÁS comunes: el
+     resultado ofrecía los productos sueltos y la persona tenía que
+     rearmar a mano lo que ya le habíamos armado, pagando el precio de
+     lista. Todas las demás rutas del quiz ya ofrecían su bundle.
+
+     Las dos son además el destino del gate de embarazo/lactancia de
+     `quiz-logic.ts` (piel grasa/acné y piel seca), así que NO pueden
+     llevar retinoides — tampoco si algún día se les agrega un paso.
+
+     Tampoco llevan ninguno de los cuatro The Ordinary: están en el
+     catálogo con `meta.nso_pendiente = true` y no se venden hasta que
+     el proveedor exhiba la Notificación Sanitaria (migración 027). Por
+     eso la rutina de piel grasa no tiene exfoliante químico: el único
+     del catálogo es el AHA 30% + BHA 2%, que es uno de esos cuatro.
+
+     Precio: mismo criterio que las cuatro anteriores — 10% sobre la
+     suma de las partes, redondeado al número terminado en 5 o en 9 más
+     cercano (247→225, 253→229, 289→259, 322→289, y ahora 328→295 y
+     372→335). Los bundles comprables los siembra la migración 036.
+
+     Accent: los dos salen de la paleta, no de un color nuevo —
+     `#DCE8E1` es la familia de `leaf` diluida sobre cream, un punto más
+     profunda que el verde de piel reactiva para que las dos cards no se
+     confundan, y `#F0EAE4` es el token `mist` tal cual.
+     ──────────────────────────────────────────────────────────── */
+  {
+    slug: "piel-grasa-granitos",
+    nombre: "Piel grasa y granitos",
+    tag: "Poros y brotes",
+    descripcion:
+      "Para la piel que brilla a media mañana y no termina de despejarse: granitos que van y vienen, poros marcados en la zona T. La niacinamida al 10% regula el sebo y afina el poro, la esencia de mucina hidrata sin engrasar y el protector es de textura ligera. Nada de resecar la piel para secarle la grasa: así produce más.",
+    para: ["grasa", "mixta", "acne", "poros"],
+    tiempoMinutos: 6,
+    dificultad: "intermedia",
+    /* ⚠️ DESACTIVADA A PROPÓSITO — activar cuando se cumplan LAS DOS:
+       1. Que exista la foto que apunta `imagen` (hoy responde 400: el
+          archivo no está en Storage).
+       2. Que esté aplicada la migración 036, que siembra el bundle.
+     Publicarla antes rompe de dos formas: la home renderiza `imagen` y
+     la ficha anuncia un precio de rutina completa cuyo bundle no existe
+     en la base, así que el botón de comprar no tiene qué agregar. */
+    activa: false,
+    imagen:
+      "https://usfpzlxmmgruydqbymsx.supabase.co/storage/v1/object/public/productos/rutinas/piel-grasa-granitos.jpg",
+    accent: "#DCE8E1",
+    skus: [
+      "MIXSOON-FOAM-150ML",
+      "ANUA-NIACIN-TXA-30ML",
+      "COSRX-SNAIL-100ML",
+      "BOJ-SUN-50ML",
+    ],
+    bundleSku: "RUTINA-PIEL-GRASA",
+    /* 328 = 79 + 95 + 75 + 79. */
+    precioLista: 328,
+    precioBundle: 295,
+    ahorro: 33,
+    pasos: [
+      {
+        orden: 1,
+        productoSlug: "mixsoon-centella-cleansing-foam",
+        sku: "MIXSOON-FOAM-150ML",
+        momento: "am+pm",
+        nota: "Espuma con centella. Se lleva el exceso de sebo sin dejar la piel tirante — si queda chirriante, la limpieza es parte del problema.",
+      },
+      {
+        orden: 2,
+        productoSlug: "anua-niacinamide-10-txa-4-serum",
+        sku: "ANUA-NIACIN-TXA-30ML",
+        momento: "pm",
+        nota: "Sobre piel seca, antes de la esencia. Día por medio la primera semana; cuando la toleres, puedes pasarla a mañana y noche.",
+      },
+      {
+        orden: 3,
+        productoSlug: "cosrx-advanced-snail-96-mucin-essence",
+        sku: "COSRX-SNAIL-100ML",
+        momento: "am+pm",
+        nota: "Mucina al 96%: hidrata sin aceites ni película. La piel grasa deshidratada produce todavía más sebo.",
+      },
+      {
+        orden: 4,
+        productoSlug: "beauty-of-joseon-relief-sun-spf50",
+        sku: "BOJ-SUN-50ML",
+        momento: "am",
+        nota: "SPF50+ PA++++ de acabado natural, sin residuo blanco. Reaplicar cada 3-4 horas si te da el sol.",
+      },
+    ],
+    advertencia:
+      "Ningún cosmético trata el acné inflamatorio: si hay quistes, dolor o cicatrices, la consulta con dermatología va primero. No sumes exfoliantes ácidos las primeras semanas — la niacinamida sola ya es cambio suficiente.",
+  },
+  {
+    slug: "hidratacion-profunda",
+    nombre: "Hidratación profunda",
+    tag: "Piel seca y tirante",
+    descripcion:
+      "Para la piel que tira después de lavarse, se ve apagada y se bebe la crema en minutos. El PDRN y el hialurónico atraen el agua, la crema de ceramidas la sella y el protector de savia de abedul sostiene el resultado de día. El paso que casi todas se saltan es el sello: sin crema encima, el hialurónico se evapora y la piel queda peor que antes.",
+    para: ["seca", "muy-seca", "deshidratacion", "tirantez"],
+    tiempoMinutos: 7,
+    dificultad: "inicial",
+    /* ⚠️ DESACTIVADA A PROPÓSITO — activar cuando se cumplan LAS DOS:
+       1. Que exista la foto que apunta `imagen` (hoy responde 400: el
+          archivo no está en Storage).
+       2. Que esté aplicada la migración 036, que siembra el bundle.
+     Publicarla antes rompe de dos formas: la home renderiza `imagen` y
+     la ficha anuncia un precio de rutina completa cuyo bundle no existe
+     en la base, así que el botón de comprar no tiene qué agregar. */
+    activa: false,
+    imagen:
+      "https://usfpzlxmmgruydqbymsx.supabase.co/storage/v1/object/public/productos/rutinas/hidratacion-profunda.jpg",
+    accent: "#F0EAE4",
+    skus: [
+      "MIXSOON-FOAM-150ML",
+      "ANUA-PDRN-30ML",
+      "ALTHEA-345-50ML",
+      "RL-BIRCH-SUN-50ML",
+    ],
+    bundleSku: "RUTINA-HIDRATACION",
+    /* 372 = 79 + 115 + 89 + 89. */
+    precioLista: 372,
+    precioBundle: 335,
+    ahorro: 37,
+    pasos: [
+      {
+        orden: 1,
+        productoSlug: "mixsoon-centella-cleansing-foam",
+        sku: "MIXSOON-FOAM-150ML",
+        momento: "am+pm",
+        nota: "Espuma con centella, sin detergentes agresivos. Una limpieza que reseca es el primer motivo por el que una piel seca no mejora.",
+      },
+      {
+        orden: 2,
+        productoSlug: "anua-pdrn-hyaluronic-capsule-serum",
+        sku: "ANUA-PDRN-30ML",
+        momento: "am+pm",
+        nota: "PDRN + hialurónico sobre la piel todavía húmeda: ahí es donde el hialurónico toma el agua que después retiene.",
+      },
+      {
+        orden: 3,
+        productoSlug: "dr-althea-345-relief-cream",
+        sku: "ALTHEA-345-50ML",
+        momento: "am+pm",
+        nota: "Ceramidas + pantenol. Este es el sello: sin esta capa, lo del paso anterior se evapora.",
+      },
+      {
+        orden: 4,
+        productoSlug: "round-lab-birch-juice-sunscreen-spf50",
+        sku: "RL-BIRCH-SUN-50ML",
+        momento: "am",
+        nota: "SPF50+ con savia de abedul: hidrata mientras protege y no deja la piel tirante.",
+      },
+    ],
+    advertencia:
+      "Si además de seca la piel arde, pica o descama en parches, eso ya es barrera dañada: empieza por la rutina de piel reactiva y vuelve a esta cuando se calme.",
   },
   {
     slug: "manchas-tono-desparejo",

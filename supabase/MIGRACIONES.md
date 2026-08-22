@@ -43,6 +43,9 @@ Por eso las migraciones están repartidas entre repos y conviene tener el orden 
 | 20260821… | `031_reclamos` | idem | Libro de Reclamaciones real (era un `mailto:` que no guardaba nada). Correlativo `LR-2026-XXXX` con tabla contador —no con `sequence`, que no se revierte y dejaría huecos en un registro que INDECOPI puede pedir—. `fecha_limite` +30 días en hora de Lima, no UTC |
 | 20260821… | `032_aviso_pedido_interno` | idem | Aviso interno de pedido nuevo. Antes, la única señal de una venta era que la clienta escribiera al WhatsApp |
 | 20260821… | `033_textos_fotos_catalogo` | idem | Fotos de los 4 bundles (salían con placeholder gris siendo los de mayor ticket), el texto del SPF que contradecía a la 023, y el voseo que quedó en las columnas de texto cuando el sitio pasó a español neutro |
+| 20260821… | `034_comprobantes` | idem | Índices únicos de comprobantes (uno por pedido, uno por serie+correlativo). **Leer el aviso del inicio antes de aplicar:** el trigger de la 011 no está versionado y si hace un INSERT sin ON CONFLICT, el índice único le revienta la transacción DEL COBRO |
+| 20260821… | `035_envio_en_servidor` | idem | El costo de envío se recalcula dentro de `crear_pedido`: antes lo mandaba el navegador y sólo se acotaba a 0-200. **Reescribe el RPC de cobro de las 4 líneas** — comparar la definición viva antes de aplicar, la guarda no detecta código añadido desde el Studio |
+| 20260821… | `036_bundles_acne_hidratacion` | idem | Los dos bundles que faltaban. Las rutinas quedan `activa: false` en el front hasta que corra esta migración Y existan sus fotos en Storage |
 
 ## El riesgo
 

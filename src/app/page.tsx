@@ -493,7 +493,17 @@ export default async function CosmeticLanding() {
                   {/* La imagen se compuso sobre el MISMO accent que la card,
                       así que el borde inferior de la foto funde con el fondo
                       y no se ve un recuadro pegado. */}
-                  <div className="relative aspect-[3/2] w-full">
+                  {/* La foto se pinta sólo si existe. `imagen` es `string` en el tipo,
+                      pero una rutina puede publicarse antes de que su JPG esté en
+                      Storage — pasó con las dos rutinas nuevas, cuya URL devolvía 400.
+                      Sin esta guarda queda un hueco roto en el carrusel de la home,
+                      que es la primera pantalla del sitio. El accent de la card tapa
+                      el lugar mientras tanto. */}
+                  <div
+                    className="relative aspect-[3/2] w-full"
+                    style={r.imagen ? undefined : { background: r.accent }}
+                  >
+                    {r.imagen && (
                     <Image
                       src={r.imagen}
                       alt={`Productos de la rutina ${r.nombre}`}
@@ -501,6 +511,7 @@ export default async function CosmeticLanding() {
                       sizes="(min-width: 1280px) 31vw, (min-width: 640px) 54vw, 82vw"
                       className="object-cover"
                     />
+                    )}
                   </div>
 
                   <div className="p-8 pt-6 flex flex-col gap-5 flex-1">

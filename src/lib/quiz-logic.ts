@@ -197,14 +197,32 @@ export interface Rutina {
      tenía el mismo set armado como UN bundle de un clic y más barato.
      Con esto el resultado del quiz ofrece el bundle al precio de bundle.
      `null` cuando no hay equivalente: es preferible mostrar los productos
-     sueltos a mandar a la persona a una rutina que no es la suya. */
+     sueltos a mandar a la persona a una rutina que no es la suya.
+
+     Desde el 2026-08-21 ninguna ruta queda en `null`. Las dos que faltaban
+     —`acne-graso` e `hidratacion`— eran justo las de los perfiles más
+     comunes y las dos salidas del gate de embarazo/lactancia de abajo: el
+     embudo pasaba de un clic a un carrito armado a mano en el peor lugar
+     posible. Sus bundles (`piel-grasa-granitos` e `hidratacion-profunda`,
+     migración 036) son retinoid-free a propósito, porque ahí aterriza el
+     gate. El campo sigue aceptando `null` para rutas futuras. */
   bundleSlug: string | null;
 }
 
 /* Tabla hardcoded: perfil de rutina → producto hero por paso.
    Máximo 4 slugs para no abrumar; siempre incluye SPF (paso no negociable).
    Los slugs se verificaron en Supabase 2026-08-16 (linea_negocio='cosmetic',
-   migración 013 — catálogo real de 12 SKUs, todos en pre-venta). */
+   migración 013 — catálogo real de 12 SKUs, todos en pre-venta) y otra vez
+   el 2026-08-21 contra `variantes_producto`.
+
+   INVARIANTE: cuando una ruta tiene `bundleSlug`, sus `productos_slugs`
+   tienen que ser EXACTAMENTE los del bundle. La pantalla de resultado
+   muestra las dos cosas una al lado de la otra —"Llévala completa S/322 →
+   S/289" arriba y "O ármala tú… Suelto: S/247" abajo—, así que dos listas
+   distintas se leen como dos precios contradictorios para la misma rutina.
+   Pasaba en `manchas` (le sobraba la mucina y le faltaba el limpiador) y en
+   `sensibilidad` (le faltaba la mucina que la migración 023 metió al bundle
+   de piel reactiva); las dos quedaron alineadas el 2026-08-21. */
 const RUTINAS: Record<string, Rutina> = {
   antiedad: {
     slug: "antiedad",
@@ -224,36 +242,44 @@ const RUTINAS: Record<string, Rutina> = {
     bundleSlug: "manchas-tono-desparejo",
     rutina_nombre: "Rutina Antimanchas · Tono uniforme",
     descripcion:
-      "Niacinamida 10% + ácido tranexámico 4% para aclarar marcas, mucina de caracol para reparar y SPF 50 para bloquear que aparezcan más.",
+      "Limpieza suave con centella, niacinamida 10% + ácido tranexámico 4% para aclarar marcas y SPF 50 para bloquear que aparezcan más.",
     productos_slugs: [
+      "mixsoon-centella-cleansing-foam",
       "anua-niacinamide-10-txa-4-serum",
-      "cosrx-advanced-snail-96-mucin-essence",
       "skin1004-madagascar-sun-serum-spf50",
     ],
     filtro_url: "/productos?preocupacion=manchas",
   },
   "acne-graso": {
     slug: "acne-graso",
+    /* null hasta que la rutina esté activa: ver la nota en rutinas.ts.
+       Apuntar a un bundle que la base todavía no tiene deja el resultado
+       del quiz ofreciendo un precio que nadie puede pagar. */
     bundleSlug: null,
     rutina_nombre: "Rutina Piel Grasa · Poros + grasitud",
     descripcion:
-      "Limpieza con centella que no agrede la barrera, niacinamida para regular el sebo y afinar poros, y SPF ligero que no engrasa.",
+      "Limpieza con centella que no agrede la barrera, niacinamida para regular el sebo y afinar poros, esencia de mucina que hidrata sin engrasar y SPF ligero.",
     productos_slugs: [
       "mixsoon-centella-cleansing-foam",
       "anua-niacinamide-10-txa-4-serum",
+      "cosrx-advanced-snail-96-mucin-essence",
       "beauty-of-joseon-relief-sun-spf50",
     ],
     filtro_url: "/productos?tipo_piel=grasa&preocupacion=poros",
   },
   hidratacion: {
     slug: "hidratacion",
+    /* null hasta que la rutina esté activa: ver la nota en rutinas.ts.
+       Apuntar a un bundle que la base todavía no tiene deja el resultado
+       del quiz ofreciendo un precio que nadie puede pagar. */
     bundleSlug: null,
     rutina_nombre: "Rutina Hidratación · Piel calmada",
     descripcion:
-      "Limpieza suave que no reseca, PDRN + hialurónico para reponer agua y firmeza, y un SPF de savia de abedul que hidrata mientras protege.",
+      "Limpieza suave que no reseca, PDRN + hialurónico para reponer agua y firmeza, crema de ceramidas que sella lo anterior y un SPF de savia de abedul que hidrata mientras protege.",
     productos_slugs: [
       "mixsoon-centella-cleansing-foam",
       "anua-pdrn-hyaluronic-capsule-serum",
+      "dr-althea-345-relief-cream",
       "round-lab-birch-juice-sunscreen-spf50",
     ],
     filtro_url: "/productos?tipo_piel=seca&preocupacion=hidratacion",
@@ -276,9 +302,10 @@ const RUTINAS: Record<string, Rutina> = {
     bundleSlug: "piel-reactiva",
     rutina_nombre: "Rutina Piel Sensible · Reparación suave",
     descripcion:
-      "Sin ácidos ni fragancias agresivas. Limpieza con centella, crema de ceramidas + péptidos para reparar la barrera y SPF calmante con madecassoside.",
+      "Sin ácidos ni fragancias agresivas. Limpieza con centella, esencia de mucina que calma, crema de ceramidas + péptidos para reparar la barrera y SPF calmante con madecassoside.",
     productos_slugs: [
       "mixsoon-centella-cleansing-foam",
+      "cosrx-advanced-snail-96-mucin-essence",
       "dr-althea-345-relief-cream",
       "skin1004-madagascar-sun-serum-spf50",
     ],

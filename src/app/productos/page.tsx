@@ -9,12 +9,23 @@ import {
   type ProductoRow,
   type Variante,
 } from "@/lib/supabase";
+import {
+  FACETS,
+  FiltrosMovil,
+  FiltrosSidebar,
+  hasAnyFilter,
+  readMulti,
+  type FacetKey,
+  type SearchParams,
+} from "@/components/FiltrosProductos";
 
 /* ============================================================
    Veliroz Cosmetic — /productos
    Server Component: catálogo filtrable por URL state.
    - Query Supabase con RLS anon (productos activos, linea_negocio='cosmetic').
    - Filtros multi-select via searchParams (?marca=cerave,cosrx&tipo_piel=grasa).
+     La config de facets y su UI viven en @/components/FiltrosProductos:
+     sidebar en escritorio, panel colapsable + chips activos en móvil.
    - Sort por precio/destacado/created_at.
    - Estado vacío + botón "Limpiar filtros".
    ============================================================ */
@@ -26,110 +37,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/productos" },
 };
 
-/* Next.js 16 App Router: searchParams llega como Promise en async pages. */
-type SearchParams = Record<string, string | string[] | undefined>;
-
-/* ────────────────── Config de filtros (facets) ────────────────── */
-/* Los slugs coinciden con los valores reales en Postgres (migración 007+008). */
-const FACETS = {
-  marca: {
-    label: "Marca",
-    options: [
-      { slug: "anua", label: "Anua" },
-      { slug: "beauty-of-joseon", label: "Beauty of Joseon" },
-      { slug: "biodance", label: "BIODANCE" },
-      { slug: "celimax", label: "celimax" },
-      { slug: "cosrx", label: "COSRX" },
-      { slug: "dr-althea", label: "Dr.Althea" },
-      { slug: "mixsoon", label: "Mixsoon" },
-      { slug: "round-lab", label: "Round Lab" },
-      { slug: "skin1004", label: "SKIN1004" },
-      { slug: "the-ordinary", label: "The Ordinary" },
-      /* Veliroz sigue en la lista aunque sus dos productos propios salieron
-         del catálogo (migración 026): las 4 RUTINAS cuelgan de esta marca,
-         porque las armamos nosotros. Sacarla dejaba los bundles sin filtro. */
-      { slug: "veliroz", label: "Veliroz" },
-    ],
-  },
-  categoria: {
-    label: "Categoría",
-    options: [
-      /* Rutinas primero: son los bundles (productos tipo='bundle') y lo que
-         queremos que el visitante mire antes que los productos sueltos. */
-      { slug: "rutina", label: "Rutinas completas" },
-      { slug: "protector-solar", label: "Protector solar" },
-      { slug: "serum", label: "Sérum" },
-      { slug: "tratamiento", label: "Tratamiento" },
-      { slug: "exfoliante", label: "Exfoliante" },
-      { slug: "crema-hidratante", label: "Hidratante" },
-      { slug: "essence", label: "Essence" },
-      { slug: "limpiador", label: "Limpiador" },
-      { slug: "mascarilla", label: "Mascarilla" },
-    ],
-  },
-  tipo_piel: {
-    label: "Tipo de piel",
-    options: [
-      { slug: "grasa", label: "Grasa" },
-      { slug: "mixta", label: "Mixta" },
-      { slug: "seca", label: "Seca" },
-      { slug: "sensible", label: "Sensible" },
-      { slug: "normal", label: "Normal" },
-    ],
-  },
-  preocupacion: {
-    label: "Preocupación",
-    options: [
-      { slug: "proteccion-solar", label: "Protección solar" },
-      { slug: "manchas", label: "Manchas" },
-      { slug: "acne", label: "Acné" },
-      { slug: "marcas-post-acne", label: "Marcas post-acné" },
-      { slug: "poros", label: "Poros" },
-      { slug: "hidratacion", label: "Hidratación" },
-      { slug: "antiedad", label: "Antiedad" },
-      { slug: "arrugas", label: "Arrugas" },
-      { slug: "firmeza", label: "Firmeza" },
-      { slug: "luminosidad", label: "Luminosidad" },
-      { slug: "sensibilidad", label: "Sensibilidad" },
-      { slug: "rojeces", label: "Rojeces" },
-      { slug: "barrera-cutanea", label: "Barrera cutánea" },
-      { slug: "textura", label: "Textura" },
-      { slug: "reparacion", label: "Reparación" },
-      { slug: "limpieza", label: "Limpieza" },
-    ],
-  },
-  ingrediente: {
-    label: "Ingrediente activo",
-    options: [
-      { slug: "spf-50", label: "SPF 50+" },
-      { slug: "niacinamida", label: "Niacinamida" },
-      { slug: "ac-hialuronico", label: "Ác. hialurónico" },
-      { slug: "ac-tranexamico", label: "Ác. tranexámico" },
-      { slug: "retinal", label: "Retinal" },
-      { slug: "pdrn", label: "PDRN" },
-      { slug: "mucina-caracol", label: "Mucina de caracol" },
-      { slug: "centella-asiatica", label: "Centella asiática" },
-      { slug: "ceramidas", label: "Ceramidas" },
-      { slug: "peptidos", label: "Péptidos" },
-      { slug: "colageno", label: "Colágeno" },
-      { slug: "pantenol", label: "Pantenol" },
-      { slug: "madecassoside", label: "Madecassoside" },
-      { slug: "extracto-arroz", label: "Extracto de arroz" },
-      { slug: "savia-abedul", label: "Savia de abedul" },
-      { slug: "probioticos", label: "Probióticos" },
-    ],
-  },
-  precio: {
-    label: "Precio",
-    options: [
-      { slug: "0-50", label: "Menos de S/50" },
-      { slug: "50-100", label: "S/50 – S/100" },
-      { slug: "100+", label: "Más de S/100" },
-    ],
-  },
-} as const;
-
-type FacetKey = keyof typeof FACETS;
+/* SearchParams (el objeto YA resuelto), FACETS y los helpers de URL viven en
+   @/components/FiltrosProductos — misma fuente para la página y los filtros. */
 
 const SORT_OPTIONS = [
   { slug: "destacado", label: "Destacados" },
@@ -145,40 +54,10 @@ type SortSlug = (typeof SORT_OPTIONS)[number]["slug"];
 
 /* ────────────────── Utilidades de URL state ────────────────── */
 
-function readMulti(sp: SearchParams, key: string): string[] {
-  const raw = sp[key];
-  if (!raw) return [];
-  const s = Array.isArray(raw) ? raw.join(",") : raw;
-  return s
-    .split(",")
-    .map((x) => x.trim())
-    .filter(Boolean);
-}
-
 function readSingle(sp: SearchParams, key: string): string | undefined {
   const raw = sp[key];
   if (!raw) return undefined;
   return Array.isArray(raw) ? raw[0] : raw;
-}
-
-/** Construye la URL después de togglear un valor multi-select. */
-function toggleHref(
-  base: SearchParams,
-  key: string,
-  value: string,
-): string {
-  const clone: Record<string, string> = {};
-  for (const [k, v] of Object.entries(base)) {
-    if (v == null) continue;
-    clone[k] = Array.isArray(v) ? v.join(",") : v;
-  }
-  const cur = readMulti(base, key);
-  const has = cur.includes(value);
-  const next = has ? cur.filter((v) => v !== value) : [...cur, value];
-  if (next.length === 0) delete clone[key];
-  else clone[key] = next.join(",");
-  const qs = new URLSearchParams(clone).toString();
-  return qs ? `/productos?${qs}` : "/productos";
 }
 
 /** Reemplaza el valor de una key single (dropdown sort). */
@@ -195,14 +74,6 @@ function replaceHref(
   clone[key] = value;
   const qs = new URLSearchParams(clone).toString();
   return qs ? `/productos?${qs}` : "/productos";
-}
-
-/** ¿Hay al menos un filtro activo? */
-function hasAnyFilter(sp: SearchParams): boolean {
-  for (const k of Object.keys(FACETS)) {
-    if (readMulti(sp, k).length > 0) return true;
-  }
-  return false;
 }
 
 /* ────────────────── Data ────────────────── */
@@ -331,68 +202,6 @@ function applySort(productos: Producto[], sort: SortSlug): Producto[] {
   return list;
 }
 
-/* ────────────────── UI helpers ────────────────── */
-
-function FacetGroup({
-  facetKey,
-  label,
-  active,
-  sp,
-}: {
-  facetKey: FacetKey;
-  label: string;
-  active: string[];
-  sp: SearchParams;
-}) {
-  const options = FACETS[facetKey].options;
-  return (
-    <div className="space-y-3">
-      <h3 className="font-mono text-[10px] tracking-[0.22em] uppercase text-taupe">
-        {label}
-      </h3>
-      <div className="flex flex-wrap gap-1.5">
-        {options.map((opt) => {
-          const isActive = active.includes(opt.slug);
-          const href = toggleHref(sp, facetKey, opt.slug);
-          return (
-            <Link
-              key={opt.slug}
-              href={href}
-              scroll={false}
-              aria-pressed={isActive}
-              aria-label={`Filtrar por ${label.toLowerCase()}: ${opt.label}`}
-              className={
-                "inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs transition-colors border " +
-                (isActive
-                  ? "bg-ink text-cream border-ink"
-                  : "bg-mist/60 text-clay border-transparent hover:border-[--border-2] hover:text-ink")
-              }
-            >
-              <span>{opt.label}</span>
-              {isActive && (
-                <svg
-                  aria-hidden
-                  className="w-3 h-3"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              )}
-            </Link>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 /* ────────────────── Página ────────────────── */
 
 export default async function ProductosPage({
@@ -409,15 +218,6 @@ export default async function ProductosPage({
   const allProductos = await fetchProductos();
   const filtered = applyFilters(allProductos, sp);
   const productos = applySort(filtered, sort);
-
-  const activeCounts: Record<FacetKey, string[]> = {
-    marca: readMulti(sp, "marca"),
-    categoria: readMulti(sp, "categoria"),
-    tipo_piel: readMulti(sp, "tipo_piel"),
-    preocupacion: readMulti(sp, "preocupacion"),
-    ingrediente: readMulti(sp, "ingrediente"),
-    precio: readMulti(sp, "precio"),
-  };
 
   const anyFilter = hasAnyFilter(sp);
 
@@ -508,61 +308,15 @@ export default async function ProductosPage({
       {/* ────────────────── LAYOUT SIDEBAR + GRID ────────────────── */}
       <section className="max-w-7xl mx-auto px-6 md:px-10 pb-24">
         <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] lg:grid-cols-[264px_1fr] gap-10">
-          {/* ────────── SIDEBAR ────────── */}
-          <aside className="space-y-8 md:sticky md:top-24 md:self-start md:max-h-[calc(100vh-7rem)] md:overflow-y-auto md:pr-2">
-            <div className="flex items-center justify-between">
-              <h2 className="font-serif text-lg text-ink">Filtros</h2>
-              {anyFilter && (
-                <Link
-                  href="/productos"
-                  scroll={false}
-                  className="text-[11px] text-rose-deep hover:text-ink underline underline-offset-4"
-                >
-                  Limpiar todo
-                </Link>
-              )}
-            </div>
-
-            <FacetGroup
-              facetKey="marca"
-              label={FACETS.marca.label}
-              active={activeCounts.marca}
-              sp={sp}
-            />
-            <FacetGroup
-              facetKey="categoria"
-              label={FACETS.categoria.label}
-              active={activeCounts.categoria}
-              sp={sp}
-            />
-            <FacetGroup
-              facetKey="tipo_piel"
-              label={FACETS.tipo_piel.label}
-              active={activeCounts.tipo_piel}
-              sp={sp}
-            />
-            <FacetGroup
-              facetKey="preocupacion"
-              label={FACETS.preocupacion.label}
-              active={activeCounts.preocupacion}
-              sp={sp}
-            />
-            <FacetGroup
-              facetKey="ingrediente"
-              label={FACETS.ingrediente.label}
-              active={activeCounts.ingrediente}
-              sp={sp}
-            />
-            <FacetGroup
-              facetKey="precio"
-              label={FACETS.precio.label}
-              active={activeCounts.precio}
-              sp={sp}
-            />
-          </aside>
+          {/* ────────── SIDEBAR (escritorio) ────────── */}
+          <FiltrosSidebar sp={sp} />
 
           {/* ────────── GRID ────────── */}
           <div>
+            {/* Filtros de móvil DENTRO de la columna de resultados: colapsados
+                arriba de la grilla, no como una pared de chips antes de ella. */}
+            <FiltrosMovil sp={sp} total={productos.length} />
+
             {productos.length === 0 ? (
               <EmptyState />
             ) : (

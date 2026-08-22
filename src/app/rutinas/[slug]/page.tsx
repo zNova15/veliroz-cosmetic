@@ -25,6 +25,7 @@ import {
   type Variante,
 } from "@/lib/supabase";
 import { swatchFor } from "@/lib/marcas";
+import { absoluteUrl } from "@/lib/site";
 
 /* ============================================================
    /rutinas/[slug] — detalle rutina.
@@ -46,6 +47,22 @@ export async function generateMetadata(
   if (!r) {
     return { title: "Rutina no encontrada", robots: { index: false, follow: false } };
   }
+
+  /* og:image — Next reemplaza el `openGraph` del layout raíz entero cuando la
+     página define el suyo, así que sin esto el link de una rutina compartido
+     por WhatsApp salía como un rectángulo gris (4 rutinas). `r.imagen` es la
+     composición con sus packshots (migración 024) y ya viene absoluta desde
+     el storage de Supabase; si alguna quedara sin imagen, caemos al og por
+     defecto del sitio, que es el único 1200x630 que conocemos. */
+  const og = r.imagen
+    ? { url: r.imagen, alt: `Rutina ${r.nombre} — Veliroz Cosmetic` }
+    : {
+        url: absoluteUrl("/og.png"),
+        width: 1200,
+        height: 630,
+        alt: "Veliroz Cosmetic — skincare coreano curado por rutina",
+      };
+
   return {
     title: `Rutina · ${r.nombre}`,
     description: r.descripcion,
@@ -57,6 +74,13 @@ export async function generateMetadata(
       siteName: "Veliroz Cosmetic",
       locale: "es_PE",
       type: "article",
+      images: [og],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `Rutina · ${r.nombre} — Veliroz Cosmetic`,
+      description: r.descripcion,
+      images: [og.url],
     },
   };
 }

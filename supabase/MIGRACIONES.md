@@ -38,6 +38,11 @@ Por eso las migraciones están repartidas entre repos y conviene tener el orden 
 | — | `018b/c/e/f_sim_referidos*` | no versionadas | Simulación temporal para verificar el anti-abuso (dominio `@veliroz-sim.invalid`). Datos borrados en la 018f; base verificada en 0 |
 
 | 20260819… | `023_piel_reactiva_spf` | `veliroz-cosmetic/supabase/migrations/` | Suma el protector solar que faltaba en el bundle de piel reactiva (la rutina de barrera comprometida, la MÁS fotosensible, era la única sin SPF) y reprecia 219→289. **Trampa:** `bundle_composicion` usa `bundle_id → productos.id`, no `bundle_variante_id` |
+| 20260821… | `029_email_queue` | idem | La cola de correo + el trigger sobre `pedidos`. **El sistema de correo estaba escrito entero —wrapper, 5 plantillas, cron— y no existía esta tabla.** RLS sin policies a propósito (dato personal). Con la anon key un SELECT ahí devuelve 0 filas SIN error: el drainer reportaba `{ok:true, procesados:0}` para siempre |
+| 20260821… | `030_limpiar_datos_de_prueba` | idem | Borra los pedidos `.invalid` de la verificación del checkout. En transacción, lista lo que va a borrar por NOTICE y aborta si aparecen más de 20 |
+| 20260821… | `031_reclamos` | idem | Libro de Reclamaciones real (era un `mailto:` que no guardaba nada). Correlativo `LR-2026-XXXX` con tabla contador —no con `sequence`, que no se revierte y dejaría huecos en un registro que INDECOPI puede pedir—. `fecha_limite` +30 días en hora de Lima, no UTC |
+| 20260821… | `032_aviso_pedido_interno` | idem | Aviso interno de pedido nuevo. Antes, la única señal de una venta era que la clienta escribiera al WhatsApp |
+| 20260821… | `033_textos_fotos_catalogo` | idem | Fotos de los 4 bundles (salían con placeholder gris siendo los de mayor ticket), el texto del SPF que contradecía a la 023, y el voseo que quedó en las columnas de texto cuando el sitio pasó a español neutro |
 
 ## El riesgo
 
@@ -82,3 +87,13 @@ guardar el `.sql` acá.
    El catálogo de Cosmetic vive en tres capas —`productos`/`variantes_producto`
    en la BD, `rutinas.ts` para las rutinas curadas y los `FACETS` hardcodeados
    de `productos/page.tsx`— y cambiar una obliga a mirar las otras dos.
+
+5. **Si dos migraciones amplían el MISMO `CHECK`, las dos tienen que escribir la
+   lista COMPLETA.** Postgres no tiene `ALTER CONSTRAINT` para un CHECK: hay que
+   hacer `drop` + `add`, así que la última que corra deja escrita SU lista y
+   borra la de la otra. Pasó el 21-ago-2026 con `email_queue_tipo_check`: la 031
+   agregaba los tipos del Libro de Reclamaciones y la 032 el aviso de pedido, cada
+   una omitiendo los de la otra. Aplicar 031→032 dejaba los correos legales
+   rompiendo con 23514; al revés, el aviso de venta. Hoy las dos declaran los
+   nueve tipos idénticos y el orden dejó de importar — **al agregar un tipo nuevo,
+   va en las dos.**

@@ -95,7 +95,7 @@ export async function createPreference(
 
   const siteUrl = resolverSiteUrl();
 
-  const items: PreferenceRequest["items"] = pedido.lineas.map((l) => ({
+  const detalle: PreferenceRequest["items"] = pedido.lineas.map((l) => ({
     id: l.sku,
     title: l.nombre.slice(0, 250),
     quantity: l.cantidad,
@@ -107,7 +107,7 @@ export async function createPreference(
 
   // Envío como línea extra (MP no maneja envío separado en Perú por default).
   if (pedido.costo_envio && pedido.costo_envio > 0) {
-    items.push({
+    detalle.push({
       id: "envio",
       title: "Envío",
       quantity: 1,
@@ -117,10 +117,45 @@ export async function createPreference(
     });
   }
 
+  /* ── Lo que MP cobra tiene que ser el total del pedido, al centavo ──
+     MP cobra la SUMA de los items; no existe línea de descuento (los
+     items no admiten precio negativo y `coupon_amount` es para campañas
+     propias de MP). Con un cupón o un código de referido aplicado, la
+     suma de líneas + envío es MAYOR que `pedidos.total`: se le cobraría
+     a la clienta el descuento que ya se le había concedido.
+
+     Cuando cuadra, mandamos el detalle — la persona ve qué está pagando
+     en la pantalla de MP. Cuando no cuadra, se manda una sola línea por
+     el total exacto: perder el desglose es un costo estético, cobrar de
+     más es un cargo indebido. */
+  const suma = detalle.reduce((acc, it) => acc + it.unit_price * it.quantity, 0);
+  const total = Number(pedido.total ?? 0);
+  const cuadra = Math.abs(suma - total) < 0.005;
+
+  const items: PreferenceRequest["items"] = cuadra
+    ? detalle
+    : [
+        {
+          id: pedido.pedido_codigo,
+          title: `Pedido ${pedido.pedido_codigo}`,
+          description: `${pedido.lineas.length} producto(s) · envío y descuentos incluidos`,
+          quantity: 1,
+          unit_price: Number(total.toFixed(2)),
+          currency_id: "PEN",
+          category_id: "beauty",
+        },
+      ];
+
   /* ── back_urls → /pago/exito ──────────────────────────────────────────
      La página de confirmación real es /pago/exito. Antes apuntábamos a la
      ruta vieja del checkout, que dejó de existir en el refactor de rutas
      → el cliente que pagaba con MP aterrizaba en un 404.
+
+     Los tres caminos (success/failure/pending) van a /pago/exito a
+     propósito: esa página ya resuelve los tres estados — con
+     `estado=fallido` pinta "No pudimos procesar tu pago" + reintentar +
+     salida por Yape/Plin. Una /pago/error separada hoy sería un 404, que
+     es justo el bug que este bloque arregló.
 
      Mandamos codigo + total + pago como FALLBACK: si la RLS anon no deja
      leer el pedido, /pago/exito igual puede pintar el detalle desde el URL.

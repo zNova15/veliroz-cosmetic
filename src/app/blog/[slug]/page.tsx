@@ -6,8 +6,10 @@ import {
   getPostBySlug,
   getRelatedPosts,
   listPostSlugs,
+  type BlogFrontmatter,
 } from "@/lib/blog";
 import { BlogMDX } from "@/components/BlogMDX";
+import { absoluteUrl } from "@/lib/site";
 
 /* ============================================================
    Veliroz Cosmetic — /blog/[slug]
@@ -28,6 +30,30 @@ export function generateStaticParams(): Array<{ slug: string }> {
   return listPostSlugs().map((slug) => ({ slug }));
 }
 
+/* Portada del artículo para compartir.
+
+   Antes esto apuntaba a `/og-blog-default.jpg`, un archivo que nunca existió
+   en `public/` — o sea que todos los posts compartían un og:image 404 y el
+   link salía gris igual que si no hubiera ninguno. El orden real es:
+   `og_image` del frontmatter (override manual) → `hero_imagen`, la portada
+   compuesta con los packshots del post (migración 025, ya absoluta desde el
+   storage de Supabase) → el og por defecto del sitio.
+
+   Las medidas se declaran sólo en el fallback: la portada del post es 3:2 y
+   anunciarla como 1200x630 hace que Facebook la recorte mal. */
+type OgImagen = { url: string; width?: number; height?: number; alt: string };
+
+function portadaOg(fm: BlogFrontmatter): OgImagen {
+  const propia = fm.og_image ?? fm.hero_imagen;
+  if (propia) return { url: propia, alt: fm.title };
+  return {
+    url: absoluteUrl("/og.png"),
+    width: 1200,
+    height: 630,
+    alt: "Veliroz Cosmetic — skincare coreano curado por rutina",
+  };
+}
+
 export async function generateMetadata(
   props: PageProps<"/blog/[slug]">,
 ): Promise<Metadata> {
@@ -41,7 +67,7 @@ export async function generateMetadata(
   }
   const { frontmatter, fechaISO } = post;
   const url = `${SITE}/blog/${frontmatter.slug}`;
-  const ogImage = frontmatter.og_image ?? `${SITE}/og-blog-default.jpg`;
+  const og = portadaOg(frontmatter);
 
   return {
     title: frontmatter.title,
@@ -60,13 +86,13 @@ export async function generateMetadata(
       modifiedTime: frontmatter.actualizado ?? fechaISO,
       authors: [frontmatter.autor],
       tags: frontmatter.tags,
-      images: [{ url: ogImage, width: 1200, height: 630, alt: frontmatter.title }],
+      images: [og],
     },
     twitter: {
       card: "summary_large_image",
       title: frontmatter.title,
       description: frontmatter.excerpt,
-      images: [ogImage],
+      images: [og.url],
     },
   };
 }
@@ -81,7 +107,9 @@ export default async function BlogPostPage(
   const { frontmatter, content, readingText, fechaISO, fechaLegible } = post;
   const related = getRelatedPosts(slug, 3);
   const url = `${SITE}/blog/${frontmatter.slug}`;
-  const ogImage = frontmatter.og_image ?? `${SITE}/og-blog-default.jpg`;
+  /* Misma portada que el og:image, para que Google y el preview de WhatsApp
+     no muestren imágenes distintas del mismo artículo. */
+  const ogImage = portadaOg(frontmatter).url;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -95,7 +123,9 @@ export default async function BlogPostPage(
       "@type": "Organization",
       name: "Veliroz",
       url: SITE,
-      logo: { "@type": "ImageObject", url: `${SITE}/icon-512.png` },
+      /* `/icon-512.png` no existe en `public/` — era otro 404 heredado del
+         mismo copy-paste que la portada. El logo real es `/logo.png`. */
+      logo: { "@type": "ImageObject", url: absoluteUrl("/logo.png") },
     },
     image: ogImage,
     mainEntityOfPage: { "@type": "WebPage", "@id": url },

@@ -10,7 +10,8 @@ import {
   type ProductoRow,
   type Variante,
 } from "@/lib/supabase";
-import { swatchFor } from "@/lib/marcas";
+import { imagenMarca, swatchFor } from "@/lib/marcas";
+import { absoluteUrl } from "@/lib/site";
 
 /* ============================================================
    /marcas/[slug] — detalle marca + productos.
@@ -119,6 +120,32 @@ export const dynamicParams = true;
 
 /* ────────────────── Metadata ────────────────── */
 
+/* og:image de la marca.
+
+   Cuando una página define su propio `openGraph`, Next NO lo fusiona con el
+   del layout raíz: lo reemplaza entero. Como acá no había `images`, el link
+   de una marca pegado en WhatsApp o en la bio de Instagram salía como un
+   rectángulo gris — y eso son 10 marcas.
+
+   Usamos la composición de packshots de MARCA_IMAGEN (migración 025), que es
+   cuadrada, y cuando la marca todavía no tiene una caemos al og por defecto
+   del sitio, que sí es 1200x630. Por eso las medidas se declaran sólo en el
+   fallback: mentir el aspect ratio hace que Facebook recorte mal. */
+type OgImagen = { url: string; width?: number; height?: number; alt: string };
+
+function ogImagen(slug: string, nombre: string): OgImagen {
+  const propia = imagenMarca(slug);
+  if (propia) {
+    return { url: propia, alt: `Productos ${nombre} en Veliroz Cosmetic` };
+  }
+  return {
+    url: absoluteUrl("/og.png"),
+    width: 1200,
+    height: 630,
+    alt: "Veliroz Cosmetic — skincare coreano curado por rutina",
+  };
+}
+
 export async function generateMetadata(
   props: PageProps<"/marcas/[slug]">
 ): Promise<Metadata> {
@@ -131,6 +158,7 @@ export async function generateMetadata(
     };
   }
   const hero = MARCA_HERO[m.slug];
+  const og = ogImagen(m.slug, m.nombre);
   return {
     title: m.nombre,
     description: hero?.intro ?? `Productos ${m.nombre} en Veliroz Cosmetic Perú.`,
@@ -142,6 +170,13 @@ export async function generateMetadata(
       siteName: "Veliroz Cosmetic",
       locale: "es_PE",
       type: "website",
+      images: [og],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${m.nombre} en Veliroz Cosmetic`,
+      description: hero?.claim ?? `Productos ${m.nombre} en Perú.`,
+      images: [og.url],
     },
   };
 }

@@ -14,6 +14,16 @@ import PedidoEntregado, {
   type PedidoEntregadoProps,
 } from "@/emails/PedidoEntregado";
 import Bienvenida, { type BienvenidaProps } from "@/emails/Bienvenida";
+import ReclamoRecibido, {
+  type ReclamoRecibidoProps,
+} from "@/emails/ReclamoRecibido";
+import ReclamoInterno, {
+  type ReclamoInternoProps,
+} from "@/emails/ReclamoInterno";
+import PedidoNuevoInterno, {
+  type PedidoNuevoInternoProps,
+} from "@/emails/PedidoNuevoInterno";
+import { EMPRESA } from "@/lib/empresa";
 
 /* ============================================================
    /api/cron/drain-email-queue  (POST)
@@ -33,6 +43,10 @@ import Bienvenida, { type BienvenidaProps } from "@/emails/Bienvenida";
    - Requiere SUPABASE_SERVICE_ROLE_KEY (server-only, NUNCA
      NEXT_PUBLIC_) porque RLS de email_queue solo deja pasar a
      is_admin(). Fallback: anon key con warning — devolverá 0.
+
+   TIPOS DE CORREO: el reparto por `tipo` vive en HANDLERS (más abajo),
+   un registro clave → función. Ahí está escrito qué hay que hacer para
+   sumar un tipo nuevo sin tocar nada de lo que ya funciona.
    ============================================================ */
 
 export const runtime = "nodejs";
@@ -54,6 +68,12 @@ type EmailQueueRow = {
 type PedidoRow = {
   pedido_codigo: string;
   cliente_nombre: string;
+  /* Contacto y estado los usa el aviso interno: sin teléfono ni correo
+     el aviso avisa de una venta que nadie sabe cómo atender. */
+  cliente_email: string | null;
+  cliente_telefono: string | null;
+  estado: string | null;
+  fecha_pedido: string | null;
   metodo_pago: string | null;
   metodo_entrega: string | null;
   subtotal: number | null;
@@ -127,7 +147,7 @@ async function loadPedidoContext(
     sb
       .from("pedidos")
       .select(
-        "pedido_codigo,cliente_nombre,metodo_pago,metodo_entrega,subtotal,descuento,costo_envio,total,envio_meta"
+        "pedido_codigo,cliente_nombre,cliente_email,cliente_telefono,estado,fecha_pedido,metodo_pago,metodo_entrega,subtotal,descuento,costo_envio,total,envio_meta"
       )
       .eq("id", pedidoId)
       .maybeSingle(),
@@ -149,173 +169,427 @@ async function loadPedidoContext(
   };
 }
 
+/* ---------- Aviso interno de venta ---------- */
+
+/* A quién le llega el aviso de que entró un pedido. EMAIL_INTERNO
+   admite varias direcciones separadas por coma. Sin la variable cae en
+   el correo de la empresa, que existe y alguien lee: un aviso operativo
+   que no sale por falta de configuración es exactamente el problema que
+   este correo vino a resolver, así que no puede depender de que la var
+   esté puesta. */
+/* Resend rechaza el envío ENTERO con validation_error si el Reply-To no
+   parsea, y el drainer lo reintentaría cinco veces antes de dejarlo en
+   'fallido'. El correo de la clienta llega del trigger, que sólo hace
+   nullif(trim(...)): un pedido cargado a mano desde el CRM con "no tiene"
+   o "sofia@" pasa ese filtro. Perder el Reply-To es inofensivo; perder el
+   aviso de que entró una venta, no. */
+function replyToValido(email: string | null | undefined): string | undefined {
+  const e = (email ?? "").trim();
+  return /^\S+@\S+\.\S+$/.test(e) ? e : undefined;
+}
+
+function destinatariosInternos(): string[] {
+  const raw = process.env.EMAIL_INTERNO ?? "";
+  const lista = raw
+    .split(",")
+    .map((s) => s.trim())
+    .filter((s) => s.includes("@"));
+  return lista.length > 0 ? lista : [EMPRESA.email];
+}
+
+/* wa.me quiere el número con código de país y sin signos, y los
+   teléfonos entran como los tipea la clienta (9 dígitos, con espacios,
+   con +51). Si no se puede normalizar devolvemos null y el correo no
+   muestra el botón — mejor sin botón que con un link que no abre nada. */
+function waLink(tel: string | null | undefined): string | null {
+  const d = (tel ?? "").replace(/\D/g, "");
+  if (d.length === 9 && d.startsWith("9")) return `https://wa.me/51${d}`;
+  if (d.length === 11 && d.startsWith("51")) return `https://wa.me/${d}`;
+  return null;
+}
+
+/* El server corre en UTC: un pedido de las 8 de la noche de Lima
+   figuraría como del día siguiente si se muestra el timestamp crudo. */
+function fechaLima(iso: string | null | undefined): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return new Intl.DateTimeFormat("es-PE", {
+    timeZone: "America/Lima",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(d);
+}
+
+/* El uso del referido lo escribe crear_pedido_con_referido DESPUÉS de
+   insertar el pedido, así que el trigger que encola el aviso todavía no
+   lo puede ver: se lee acá, al enviar. Cualquier fallo devuelve null y
+   el aviso sale igual — perder el correo entero por un dato accesorio
+   sería peor que mandarlo incompleto. */
+async function cargarReferido(
+  sb: SupabaseClient,
+  pedidoId: string
+): Promise<{ codigo: string; descuento: number } | null> {
+  try {
+    const { data, error } = await sb
+      .from("referidos_usos")
+      .select("descuento_aplicado,referidos(codigo)")
+      .eq("pedido_id", pedidoId)
+      .maybeSingle();
+    if (error || !data) return null;
+    const fila = data as {
+      descuento_aplicado: number | null;
+      referidos: { codigo: string } | { codigo: string }[] | null;
+    };
+    /* PostgREST devuelve el embed como objeto o como array de uno según
+       cómo resuelva la relación; se aceptan las dos formas. */
+    const ref = Array.isArray(fila.referidos)
+      ? fila.referidos[0] ?? null
+      : fila.referidos;
+    if (!ref || !ref.codigo) return null;
+    return { codigo: ref.codigo, descuento: Number(fila.descuento_aplicado ?? 0) };
+  } catch {
+    return null;
+  }
+}
+
 /* ---------- Dispatcher por tipo ---------- */
+
+/* Contexto que recibe cada handler. Se arma una sola vez por fila y la
+   firma es la misma para todos, así que sumar un tipo no obliga a tocar
+   los que ya andan. */
+type HandlerCtx = {
+  sb: SupabaseClient;
+  row: EmailQueueRow;
+  payload: Record<string, unknown>;
+};
+
+type EmailHandler = (ctx: HandlerCtx) => Promise<SendEmailResult>;
+
+/* CÓMO SE AGREGA UN TIPO DE CORREO — tres pasos, ninguno pisa lo demás:
+     1. Migración: ampliar el CHECK de `email_queue.tipo` repitiendo la
+        lista COMPLETA de tipos válidos (ver 032). Olvidarse uno rompe
+        el trigger, y el trigger corre dentro de la transacción del
+        pedido: tumba el checkout, no sólo el correo.
+     2. Importar la plantilla arriba de este archivo.
+     3. Sumar una entrada a HANDLERS con la clave EXACTA del `tipo`.
+   El batch, los reintentos, los estados y la auth no se tocan nunca.
+
+   Antes esto era un switch gigante; la diferencia práctica es que el
+   diff de un tipo nuevo son ahora sus propias líneas y nada más — dos
+   personas pueden agregar tipos distintos sin chocar. */
+const HANDLERS: Record<string, EmailHandler> = {
+  pedido_creado: async ({ sb, row }) => {
+    if (!row.pedido_id) {
+      return { ok: false, error: "pedido_id requerido para pedido_creado" };
+    }
+    const { pedido, lineas } = await loadPedidoContext(sb, row.pedido_id);
+    if (!pedido) return { ok: false, error: "pedido no encontrado" };
+    const props: PedidoCreadoProps = {
+      pedidoCodigo: pedido.pedido_codigo,
+      clienteNombre: pedido.cliente_nombre ?? "",
+      items: lineas.map((l) => ({
+        nombre: l.nombre,
+        cantidad: l.cantidad,
+        precio_unitario: l.precio_unit,
+        subtotal: l.subtotal_linea,
+      })),
+      subtotal: Number(pedido.subtotal ?? 0),
+      descuento: Number(pedido.descuento ?? 0),
+      costoEnvio: Number(pedido.costo_envio ?? 0),
+      total: Number(pedido.total ?? 0),
+      metodoPago: pedido.metodo_pago ?? "",
+      metodoEntrega: pedido.metodo_entrega ?? "",
+    };
+    return sendEmail(
+      row.cliente_email,
+      `Recibimos tu pedido — ${pedido.pedido_codigo}`,
+      PedidoCreado,
+      props,
+      { tags: [{ name: "tipo", value: "pedido_creado" }] }
+    );
+  },
+
+  pedido_pagado: async ({ sb, row, payload }) => {
+    if (!row.pedido_id) {
+      return { ok: false, error: "pedido_id requerido para pedido_pagado" };
+    }
+    const { pedido, comprobante } = await loadPedidoContext(sb, row.pedido_id);
+    if (!pedido) return { ok: false, error: "pedido no encontrado" };
+    const meta = pedido.envio_meta ?? {};
+    const trackingUrl =
+      (payload.tracking_url as string | undefined) ??
+      (meta.tracking_url as string | undefined) ??
+      null;
+    const props: PedidoPagadoProps = {
+      pedidoCodigo: pedido.pedido_codigo,
+      clienteNombre: pedido.cliente_nombre ?? "",
+      total: Number(pedido.total ?? 0),
+      metodoPago: pedido.metodo_pago ?? "",
+      metodoEntrega: pedido.metodo_entrega ?? "",
+      comprobantePdfUrl:
+        comprobante?.estado_emision === "emitido" ? comprobante.pdf_url : null,
+      trackingUrl,
+    };
+    return sendEmail(
+      row.cliente_email,
+      `Pago confirmado — ${pedido.pedido_codigo}`,
+      PedidoPagado,
+      props,
+      { tags: [{ name: "tipo", value: "pedido_pagado" }] }
+    );
+  },
+
+  pedido_en_reparto: async ({ sb, row, payload }) => {
+    if (!row.pedido_id) {
+      return { ok: false, error: "pedido_id requerido para pedido_en_reparto" };
+    }
+    const { pedido } = await loadPedidoContext(sb, row.pedido_id);
+    if (!pedido) return { ok: false, error: "pedido no encontrado" };
+    const meta = pedido.envio_meta ?? {};
+    const props: PedidoEnRepartoProps = {
+      pedidoCodigo: pedido.pedido_codigo,
+      clienteNombre: pedido.cliente_nombre ?? "",
+      metodoEntrega: pedido.metodo_entrega ?? "",
+      transportista:
+        (payload.transportista as string | undefined) ??
+        (meta.transportista as string | undefined) ??
+        null,
+      trackingCodigo:
+        (payload.tracking_codigo as string | undefined) ??
+        (meta.tracking_codigo as string | undefined) ??
+        null,
+      trackingUrl:
+        (payload.tracking_url as string | undefined) ??
+        (meta.tracking_url as string | undefined) ??
+        null,
+      fechaEstimada:
+        (payload.fecha_estimada as string | undefined) ??
+        (meta.fecha_estimada as string | undefined) ??
+        null,
+    };
+    return sendEmail(
+      row.cliente_email,
+      `Tu pedido está en camino — ${pedido.pedido_codigo}`,
+      PedidoEnReparto,
+      props,
+      { tags: [{ name: "tipo", value: "pedido_en_reparto" }] }
+    );
+  },
+
+  /* pedido_entregado y review_request comparten plantilla y sólo
+     cambian el asunto: la reseña es el mismo correo 7 días después. */
+  pedido_entregado: async (ctx) => entregaOResena(ctx),
+  review_request: async (ctx) => entregaOResena(ctx),
+
+  bienvenida: async ({ row, payload }) => {
+    const nombre =
+      (payload.cliente_nombre as string | undefined) ??
+      (payload.nombre as string | undefined) ??
+      "";
+    const cupon = (payload.cupon as string | undefined) ?? "COSMETIC10";
+    const descuentoPct = (payload.descuento_pct as number | undefined) ?? 10;
+    const props: BienvenidaProps = {
+      clienteNombre: nombre,
+      cupon,
+      descuentoPct,
+    };
+    return sendEmail(
+      row.cliente_email,
+      `Bienvenida a Veliroz — tu ${descuentoPct}% adentro`,
+      Bienvenida,
+      props,
+      { tags: [{ name: "tipo", value: "bienvenida" }] }
+    );
+  },
+
+  /* El único que NO va a la clienta. Lo encola el trigger de la 032 en
+     cada INSERT de `pedidos`, de cualquier canal. */
+  pedido_nuevo_interno: async ({ sb, row, payload }) => {
+    if (!row.pedido_id) {
+      return {
+        ok: false,
+        error: "pedido_id requerido para pedido_nuevo_interno",
+      };
+    }
+    const { pedido, lineas } = await loadPedidoContext(sb, row.pedido_id);
+    if (!pedido) return { ok: false, error: "pedido no encontrado" };
+
+    const meta = pedido.envio_meta ?? {};
+    const referido = await cargarReferido(sb, row.pedido_id);
+
+    /* El correo de la clienta se lee del payload y NO de
+       row.cliente_email: para este tipo esa columna guarda el marcador
+       'interno@veliroz.com' porque el destino real lo decide acá (ver
+       migración 032). El fallback a la tabla cubre filas encoladas a
+       mano sin payload. */
+    const clienteEmail =
+      (payload.cliente_email as string | undefined) ??
+      pedido.cliente_email ??
+      null;
+    const telefono =
+      (payload.cliente_telefono as string | undefined) ??
+      pedido.cliente_telefono ??
+      null;
+
+    const props: PedidoNuevoInternoProps = {
+      pedidoCodigo: pedido.pedido_codigo,
+      fechaTexto: fechaLima(
+        (payload.fecha_pedido as string | undefined) ?? pedido.fecha_pedido
+      ),
+      estado: (payload.estado as string | undefined) ?? pedido.estado ?? null,
+      linea: (meta.linea as string | undefined) ?? null,
+      canal: (payload.canal as string | undefined) ?? null,
+      clienteNombre: pedido.cliente_nombre ?? "",
+      clienteEmail,
+      clienteTelefono: telefono,
+      waUrl: waLink(telefono),
+      items: lineas.map((l) => ({
+        nombre: l.nombre,
+        cantidad: l.cantidad,
+        precio_unitario: l.precio_unit,
+        subtotal: l.subtotal_linea,
+      })),
+      subtotal: Number(pedido.subtotal ?? 0),
+      descuento: Number(pedido.descuento ?? 0),
+      costoEnvio: Number(pedido.costo_envio ?? 0),
+      total: Number(pedido.total ?? 0),
+      metodoPago: pedido.metodo_pago ?? "",
+      metodoEntrega: pedido.metodo_entrega ?? "",
+      transporte: (meta.transporte as string | undefined) ?? null,
+      agencia: (meta.agencia as string | undefined) ?? null,
+      direccion: (payload.direccion as string | undefined) ?? null,
+      cupon: (payload.cupon as string | undefined) ?? null,
+      referidoCodigo: referido?.codigo ?? null,
+      referidoDescuento: referido?.descuento ?? null,
+      tipoComprobante: (payload.tipo_comprobante as string | undefined) ?? null,
+      documento: (payload.documento as string | undefined) ?? null,
+      razonSocial: (payload.razon_social as string | undefined) ?? null,
+    };
+
+    /* El asunto tiene que alcanzar solo: se lee en la notificación del
+       celular sin abrir nada. Código, plata y cómo se cobra. */
+    const asunto =
+      `Pedido nuevo ${pedido.pedido_codigo} · ` +
+      `S/ ${Number(pedido.total ?? 0).toFixed(2)} · ` +
+      `${pedido.metodo_pago ?? "sin método"}`;
+
+    return sendEmail(destinatariosInternos(), asunto, PedidoNuevoInterno, props, {
+      /* Responder el aviso escribe a la clienta, no a nosotros. */
+      replyTo: replyToValido(clienteEmail),
+      tags: [{ name: "tipo", value: "pedido_nuevo_interno" }],
+    });
+  },
+  /* ---------- Libro de Reclamaciones ----------
+     Los dos salen ENTEROS del payload: no consultan `reclamos` ni usan
+     loadPedidoContext, porque `pedido_id` siempre viene null — un reclamo
+     no tiene por qué venir de un pedido. Exigirlo abortaría el envío de la
+     constancia, que es justo la parte obligatoria.
+     El destinatario es `row.cliente_email`, que /api/reclamos ya llenó con
+     la persona en un caso y con la casilla del negocio en el otro. */
+
+  reclamo_recibido: async ({ row, payload }) => {
+    const props: ReclamoRecibidoProps = {
+      codigo: String(payload.codigo ?? ""),
+      nombre: String(payload.nombre ?? ""),
+      tipo: payload.tipo === "queja" ? "queja" : "reclamo",
+      fechaLimite: String(payload.fecha_limite ?? ""),
+      detalle: String(payload.detalle ?? ""),
+      pedidoConcreto: String(payload.pedido_concreto ?? ""),
+      montoReclamado: (payload.monto_reclamado as number | null) ?? null,
+    };
+    if (!props.codigo) {
+      return { ok: false, error: "payload sin codigo de reclamo" };
+    }
+    return sendEmail(
+      row.cliente_email,
+      `Tu ${props.tipo} quedó registrado — ${props.codigo}`,
+      ReclamoRecibido,
+      props,
+      { tags: [{ name: "tipo", value: "reclamo_recibido" }] }
+    );
+  },
+
+  reclamo_interno: async ({ row, payload }) => {
+    const codigo = String(payload.codigo ?? "");
+    if (!codigo) {
+      return { ok: false, error: "payload sin codigo de reclamo" };
+    }
+    const tipo = payload.tipo === "queja" ? "queja" : "reclamo";
+    const fechaLimite = String(payload.fecha_limite ?? "");
+    const props: ReclamoInternoProps = {
+      codigo,
+      tipo,
+      fechaLimite,
+      recibidoEn: (payload.recibido_en as string | null) ?? null,
+      nombre: String(payload.nombre ?? ""),
+      documentoTipo: String(payload.documento_tipo ?? ""),
+      documentoNumero: String(payload.documento_numero ?? ""),
+      email: String(payload.email ?? ""),
+      telefono: (payload.telefono as string | null) ?? null,
+      domicilio: String(payload.domicilio ?? ""),
+      bienContratado:
+        payload.bien_contratado === "servicio" ? "servicio" : "producto",
+      descripcion: String(payload.descripcion ?? ""),
+      comprobante: (payload.comprobante as string | null) ?? null,
+      montoReclamado: (payload.monto_reclamado as number | null) ?? null,
+      detalle: String(payload.detalle ?? ""),
+      pedidoConcreto: String(payload.pedido_concreto ?? ""),
+    };
+    return sendEmail(
+      row.cliente_email,
+      `[${tipo}] ${codigo} · responder antes del ${fechaLimite}`,
+      ReclamoInterno,
+      props,
+      {
+        /* Responder el expediente escribe a quien reclamó. */
+        replyTo: replyToValido(props.email),
+        tags: [{ name: "tipo", value: "reclamo_interno" }],
+      }
+    );
+  },
+};
+/* Cuerpo compartido de pedido_entregado / review_request. */
+async function entregaOResena({
+  sb,
+  row,
+  payload,
+}: HandlerCtx): Promise<SendEmailResult> {
+  if (!row.pedido_id) {
+    return { ok: false, error: "pedido_id requerido para pedido_entregado" };
+  }
+  const { pedido } = await loadPedidoContext(sb, row.pedido_id);
+  if (!pedido) return { ok: false, error: "pedido no encontrado" };
+  const props: PedidoEntregadoProps = {
+    pedidoCodigo: pedido.pedido_codigo,
+    clienteNombre: pedido.cliente_nombre ?? "",
+    reviewUrl: (payload.review_url as string | undefined) ?? null,
+  };
+  const subject =
+    row.tipo === "review_request"
+      ? `¿Cómo te llegó? — ${pedido.pedido_codigo}`
+      : `Tu pedido llegó — ${pedido.pedido_codigo}`;
+  return sendEmail(row.cliente_email, subject, PedidoEntregado, props, {
+    tags: [{ name: "tipo", value: row.tipo }],
+  });
+}
 
 async function sendForRow(
   sb: SupabaseClient,
   row: EmailQueueRow
 ): Promise<SendEmailResult> {
-  const payload = (row.payload ?? {}) as Record<string, unknown>;
-
-  switch (row.tipo) {
-    case "pedido_creado": {
-      if (!row.pedido_id) {
-        return { ok: false, error: "pedido_id requerido para pedido_creado" };
-      }
-      const { pedido, lineas } = await loadPedidoContext(sb, row.pedido_id);
-      if (!pedido) return { ok: false, error: "pedido no encontrado" };
-      const props: PedidoCreadoProps = {
-        pedidoCodigo: pedido.pedido_codigo,
-        clienteNombre: pedido.cliente_nombre ?? "",
-        items: lineas.map((l) => ({
-          nombre: l.nombre,
-          cantidad: l.cantidad,
-          precio_unitario: l.precio_unit,
-          subtotal: l.subtotal_linea,
-        })),
-        subtotal: Number(pedido.subtotal ?? 0),
-        descuento: Number(pedido.descuento ?? 0),
-        costoEnvio: Number(pedido.costo_envio ?? 0),
-        total: Number(pedido.total ?? 0),
-        metodoPago: pedido.metodo_pago ?? "",
-        metodoEntrega: pedido.metodo_entrega ?? "",
-      };
-      return sendEmail(
-        row.cliente_email,
-        `Recibimos tu pedido — ${pedido.pedido_codigo}`,
-        PedidoCreado,
-        props,
-        { tags: [{ name: "tipo", value: "pedido_creado" }] }
-      );
-    }
-
-    case "pedido_pagado": {
-      if (!row.pedido_id) {
-        return { ok: false, error: "pedido_id requerido para pedido_pagado" };
-      }
-      const { pedido, comprobante } = await loadPedidoContext(
-        sb,
-        row.pedido_id
-      );
-      if (!pedido) return { ok: false, error: "pedido no encontrado" };
-      const meta = pedido.envio_meta ?? {};
-      const trackingUrl =
-        (payload.tracking_url as string | undefined) ??
-        (meta.tracking_url as string | undefined) ??
-        null;
-      const props: PedidoPagadoProps = {
-        pedidoCodigo: pedido.pedido_codigo,
-        clienteNombre: pedido.cliente_nombre ?? "",
-        total: Number(pedido.total ?? 0),
-        metodoPago: pedido.metodo_pago ?? "",
-        metodoEntrega: pedido.metodo_entrega ?? "",
-        comprobantePdfUrl:
-          comprobante?.estado_emision === "emitido"
-            ? comprobante.pdf_url
-            : null,
-        trackingUrl,
-      };
-      return sendEmail(
-        row.cliente_email,
-        `Pago confirmado — ${pedido.pedido_codigo}`,
-        PedidoPagado,
-        props,
-        { tags: [{ name: "tipo", value: "pedido_pagado" }] }
-      );
-    }
-
-    case "pedido_en_reparto": {
-      if (!row.pedido_id) {
-        return {
-          ok: false,
-          error: "pedido_id requerido para pedido_en_reparto",
-        };
-      }
-      const { pedido } = await loadPedidoContext(sb, row.pedido_id);
-      if (!pedido) return { ok: false, error: "pedido no encontrado" };
-      const meta = pedido.envio_meta ?? {};
-      const props: PedidoEnRepartoProps = {
-        pedidoCodigo: pedido.pedido_codigo,
-        clienteNombre: pedido.cliente_nombre ?? "",
-        metodoEntrega: pedido.metodo_entrega ?? "",
-        transportista:
-          (payload.transportista as string | undefined) ??
-          (meta.transportista as string | undefined) ??
-          null,
-        trackingCodigo:
-          (payload.tracking_codigo as string | undefined) ??
-          (meta.tracking_codigo as string | undefined) ??
-          null,
-        trackingUrl:
-          (payload.tracking_url as string | undefined) ??
-          (meta.tracking_url as string | undefined) ??
-          null,
-        fechaEstimada:
-          (payload.fecha_estimada as string | undefined) ??
-          (meta.fecha_estimada as string | undefined) ??
-          null,
-      };
-      return sendEmail(
-        row.cliente_email,
-        `Tu pedido está en camino — ${pedido.pedido_codigo}`,
-        PedidoEnReparto,
-        props,
-        { tags: [{ name: "tipo", value: "pedido_en_reparto" }] }
-      );
-    }
-
-    case "pedido_entregado":
-    case "review_request": {
-      if (!row.pedido_id) {
-        return {
-          ok: false,
-          error: "pedido_id requerido para pedido_entregado",
-        };
-      }
-      const { pedido } = await loadPedidoContext(sb, row.pedido_id);
-      if (!pedido) return { ok: false, error: "pedido no encontrado" };
-      const props: PedidoEntregadoProps = {
-        pedidoCodigo: pedido.pedido_codigo,
-        clienteNombre: pedido.cliente_nombre ?? "",
-        reviewUrl: (payload.review_url as string | undefined) ?? null,
-      };
-      const subject =
-        row.tipo === "review_request"
-          ? `¿Cómo te llegó? — ${pedido.pedido_codigo}`
-          : `Tu pedido llegó — ${pedido.pedido_codigo}`;
-      return sendEmail(row.cliente_email, subject, PedidoEntregado, props, {
-        tags: [{ name: "tipo", value: row.tipo }],
-      });
-    }
-
-    case "bienvenida": {
-      const nombre =
-        (payload.cliente_nombre as string | undefined) ??
-        (payload.nombre as string | undefined) ??
-        "";
-      const cupon = (payload.cupon as string | undefined) ?? "COSMETIC10";
-      const descuentoPct =
-        (payload.descuento_pct as number | undefined) ?? 10;
-      const props: BienvenidaProps = {
-        clienteNombre: nombre,
-        cupon,
-        descuentoPct,
-      };
-      return sendEmail(
-        row.cliente_email,
-        `Bienvenida a Veliroz — tu ${descuentoPct}% adentro`,
-        Bienvenida,
-        props,
-        { tags: [{ name: "tipo", value: "bienvenida" }] }
-      );
-    }
-
-    default:
-      return {
-        ok: false,
-        error: `Tipo de email no soportado: ${row.tipo}`,
-      };
+  const handler: EmailHandler | undefined = HANDLERS[row.tipo];
+  if (!handler) {
+    return { ok: false, error: `Tipo de email no soportado: ${row.tipo}` };
   }
+  return handler({
+    sb,
+    row,
+    payload: (row.payload ?? {}) as Record<string, unknown>,
+  });
 }
 
 /* ---------- POST handler ---------- */

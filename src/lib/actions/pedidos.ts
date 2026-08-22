@@ -176,6 +176,54 @@ export async function crearPedidoAction(
       items.push({ producto_id: it.sku, cantidad: c, imagen: it.imagen ?? null });
     }
 
+    /* ---------- Guarda de NSO ----------
+       Un cosmético sin Notificación Sanitaria Obligatoria vigente del
+       importador NO se vende. Es la regla dura del negocio: si alguien lo
+       compra y el NSO no aparece, hay que devolver la plata y la
+       mercadería es decomisable. Los productos en esa situación se marcan
+       con meta.nso_pendiente = true y se siguen exhibiendo —sirven para
+       medir interés— pero no pueden entrar en un pedido.
+
+       Hasta ahora esa regla vivía SÓLO en AddToCartButton, o sea en el
+       navegador. Un POST directo a esta action la salteaba entera, y esta
+       action es la que cobra. Una regla que sólo existe en la interfaz es
+       una sugerencia.
+
+       POR QUÉ UNA CONSULTA APARTE Y NO UN EMBED EN LA DE ARRIBA: aquélla
+       es la que valida los SKU del cobro y hoy funciona. Sumarle un embed
+       significa que un cambio de relación en `productos` tira el checkout
+       entero. Ésta se agrega al lado; si algún día molesta, se saca sin
+       tocar nada más.
+
+       LÍMITE CONOCIDO: mira el producto del SKU, no los componentes de un
+       bundle. Hoy no hay bundle que incluya un SKU con NSO pendiente
+       (verificado contra la base el 21-ago-2026); si se arma uno, esta
+       guarda no lo ve y hay que extenderla por bundle_composicion. */
+    const { data: nsoRows, error: nsoErr } = await sb
+      .from("variantes_producto")
+      .select(
+        "sku, producto:productos!variantes_producto_producto_id_fkey (nombre, meta)",
+      )
+      .in("sku", skus);
+    /* Falla cerrada, igual que la validación de SKU de arriba: si no se
+       puede comprobar, no se vende. Equivocarse para el otro lado es
+       cobrar por algo que no se puede entregar. */
+    if (nsoErr) return { ok: false, error: `db_error_nso: ${nsoErr.message}` };
+
+    type ProductoNso = { nombre: string | null; meta: Record<string, unknown> | null };
+    type VarianteNsoRow = {
+      sku: string;
+      /* PostgREST devuelve el embed como objeto, pero según cómo resuelva
+         la relación puede venir como array de uno. Se aceptan las dos. */
+      producto: ProductoNso | ProductoNso[] | null;
+    };
+    for (const r of (nsoRows ?? []) as VarianteNsoRow[]) {
+      const prod = Array.isArray(r.producto) ? r.producto[0] ?? null : r.producto;
+      if (prod?.meta?.nso_pendiente === true) {
+        return { ok: false, error: `nso_pendiente:${r.sku}` };
+      }
+    }
+
     /* Metadata de envío (fuera del enum tradicional). */
     const envioMeta: Record<string, unknown> = {
       linea: "cosmetic",

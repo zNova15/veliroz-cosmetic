@@ -238,7 +238,7 @@ export async function flowMiPedido(args: {
   if (!args.pedido_codigo) {
     return {
       reply:
-        "Pasame el código de tu pedido — arranca con *VLZ-* (lo tienes en el correo/whatsapp de confirmación). Ejemplo: *mi pedido VLZ-1A2B3C*",
+        "Pásame el código de tu pedido — empieza con *VLZ-* (lo tienes en el correo o el WhatsApp de confirmación). Ejemplo: *mi pedido VLZ-1A2B3C*",
     };
   }
 
@@ -303,7 +303,7 @@ export async function flowPrecio(termino: string): Promise<FlowResult> {
   if (!q || q.length < 2) {
     return {
       reply:
-        "Decime qué producto buscas. Ejemplo: *precio niacinamida* o *precio protector solar*.",
+        "Dime qué producto buscas. Ejemplo: *precio niacinamida* o *precio protector solar*.",
     };
   }
   try {

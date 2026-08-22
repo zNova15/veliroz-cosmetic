@@ -146,10 +146,36 @@ export default function PrivacidadPage() {
           <strong>Lo que nunca guardamos:</strong> los datos de tu tarjeta. El
           número, la fecha y el CVV viajan cifrados directo a la pasarela de
           pago (Culqi o MercadoPago) y nunca pasan por nuestros servidores.
-          Nosotros solo vemos si el pago se aprobó o no. Tampoco recogemos datos
-          sensibles: no te pedimos información de salud, y si nos cuentas algo
-          sobre tu piel en una consulta, no lo usamos para otra cosa que
-          responderte.
+          Nosotros solo vemos si el pago se aprobó o no.
+        </p>
+        {/* Este párrafo antes decía "no te pedimos información de salud".
+            Era falso desde que el quiz pregunta por embarazo y lactancia, que
+            es dato de salud —o sea, dato sensible— bajo la Ley 29733. El quiz
+            no cambió porque no hacía falta: el perfil se calcula y se guarda
+            en el navegador (localStorage, clave veliroz-cosmetic-quiz-perfil)
+            y nunca se envía. Lo que estaba mal era el texto. */}
+        <p>
+          <strong>El quiz de piel se resuelve en tu dispositivo.</strong> Para
+          armarte una rutina te preguntamos por tu tipo de piel, tu edad
+          aproximada y si estás embarazada o amamantando. Esa última respuesta
+          es un dato de salud, así que la tratamos como corresponde:{" "}
+          <strong>
+            tus respuestas y el diagnóstico que sale de ellas se calculan en tu
+            navegador y se guardan únicamente ahí
+          </strong>
+          . No se envían ni se almacenan en nuestros servidores, no quedan
+          asociadas a tu nombre, tu correo ni tus pedidos, y no las usamos para
+          publicidad. Sirven para dos cosas concretas: elegir qué productos
+          mostrarte y no recomendarte activos contraindicados en el embarazo y
+          la lactancia. Las borras cuando quieras con “Rehacer el quiz” o
+          limpiando los datos del sitio en tu navegador. Si después decides
+          escribirnos por WhatsApp con tu resultado, recién ahí viaja lo que tú
+          elijas contarnos.
+        </p>
+        <p>
+          Fuera del quiz no te pedimos información de salud. Si nos cuentas algo
+          sobre tu piel en una consulta, queda en esa conversación y no lo
+          usamos para otra cosa que responderte.
         </p>
       </LegalSection>
 
@@ -164,7 +190,7 @@ export default function PrivacidadPage() {
             factura) y cumplir con nuestras obligaciones tributarias.
           </li>
           <li>
-            <strong>Coordinar la entrega</strong> con el courier o con tú
+            <strong>Coordinar la entrega</strong> con el courier o contigo
             directamente.
           </li>
           <li>
@@ -267,7 +293,7 @@ export default function PrivacidadPage() {
         </LegalList>
         <p>
           Cumplido el plazo, los eliminamos o los anonimizamos de forma que ya
-          no puedan asociarse a tú.
+          no puedan asociarse a ti.
         </p>
       </LegalSection>
 

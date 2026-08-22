@@ -267,7 +267,7 @@ export default function TerminosPage() {
           Los plazos se cuentan en <strong>días hábiles desde el despacho</strong>
           , no desde la compra, y suman los 5-7 días de cierre de lote de la
           pre-venta. Los tiempos de la agencia dependen de Shalom: hacemos el
-          seguimiento con tú, pero no controlamos su operación ni respondemos
+          seguimiento contigo, pero no controlamos su operación ni respondemos
           por demoras, paros o cierres de carretera ajenos a nosotros.
         </p>
         <p>
@@ -324,11 +324,31 @@ export default function TerminosPage() {
       </LegalSection>
 
       <LegalSection id="garantia" n="08" titulo="Garantía y autenticidad">
+        {/* Este párrafo decía que TODO el catálogo tiene registro DIGEMID.
+            No es cierto: hay SKUs cargados con meta.nso_pendiente, que se
+            exhiben para medir interés y no se pueden comprar hasta que el
+            proveedor entregue el número de NSO. El texto ahora describe esa
+            regla real —la misma que aplica AddToCartButton— en vez de una
+            promesa que el sistema no cumple. */}
         <p>
           Todo lo que vendemos es <strong>original y sellado de fábrica</strong>
-          . Trabajamos con importadores y distribuidores formales, y los
-          productos cuentan con el registro sanitario correspondiente a nombre
-          del importador ante DIGEMID.
+          . Compramos a importadores y distribuidores formales del país:{" "}
+          <strong>
+            la Notificación Sanitaria Obligatoria (NSO) ante DIGEMID está a
+            nombre del importador
+          </strong>
+          , no a nombre nuestro. Nosotros no somos titulares de ninguna NSO ni
+          decimos serlo.
+        </p>
+        <p>
+          A cada proveedor le exigimos por escrito el{" "}
+          <strong>número de NSO vigente de cada producto</strong> antes de
+          ponerlo a la venta. Mientras ese número no esté confirmado, el
+          producto puede aparecer en el catálogo —nos sirve para medir
+          interés— pero <strong>no se puede comprar</strong>: el botón queda
+          bloqueado con el aviso de que estamos verificando el registro
+          sanitario. Si ves ese aviso en una ficha, es exactamente eso y no un
+          problema de stock.
         </p>
         <p>
           Si alguna vez recibes un producto y dudas de su autenticidad,
@@ -428,7 +448,7 @@ export default function TerminosPage() {
         </p>
         <p>
           Ante cualquier controversia, primero intentamos resolverla
-          directamente con tú. Si no llegamos a un acuerdo, puedes recurrir a
+          directamente contigo. Si no llegamos a un acuerdo, puedes recurrir a
           INDECOPI o a los juzgados de la ciudad de Cajamarca.
         </p>
       </LegalSection>

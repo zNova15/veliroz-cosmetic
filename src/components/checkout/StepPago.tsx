@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, type ReactNode } from "react";
 import { useCheckoutStore } from "@/lib/checkout-store";
 import { Tab } from "./FormField";
 import type { StepValidator } from "./validators";
@@ -22,6 +22,12 @@ import type { StepValidator } from "./validators";
    entren las credenciales en Vercel, el método reaparece solo. Las
    NEXT_PUBLIC_* se resuelven al compilar, así que esto es una constante
    en el bundle, no una consulta en tiempo de ejecución.
+
+   MERCADOPAGO VA POR CHECKOUT PRO, NO POR BRICK: al confirmar, el
+   checkout crea el pedido, pide la preference a
+   /api/pagos/mercadopago/preference y redirige al sitio de MP. Por eso
+   su panel explica el paso siguiente en vez de reservar el hueco de un
+   formulario de tarjeta que nunca se montó.
    ============================================================ */
 
 const CULQI_LISTO = Boolean(process.env.NEXT_PUBLIC_CULQI_PUBLIC_KEY);
@@ -137,8 +143,9 @@ export function StepPago({ totalMostrado }: Props) {
   );
 }
 
-/* Ningún campo obligatorio adicional para el paso 3 (por ahora Bricks
-   no está montado). El validador solo confirma que hay método pago. */
+/* Ningún campo obligatorio adicional para el paso 3: Yape y Plin se
+   pagan fuera del sitio y MercadoPago pide los datos de la tarjeta en su
+   propia pantalla. El validador solo confirma que hay método de pago. */
 export const validateStepPago: StepValidator = (s) => {
   const errors: Record<string, string> = {};
   if (!s.metodoPago) errors.metodoPago = "Elige un método";
@@ -171,27 +178,53 @@ function BloqueCulqi({ total }: { total: number }) {
   );
 }
 
+/* El cobro ocurre EN MercadoPago, no acá: por eso este panel no pide
+   ningún dato. Lo único que tiene que hacer es que la persona sepa qué
+   va a pasar al tocar "Confirmar pedido" — que se va del sitio y vuelve. */
 function BloqueMp({ total }: { total: number }) {
   return (
-    <div className="space-y-3">
-      <p className="font-serif text-lg text-ink">MercadoPago</p>
-      <div className="rounded-md border border-dashed border-[--border-2] bg-mist/40 p-6 text-center">
-        <span className="font-mono text-[9px] tracking-[0.22em] uppercase text-taupe">
-          · Payment Brick MP ·
-        </span>
-        <p className="mt-2 text-sm text-clay text-pretty">
-          MercadoPago Payment Brick — pendiente configurar{" "}
-          <code className="font-mono text-[11px] bg-cream px-1 rounded">
-            NEXT_PUBLIC_MP_PUBLIC_KEY
-          </code>{" "}
-          en Vercel.
+    <div className="space-y-4">
+      <div>
+        <p className="font-serif text-lg text-ink">Pagar con MercadoPago</p>
+        <p className="text-sm text-clay text-pretty">
+          Al confirmar te llevamos al sitio seguro de MercadoPago para
+          completar el pago. Cuando termines vuelves acá con tu
+          confirmación.
         </p>
       </div>
+
+      <ul className="space-y-2 text-sm text-ink">
+        <ItemMp>Tarjeta de crédito o débito, en cuotas o al contado.</ItemMp>
+        <ItemMp>Saldo de tu cuenta MercadoPago.</ItemMp>
+        <ItemMp>
+          Los datos de tu tarjeta se ingresan en MercadoPago — nosotros no
+          los vemos ni los guardamos.
+        </ItemMp>
+      </ul>
+
       <p className="text-xs text-clay">
         Total a cobrar:{" "}
         <span className="font-mono text-ink">S/{total.toFixed(2)}</span>
       </p>
     </div>
+  );
+}
+
+function ItemMp({ children }: { children: ReactNode }) {
+  return (
+    <li className="flex items-start gap-2 text-pretty">
+      <svg
+        className="w-4 h-4 mt-0.5 shrink-0 text-champagne-dark"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        aria-hidden
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+      </svg>
+      <span>{children}</span>
+    </li>
   );
 }
 

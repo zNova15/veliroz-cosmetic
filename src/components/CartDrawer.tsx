@@ -191,8 +191,14 @@ export function CartDrawer() {
                       S/. {total.toFixed(2)}
                     </span>
                   </div>
+                  {/* Decía "Envío e impuestos se calculan al pagar". Los
+                      precios del catálogo ya llevan IGV incluido (así lo exige
+                      el Código de Protección y Defensa del Consumidor, y así lo
+                      descompone nubefact.ts al emitir el comprobante), o sea
+                      que anunciar un impuesto "al pagar" sugería un recargo que
+                      no existe justo antes del botón de checkout. */}
                   <p className="text-[11px] text-clay leading-snug">
-                    Envío e impuestos se calculan al pagar.
+                    Precios con IGV incluido. El envío se calcula al pagar.
                   </p>
                   <Link
                     href="/pago"

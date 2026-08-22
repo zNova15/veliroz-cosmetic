@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { getSupabase } from "@/lib/supabase";
 import { SelloConfirmacion } from "@/components/SelloConfirmacion";
 import { TrackPurchase } from "@/components/TrackPurchase";
+import { LimpiarCompra } from "@/components/LimpiarCompra";
 
 /* ============================================================
    /pago/exito — Server Component. Página de retorno del checkout.
@@ -231,8 +232,36 @@ export default async function ExitoPage({
 
   const copy = COPY[estado];
 
+  const aprobado = estado === "aprobado";
+
   return (
     <main className="min-h-screen">
+      {/* Dos islas de cliente, las dos invisibles y las dos condicionadas a
+          que el pago se haya aprobado.
+
+          TrackPurchase estaba importado en este archivo desde el commit
+          b4f3285 y NUNCA se renderizó: el evento Purchase que ese commit
+          decía cablear no se disparó una sola vez. Sin él, Meta no puede
+          optimizar la pauta hacia compra y el presupuesto termina
+          optimizando hacia clics.
+
+          LimpiarCompra vacía el carrito, que con MercadoPago no se limpia
+          solo: la pasarela devuelve a la clienta acá, no a /pago. */}
+      <LimpiarCompra aprobado={aprobado} />
+      {pedido && (
+        <TrackPurchase
+          pedidoCodigo={pedido.pedido_codigo}
+          total={Number(pedido.total ?? 0)}
+          items={lineas.map((l) => ({
+            sku: l.producto_id ?? "",
+            precio: Number(l.precio_unit ?? 0),
+            cantidad: Number(l.cantidad ?? 0),
+            productoNombre: l.nombre ?? undefined,
+          }))}
+          costoEnvio={Number(pedido.costo_envio ?? 0)}
+          aprobado={aprobado}
+        />
+      )}
       {/* El header (y su spacer) los pone el RootLayout. Esta página montaba
           además su propia nav fija encima: el CosmeticHeader quedaba abajo
           traslucido y se le veían los links fantasma. */}

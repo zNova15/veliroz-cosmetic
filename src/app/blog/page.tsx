@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { listPosts, type BlogPostMeta } from "@/lib/blog";
+import { absoluteUrl } from "@/lib/site";
 
 /* ============================================================
    Veliroz Cosmetic — /blog
@@ -26,6 +27,25 @@ export const metadata: Metadata = {
     siteName: "Veliroz Cosmetic",
     locale: "es_PE",
     type: "website",
+    /* Definir `openGraph` acá reemplaza entero el del layout raíz — no lo
+       fusiona — así que sin `images` el índice del diario se compartía sin
+       foto. El índice no tiene portada propia (las portadas son de cada
+       post), así que va el og por defecto del sitio. */
+    images: [
+      {
+        url: absoluteUrl("/og.png"),
+        width: 1200,
+        height: 630,
+        alt: "Veliroz Cosmetic — skincare coreano curado por rutina",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Diario Veliroz Cosmetic",
+    description:
+      "Guías de skincare curadas por rutina — para pieles reales, con evidencia.",
+    images: [absoluteUrl("/og.png")],
   },
 };
 

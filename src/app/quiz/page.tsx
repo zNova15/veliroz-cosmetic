@@ -703,7 +703,7 @@ function ResultadoPantalla({
               mismo. Aquí queda claro que es el costo de armarla por separado. */}
           <div className="flex items-baseline justify-between gap-4 mb-4">
             <p className="font-mono text-[10px] tracking-[0.24em] uppercase text-taupe">
-              {bundle ? "O armala tú, producto por producto" : "Tu rutina, paso a paso"}
+              {bundle ? "O ármala tú, producto por producto" : "Tu rutina, paso a paso"}
             </p>
             {productos && productos.length > 0 && (
               <p className="font-mono text-xs text-clay shrink-0" suppressHydrationWarning>
@@ -786,7 +786,13 @@ function ResultadoPantalla({
               href="/rutinas"
               className="text-sm text-clay hover:text-ink underline underline-offset-4"
             >
-              Ver las 5 rutinas curadas →
+              {/* Estaba hardcodeado en 5 mientras RUTINAS_ACTIVAS son 4
+                  (glow-evento está apagada). Sale del array para que apagar o
+                  encender una rutina no deje mintiendo a este link, y el
+                  singular está resuelto por si algún día queda una sola. */}
+              {RUTINAS_ACTIVAS.length === 1
+                ? "Ver la rutina curada →"
+                : `Ver las ${RUTINAS_ACTIVAS.length} rutinas curadas →`}
             </Link>
           </p>
         </div>
@@ -804,7 +810,7 @@ function ResultadoPantalla({
           <span aria-hidden="true">→</span>
         </button>
         <Link href={rutina.filtro_url} className="btn-outline justify-center">
-          Ver más productos para tú
+          Ver más productos para ti
         </Link>
         <a
           href={waHref}

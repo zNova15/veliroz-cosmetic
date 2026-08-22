@@ -39,6 +39,10 @@ export interface WishlistProducto {
   precio: number | null;
   precioAntes: number | null;
   preventa: boolean;
+  /** meta.nso_pendiente — se muestra pero NO se puede comprar todavía.
+      Va aparte de `agotado` porque el motivo es otro (registro sanitario
+      sin confirmar, no falta de stock) y el copy tiene que decirlo. */
+  nsoPendiente: boolean;
   agotado: boolean;
 }
 
@@ -217,16 +221,24 @@ function Card({
           )}
         </Link>
 
-        {p.preventa && (
+        {/* Un solo distintivo. `nsoPendiente` también levanta `agotado`
+            —bloquea la compra igual— así que va primero: manda el motivo,
+            no el efecto. Con la cadena al revés diría "Agotado" y la persona
+            esperaría una reposición que no depende del stock. */}
+        {p.nsoPendiente ? (
+          /* Mismo distintivo que la card del catálogo (/productos). */
+          <span className="absolute top-4 left-4 z-10 font-mono text-[9px] tracking-[0.18em] uppercase text-ink bg-mist px-2 py-1 rounded-sm pointer-events-none">
+            Próximamente
+          </span>
+        ) : p.preventa ? (
           <span className="absolute top-4 left-4 z-10 font-mono text-[9px] tracking-wider uppercase text-ink bg-champagne px-2 py-1 rounded-sm pointer-events-none">
             · Pre-venta ·
           </span>
-        )}
-        {p.agotado && (
+        ) : p.agotado ? (
           <span className="absolute top-4 left-4 z-10 font-mono text-[9px] tracking-[0.18em] uppercase text-cream bg-ink/85 px-2 py-1 rounded-sm pointer-events-none">
             Agotado
           </span>
-        )}
+        ) : null}
 
         {/* Quitar de favoritos — fuera del Link para no anidar interactivos. */}
         <button
@@ -292,17 +304,29 @@ function Card({
             </Link>
           </div>
 
+          {/* El mismo texto que la ficha (AddToCartButton): no es que no
+              haya, es que todavía no podemos venderlo. Sin esto la persona
+              lee "Agotado" y espera una reposición que no depende de stock. */}
+          {p.nsoPendiente && (
+            <p className="text-xs text-clay leading-relaxed text-pretty">
+              Todavía no lo vendemos: estamos verificando el registro
+              sanitario con el importador antes de ofrecerlo.
+            </p>
+          )}
+
           <button
             type="button"
             onClick={onAdd}
             disabled={p.agotado || !p.sku || p.precio == null}
             className="btn-primary w-full justify-center text-sm disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            {p.agotado
-              ? "Agotado"
-              : p.preventa
-                ? "Reservar"
-                : "Agregar al carrito"}
+            {p.nsoPendiente
+              ? "Próximamente"
+              : p.agotado
+                ? "Agotado"
+                : p.preventa
+                  ? "Reservar"
+                  : "Agregar al carrito"}
           </button>
         </div>
       </div>

@@ -14,7 +14,15 @@ import {
    - Input cupón + Aplicar (server action)
    - Subtotal / Descuento / Envío / Total
    - Botón "Confirmar pedido" (delegado al parent vía onSubmit).
+
+   MERCADOPAGO: el pedido se crea SIEMPRE primero (RPC crear_pedido) y
+   recién después se pide la preference. Ese orden importa: si la
+   pasarela falla, el pedido ya existe y se puede retomar por su código
+   en vez de evaporarse. Antes se creaba el pedido y se saltaba directo
+   a /pago/exito sin cobrar nada.
    ============================================================ */
+
+const WA_NUM = "51967456364";
 
 interface Props {
   /* El parent orquesta la validación cross-step antes de confirmar. */
@@ -50,6 +58,64 @@ export function OrderSummary({
   const [validando, setValidando] = useState(false);
   const [confirmError, setConfirmError] = useState("");
   const [isPending, startTransition] = useTransition();
+
+  /* Pedido creado que NO llegó a la pasarela. Guardamos el código para
+     que la persona no se quede sin nada en la mano: con él puede
+     reintentar el cobro o escribirnos, y nosotros lo encontramos en la
+     base. Mientras esto tenga valor el botón principal deja de crear
+     pedidos — volver a confirmar duplicaría la compra. */
+  const [pagoPendiente, setPagoPendiente] = useState<{
+    codigo: string;
+    motivo: string;
+  } | null>(null);
+  const [redirigiendo, setRedirigiendo] = useState(false);
+
+  /* Pide el link de pago de un pedido YA creado y manda a la pasarela.
+     Devuelve false si no se pudo (el llamador muestra la salida manual). */
+  const irAPasarela = async (codigo: string): Promise<boolean> => {
+    try {
+      const r = await fetch("/api/pagos/mercadopago/preference", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pedido_codigo: codigo }),
+      });
+      const j = (await r.json()) as {
+        ok?: boolean;
+        init_point?: string;
+        error?: string;
+      };
+      if (r.ok && j.ok && j.init_point) {
+        /* El carrito NO se vacía acá a propósito. Vaciarlo dispara el
+           gate de carrito vacío de /pago/page.tsx, que hace
+           router.replace("/productos") y competiría con esta navegación
+           — la misma carrera que ya dejó a una compradora real en el
+           catálogo sin su código (ver el comentario de `confirmado` en
+           /pago/page.tsx). Como efecto lateral el carrito sobrevive al
+           viaje a MP: si el pago se cae, la persona vuelve con todo
+           puesto. Limpiarlo tras un pago aprobado queda para
+           /pago/exito, que es quien sabe cómo terminó. */
+        setRedirigiendo(true);
+        window.location.assign(j.init_point);
+        return true;
+      }
+      setPagoPendiente({ codigo, motivo: traducirErrorPasarela(j.error) });
+      return false;
+    } catch {
+      setPagoPendiente({
+        codigo,
+        motivo: "No pudimos abrir la pasarela (sin conexión).",
+      });
+      return false;
+    }
+  };
+
+  const handleReintentarPasarela = () => {
+    const pend = pagoPendiente;
+    if (!pend) return;
+    startTransition(async () => {
+      await irAPasarela(pend.codigo);
+    });
+  };
 
   const handleAplicarCupon = async () => {
     const code = cuponInput.trim();
@@ -151,6 +217,14 @@ export function OrderSummary({
         setConfirmError(traducirError(res.error) ?? "No pudimos crear el pedido.");
         return;
       }
+
+      /* MercadoPago cobra en su propio sitio: en vez de ir a la pantalla
+         de gracias, mandamos a la preference con el pedido ya creado. */
+      if (s.metodoPago === "mercadopago") {
+        await irAPasarela(res.pedidoCodigo);
+        return;
+      }
+
       onSuccess(res.pedidoCodigo, res.total ?? total);
     });
   };
@@ -283,21 +357,66 @@ export function OrderSummary({
         </p>
       )}
 
-      <button
-        type="button"
-        onClick={handleConfirm}
-        disabled={isPending || items.length === 0}
-        className="btn-primary w-full justify-center disabled:opacity-40 disabled:cursor-not-allowed"
-      >
-        {isPending
-          ? "Procesando…"
-          : stepActual === 3
-            ? "Confirmar pedido"
-            : "Continuar"}
-      </button>
-      <p className="text-[10px] text-clay text-center">
-        Compra segura · datos encriptados
-      </p>
+      {/* El pedido entró pero la pasarela no abrió. Lo peor sería dejar a
+          la persona con un "algo falló" y sin el código: su compra existe
+          y hay que decirle cómo retomarla. */}
+      {pagoPendiente ? (
+        <div
+          role="alert"
+          className="space-y-3 rounded-md border border-champagne/50 bg-champagne/15 p-4"
+        >
+          <p className="font-serif text-base text-ink">
+            Tu pedido quedó guardado, falta el pago.
+          </p>
+          <p className="text-xs text-clay text-pretty">
+            {pagoPendiente.motivo} Guarda este código — con él retomas la
+            compra sin volver a armarla:
+          </p>
+          <p className="font-mono text-sm text-ink bg-cream rounded-md px-3 py-2 text-center tracking-wider">
+            {pagoPendiente.codigo}
+          </p>
+          <button
+            type="button"
+            onClick={handleReintentarPasarela}
+            disabled={isPending}
+            className="btn-primary w-full justify-center disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            {isPending ? "Abriendo…" : "Reintentar el pago"}
+          </button>
+          <a
+            href={`https://wa.me/${WA_NUM}?text=${encodeURIComponent(
+              `Hola, mi pedido ${pagoPendiente.codigo} (S/${total.toFixed(
+                2,
+              )}) quedó sin pagar. ¿Me ayudan a completarlo?`,
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-outline w-full justify-center"
+          >
+            Pagar por Yape / Plin
+          </a>
+        </div>
+      ) : (
+        <>
+          <button
+            type="button"
+            onClick={handleConfirm}
+            disabled={isPending || redirigiendo || items.length === 0}
+            className="btn-primary w-full justify-center disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            {redirigiendo
+              ? "Abriendo MercadoPago…"
+              : isPending
+                ? "Procesando…"
+                : stepActual === 3
+                  ? "Confirmar pedido"
+                  : "Continuar"}
+          </button>
+          <p className="text-[10px] text-clay text-center">
+            Compra segura · datos encriptados
+          </p>
+        </>
+      )}
     </aside>
   );
 }
@@ -327,6 +446,21 @@ function Row({
   );
 }
 
+/* Traduce el error de /api/pagos/mercadopago/preference. Nunca mostramos
+   el código crudo: la persona necesita saber qué hacer, no cuál env var
+   le falta a Vercel. */
+function traducirErrorPasarela(code?: string): string {
+  const map: Record<string, string> = {
+    mp_no_configurado: "MercadoPago no está disponible en este momento.",
+    pedido_ya_pagado: "Este pedido ya figura como pagado.",
+    pedido_cancelado: "Este pedido está cancelado.",
+    pedido_no_encontrado: "No encontramos el pedido para cobrarlo.",
+    sin_service_role: "El servidor no pudo leer tu pedido.",
+    total_invalido: "El total del pedido no es válido.",
+  };
+  return map[code ?? ""] ?? "No pudimos abrir la pasarela de pago.";
+}
+
 /* Traduce códigos del RPC a mensajes UI. */
 function traducirError(code?: string): string | undefined {
   if (!code) return undefined;
@@ -334,6 +468,14 @@ function traducirError(code?: string): string | undefined {
     return "Uno de los productos ya no está disponible.";
   if (code.startsWith("producto_no_encontrado"))
     return "Uno de los productos no está en catálogo.";
+  /* El guard de NSO devuelve el SKU pegado al código, y el fallback de
+     traducirError termina en `Error: ${code}`: sin estas dos líneas la
+     clienta leería "Error: nso_pendiente:TO-PEELING-30ML" y, peor, el
+     mensaje crudo de Postgres en el caso de db_error. */
+  if (code.startsWith("nso_pendiente"))
+    return "Ese producto todavía no está disponible para la venta.";
+  if (code.startsWith("db_error"))
+    return "No pudimos verificar tu pedido. Vuelve a intentarlo.";
   const map: Record<string, string> = {
     carrito_vacio: "Tu carrito está vacío.",
     email_invalido: "El email no es válido.",

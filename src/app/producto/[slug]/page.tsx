@@ -10,6 +10,7 @@ import {
 } from "@/lib/supabase";
 import type { ProductoPDP, ReviewRow } from "@/lib/types";
 import { swatchFor } from "@/lib/marcas";
+import { absoluteUrl } from "@/lib/site";
 import { Gallery } from "@/components/Gallery";
 import { AddToCartButton } from "@/components/AddToCartButton";
 import { ProductTabs } from "@/components/ProductTabs";
@@ -209,8 +210,43 @@ export async function generateMetadata(
       siteName: "Veliroz Cosmetic",
       locale: "es_PE",
       type: "website",
+      /* Next NO fusiona `openGraph`: si la página lo declara, reemplaza
+         entero el del layout raíz. Sin `images` acá, el bloque del layout
+         (que sí traía /og.png) desaparecía y todo link de producto pegado
+         en WhatsApp —el canal de venta principal en Perú— salía sin foto.
+         Ver src/app/layout.tsx por el mismo problema ya resuelto ahí. */
+      images: [ogImage(producto)],
     },
   };
+}
+
+/* Imagen para compartir: la foto real del producto si existe, y si no el
+   banner de marca (/og.png, el mismo del layout raíz).
+
+   La URL tiene que ser ABSOLUTA: los scrapers de WhatsApp y Facebook no
+   resuelven rutas relativas. El origen sale de siteUrl() vía absoluteUrl(),
+   nunca de VERCEL_URL — esa apunta al deployment con hash, no al dominio de
+   producción, y el preview quedaría apuntando a un host que no es el nuestro.
+   Ver src/lib/site.ts.
+
+   Sobre width/height: sólo se declaran para el fallback, que sabemos que es
+   1200x630. Los packshots del storage son cuadrados (1080x1080) y cada uno
+   puede cambiar; declarar 1200x630 sobre ellos sería mentirle al scraper y
+   el recorte saldría deformado. Sin las medidas, Facebook y WhatsApp bajan
+   la imagen y las miden solos, que es el comportamiento correcto. */
+type OgImage = { url: string; alt: string; width?: number; height?: number };
+
+function ogImage(producto: ProductoPDP): OgImage {
+  const alt = `${producto.nombre}${producto.marca ? ` — ${producto.marca.nombre}` : ""}`;
+  const cruda = producto.imagen_principal;
+
+  if (!cruda) {
+    return { url: absoluteUrl("/og.png"), alt, width: 1200, height: 630 };
+  }
+  /* imagen_principal hoy viene como URL absoluta del storage de Supabase,
+     pero el campo es texto libre: si algún día se carga una ruta relativa,
+     la absolutizamos en vez de emitir un og:image roto. */
+  return { url: cruda.startsWith("http") ? cruda : absoluteUrl(cruda), alt };
 }
 
 /* ────────────────── Página ────────────────── */
@@ -317,18 +353,28 @@ export default async function ProductoPage(
     image: producto.imagen_principal ?? undefined,
     ...(varianteRef && {
       sku: varianteRef.sku,
-      offers: {
-        "@type": "Offer",
-        priceCurrency: "PEN",
-        price: Number(varianteRef.precio).toFixed(2),
-        availability:
-          Number(varianteRef.stock) > 0
-            ? "https://schema.org/InStock"
-            : enPreventa
-              ? "https://schema.org/PreOrder"
-              : "https://schema.org/OutOfStock",
-        url: `https://veliroz.com/producto/${producto.slug}`,
-      },
+      /* `offers` SÓLO si el producto se puede comprar de verdad. Con
+         meta.nso_pendiente la web bloquea el carrito (ver AddToCartButton),
+         pero el JSON-LD igual publicaba precio y disponibilidad: Google lo
+         indexaba como comprable y podía mostrarlo en resultados de compra.
+         En un cosmético sin Notificación Sanitaria eso no es un rich result
+         desactualizado, es publicidad de algo que no debemos vender.
+         El resto del Product (nombre, marca, imagen, descripción) se queda:
+         el producto existe, simplemente no está a la venta. */
+      ...(!nsoPendiente && {
+        offers: {
+          "@type": "Offer",
+          priceCurrency: "PEN",
+          price: Number(varianteRef.precio).toFixed(2),
+          availability:
+            Number(varianteRef.stock) > 0
+              ? "https://schema.org/InStock"
+              : enPreventa
+                ? "https://schema.org/PreOrder"
+                : "https://schema.org/OutOfStock",
+          url: `https://veliroz.com/producto/${producto.slug}`,
+        },
+      }),
     }),
     ...(producto.reviews_count > 0 && producto.reviews_avg !== null && {
       aggregateRating: {

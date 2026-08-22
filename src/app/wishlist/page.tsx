@@ -67,9 +67,18 @@ async function fetchCatalogo(): Promise<WishlistProducto[]> {
     return rows.map((r) => {
       const v = variantePrincipal((r.variantes ?? []).filter((x) => x.activo));
       const sinStock = !v || Number(v.stock) <= 0;
-      /* Pre-venta = stock 0 a propósito (se compra al confirmar el pedido),
-         así que sólo es "Agotado" cuando NO está marcado como pre-venta. */
-      const preventa = sinStock && metaFlag(r.meta, "preventa");
+      /* Mismo criterio que AddToCartButton (la ficha de producto), palabra
+         por palabra. Antes esta página calculaba `agotado = sinStock &&
+         !preventa` e ignoraba `meta.nso_pendiente`: los productos sin
+         Notificación Sanitaria confirmada quedaban comprables de un clic
+         desde favoritos mientras la ficha los bloqueaba. Vender uno de esos
+         obliga a devolver la plata y el producto es decomisable, así que el
+         bloqueo tiene que ser el mismo en las dos pantallas.
+
+         Pre-venta = stock 0 a propósito (se compra al confirmar el pedido);
+         nso_pendiente gana siempre, porque no es falta de stock. */
+      const nsoPendiente = metaFlag(r.meta, "nso_pendiente");
+      const preventa = metaFlag(r.meta, "preventa") && sinStock && !nsoPendiente;
       return {
         id: r.id,
         slug: r.slug,
@@ -82,7 +91,8 @@ async function fetchCatalogo(): Promise<WishlistProducto[]> {
         precio: v ? Number(v.precio) : null,
         precioAntes: v?.precio_antes != null ? Number(v.precio_antes) : null,
         preventa,
-        agotado: sinStock && !preventa,
+        nsoPendiente,
+        agotado: (sinStock && !preventa) || nsoPendiente,
       } satisfies WishlistProducto;
     });
   } catch (err) {
